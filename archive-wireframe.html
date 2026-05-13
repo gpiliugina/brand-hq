@@ -963,313 +963,605 @@ function ScreenSignature({ go }) {
   );
 }
 
-// =============== SCREEN 6 — SOCIAL POST ===============
-const SOCIAL_PLATFORMS = [
-  { name: "Instagram", formats: [
-    { label: "Square Post",    dims: "1080 × 1080", ratio: "1:1",   w: 200, h: 200 },
-    { name: "story",
-      label: "Story / Reel",   dims: "1080 × 1920", ratio: "9:16",  w: 120, h: 213 },
-    { label: "Portrait",       dims: "1080 × 1350", ratio: "4:5",   w: 170, h: 213 },
-  ]},
-  { name: "LinkedIn", formats: [
-    { label: "Feed Post",      dims: "1200 × 627",  ratio: "1.91:1", w: 220, h: 115 },
-    { label: "Square",         dims: "1200 × 1200", ratio: "1:1",   w: 200, h: 200 },
-  ]},
-  { name: "X / Twitter", formats: [
-    { label: "Post",           dims: "1600 × 900",  ratio: "16:9",  w: 240, h: 135 },
-  ]},
-  { name: "Facebook", formats: [
-    { label: "Feed Post",      dims: "1200 × 630",  ratio: "1.91:1", w: 220, h: 115 },
-  ]},
-  { name: "YouTube", formats: [
-    { label: "Thumbnail",      dims: "1280 × 720",  ratio: "16:9",  w: 240, h: 135 },
-  ]},
-  { name: "TikTok", formats: [
-    { label: "Video Cover",    dims: "1080 × 1920", ratio: "9:16",  w: 120, h: 213 },
-  ]},
+// =============== SCREEN 6 — SOCIAL POST CONSTRUCTOR ===============
+const SOCIAL_FORMATS = [
+  { platform: "Instagram",  label: "Square",        dims: "1080 × 1080", ratio: 1 / 1,       w: 360, h: 360 },
+  { platform: "Instagram",  label: "Story / Reel",  dims: "1080 × 1920", ratio: 9 / 16,      w: 220, h: 391 },
+  { platform: "Instagram",  label: "Portrait",      dims: "1080 × 1350", ratio: 4 / 5,       w: 300, h: 375 },
+  { platform: "LinkedIn",   label: "Feed Post",     dims: "1200 × 627",  ratio: 1.91 / 1,    w: 420, h: 220 },
+  { platform: "X / Twitter",label: "Post",          dims: "1600 × 900",  ratio: 16 / 9,      w: 420, h: 236 },
+  { platform: "Facebook",   label: "Feed Post",     dims: "1200 × 630",  ratio: 1.91 / 1,    w: 420, h: 220 },
+  { platform: "YouTube",    label: "Thumbnail",     dims: "1280 × 720",  ratio: 16 / 9,      w: 420, h: 236 },
+  { platform: "TikTok",     label: "Video Cover",   dims: "1080 × 1920", ratio: 9 / 16,      w: 220, h: 391 },
+];
+
+const SOCIAL_TOOLS = [
+  { key: "text",     label: "Text"      },
+  { key: "shape",    label: "Shape"     },
+  { key: "image",    label: "Image"     },
+  { key: "sticker",  label: "Sticker"   },
+  { key: "template", label: "Template"  },
+  { key: "colour",   label: "Colour"    },
+];
+
+const SOCIAL_BG_COLOURS = [
+  "#FFFFFF", "#F5F5F5", "#1E1C23", "#3A3744",
+  "#D8D2C0", "#B8C8D8", "#E5C8B8", "#C5D8B8",
+  "#D0B8D8", "#F0E0C8",
+];
+
+const TEXT_PRESETS = [
+  { key: "h1", label: "Heading", size: 44, weight: 700 },
+  { key: "h2", label: "Subheading", size: 24, weight: 600 },
+  { key: "p",  label: "Body", size: 14, weight: 400 },
+  { key: "cap",label: "Caption", size: 11, weight: 500 },
+];
+
+const SHAPE_PRESETS = [
+  { key: "rect", label: "Rectangle" },
+  { key: "circ", label: "Circle"    },
+  { key: "line", label: "Line"      },
+  { key: "tri",  label: "Triangle"  },
+  { key: "star", label: "Star"      },
+  { key: "arrow",label: "Arrow"     },
 ];
 
 function ScreenSocial({ go }) {
-  const [platform, setPlatform] = useState("Instagram");
   const [formatIdx, setFormatIdx] = useState(0);
-  const [template, setTemplate] = useState(1);
-  const [bg, setBg] = useState(0);
-  const [logoPos, setLogoPos] = useState("BL");
-  const [format, setFormat] = useState("PNG");
-  const [headline, setHeadline] = useState("A bold headline goes here.");
+  const [tool, setTool] = useState("text");
+  const [bg, setBg] = useState(1);
+  const [template, setTemplate] = useState(0);
+  const [activePage, setActivePage] = useState(0);
+  const [zoomPct, setZoomPct] = useState(100);
+  const [selectedElement, setSelectedElement] = useState("headline");
+  const [headline, setHeadline] = useState("A bold headline that lands.");
   const [body, setBody] = useState("Short supporting line for the campaign.");
 
-  const platformObj = SOCIAL_PLATFORMS.find(p => p.name === platform);
-  const current = platformObj.formats[formatIdx] || platformObj.formats[0];
+  const fmt = SOCIAL_FORMATS[formatIdx];
+  const platforms = Array.from(new Set(SOCIAL_FORMATS.map(f => f.platform)));
 
-  // Compute canvas display size — fit within 360 × 360 box
-  const maxBox = 360;
-  let canvasW = current.w, canvasH = current.h;
-  const scale = Math.min(maxBox / canvasW, maxBox / canvasH);
-  canvasW = canvasW * scale;
-  canvasH = canvasH * scale;
-
-  const bgColors = ["#FFFFFF", "#1E1C23", "#EAEAE8", "#D8D2C0", "#B8C8D8"];
+  function ToolIconBox({ kind, active }) {
+    const c = active ? "white" : "#555";
+    if (kind === "text") return <span style={{ color: c, fontSize: 18, fontFamily: "Georgia, serif", fontWeight: 700 }}>T</span>;
+    if (kind === "shape") return <div style={{ width: 14, height: 14, border: `1.5px solid ${c}`, borderRadius: 2 }} />;
+    if (kind === "image") return (
+      <div style={{ width: 16, height: 12, border: `1.5px solid ${c}`, borderRadius: 1, position: "relative" }}>
+        <div style={{ position: "absolute", bottom: 1, left: 1, right: 1, height: 4, background: c, opacity: 0.5 }} />
+      </div>
+    );
+    if (kind === "sticker") return <div style={{ width: 14, height: 14, borderRadius: 7, border: `1.5px solid ${c}` }} />;
+    if (kind === "template") return (
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.5, width: 14, height: 14 }}>
+        {[0,1,2,3].map(i => <div key={i} style={{ background: c, opacity: 0.6 }} />)}
+      </div>
+    );
+    if (kind === "colour") return (
+      <div style={{
+        width: 14, height: 14, borderRadius: 7,
+        background: "conic-gradient(#ff6b6b, #f7d774, #6bd09b, #6bb1ff, #c46bff, #ff6bcd, #ff6b6b)",
+        border: `1px solid ${active ? "white" : "#666"}`,
+      }} />
+    );
+    return null;
+  }
 
   return (
     <Shell active="social" screenName="Creator · Social Post" go={go}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
         <button onClick={() => go("creator")} style={{
           width: 28, height: 28, borderRadius: 14, border: `1px solid ${BORDER}`,
-          background: "white", color: DARK, fontSize: 14,
+          background: "white", color: DARK, fontSize: 14, cursor: "pointer",
         }}>←</button>
         <div style={{ fontSize: 11, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase" }}>
           Creator / <span style={{ color: DARK }}>Social Post</span>
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "26% 44% 30%", gap: 16 }}>
+      {/* CONSTRUCTOR FRAME */}
+      <div style={{
+        height: "calc(100vh - 48px - 48px - 56px)",
+        minHeight: 540,
+        display: "grid",
+        gridTemplateColumns: "60px 240px 1fr 280px",
+        background: "white",
+        border: `1px solid ${BORDER}`,
+        borderRadius: 8,
+        overflow: "hidden",
+      }}>
 
-        {/* LEFT — Platform & Size presets */}
-        <Card style={{ padding: 16 }}>
-          <SectionLabel>Platform</SectionLabel>
-          <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 4 }}>
-            {SOCIAL_PLATFORMS.map(p => {
-              const on = platform === p.name;
-              return (
-                <div
-                  key={p.name}
-                  onClick={() => { setPlatform(p.name); setFormatIdx(0); }}
+        {/* TOOL RAIL */}
+        <div style={{
+          background: "#FAFAF8",
+          borderRight: `1px solid ${BORDER}`,
+          padding: "12px 0",
+          display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
+        }}>
+          {SOCIAL_TOOLS.map(t => {
+            const on = tool === t.key;
+            return (
+              <div key={t.key} style={{ position: "relative", width: "100%" }}>
+                <button
+                  onClick={() => setTool(t.key)}
+                  title={t.label}
                   style={{
-                    padding: "8px 10px",
-                    borderLeft: on ? `3px solid ${ACCENT}` : "3px solid transparent",
-                    background: on ? "#F2F2F0" : "transparent",
-                    fontSize: 13, color: on ? DARK : "#555",
-                    fontWeight: on ? 500 : 400,
-                    cursor: "pointer",
-                    display: "flex", justifyContent: "space-between",
+                    width: 40, height: 40, borderRadius: 6, margin: "0 auto",
+                    background: on ? DARK : "transparent",
+                    border: on ? "none" : `1px solid ${BORDER}`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    cursor: "pointer", color: on ? "white" : "#555",
                   }}
                 >
-                  <span>{p.name}</span>
-                  <span style={{ color: MUTED, fontSize: 11 }}>{p.formats.length}</span>
-                </div>
-              );
-            })}
-          </div>
-
-          <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${BORDER}` }}>
-            <SectionLabel>Size Preset</SectionLabel>
-            <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }}>
-              {platformObj.formats.map((f, i) => {
-                const on = formatIdx === i;
-                return (
-                  <div
-                    key={i}
-                    onClick={() => setFormatIdx(i)}
-                    style={{
-                      padding: "10px 12px",
-                      border: on ? `2px solid ${ACCENT}` : `1px solid ${BORDER}`,
-                      borderRadius: 6, cursor: "pointer",
-                      background: "white",
-                      display: "flex", alignItems: "center", gap: 10,
-                    }}
-                  >
-                    <div style={{
-                      width: 28, height: 28 * (f.h / f.w),
-                      minWidth: 12, minHeight: 12,
-                      background: "#EAEAE8", border: `1px solid ${BORDER}`,
-                      borderRadius: 2, flexShrink: 0,
-                    }} />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 12, color: DARK, fontWeight: on ? 600 : 500 }}>{f.label}</div>
-                      <div style={{ fontSize: 10, color: MUTED, marginTop: 2 }}>{f.dims} · {f.ratio}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </Card>
-
-        {/* MIDDLE — Preview canvas + Templates */}
-        <Card style={{ padding: 24 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <SectionLabel>Preview</SectionLabel>
-            <span style={{ fontSize: 10, color: MUTED, letterSpacing: 0.6, fontFamily: '"SF Mono", monospace' }}>
-              {current.dims} · {current.ratio}
-            </span>
-          </div>
-
-          <div style={{
-            marginTop: 18, height: 380,
-            background: FAINT, borderRadius: 6,
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-            <div style={{
-              width: canvasW, height: canvasH,
-              background: bgColors[bg],
-              border: `1px solid ${BORDER}`, borderRadius: 4,
-              position: "relative",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
-              color: bg === 1 ? "white" : DARK,
-              padding: 16, boxSizing: "border-box",
-              display: "flex", flexDirection: "column",
-              justifyContent: template === 0 ? "center" : template === 1 ? "flex-end" : template === 2 ? "flex-start" : "space-between",
-              alignItems: template === 3 ? "center" : "flex-start",
-              textAlign: template === 3 ? "center" : "left",
-            }}>
-              {/* photo placeholder for some templates */}
-              {(template === 2) && (
+                  <ToolIconBox kind={t.key} active={on} />
+                </button>
                 <div style={{
-                  width: "100%", height: "55%",
-                  background: "linear-gradient(135deg, #C5B8D8, #7A6E8A)",
-                  borderRadius: 2, marginBottom: 10,
-                }} />
-              )}
-              <div style={{ fontSize: Math.max(10, canvasW * 0.06), fontWeight: 700, lineHeight: 1.15, letterSpacing: -0.3 }}>
-                {headline}
+                  marginTop: 2, fontSize: 9, color: on ? DARK : "#888",
+                  letterSpacing: 0.6, textAlign: "center",
+                  fontWeight: on ? 600 : 400, textTransform: "uppercase",
+                }}>{t.label}</div>
               </div>
-              <div style={{ fontSize: Math.max(8, canvasW * 0.035), marginTop: 6, opacity: 0.8 }}>
-                {body}
-              </div>
-              {/* logo placeholder */}
-              <div style={{
-                position: "absolute",
-                width: Math.max(20, canvasW * 0.12),
-                height: Math.max(10, canvasW * 0.05),
-                background: bg === 1 ? "white" : DARK,
-                ...(logoPos === "TL" ? { top: 12, left: 12 }
-                  : logoPos === "TR" ? { top: 12, right: 12 }
-                  : logoPos === "BL" ? { bottom: 12, left: 12 }
-                  :                    { bottom: 12, right: 12 }),
-              }} />
-            </div>
-          </div>
+            );
+          })}
+        </div>
 
-          <div style={{ marginTop: 22 }}>
-            <SectionLabel>Template</SectionLabel>
-            <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8 }}>
-              {[0,1,2,3].map(t => {
-                const on = template === t;
-                return (
-                  <button key={t} onClick={() => setTemplate(t)} style={{
-                    padding: 10, borderRadius: 6,
-                    border: on ? `2px solid ${ACCENT}` : `1px solid ${BORDER}`,
-                    background: "white", cursor: "pointer",
+        {/* TOOL PANEL */}
+        <div style={{
+          borderRight: `1px solid ${BORDER}`,
+          padding: 16, overflowY: "auto",
+        }}>
+          {tool === "text" && (
+            <>
+              <SectionLabel>Add Text</SectionLabel>
+              <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 6 }}>
+                {TEXT_PRESETS.map(p => (
+                  <button key={p.key} style={{
+                    padding: "12px 14px",
+                    border: `1px solid ${BORDER}`, borderRadius: 6,
+                    background: "white", textAlign: "left", cursor: "pointer",
+                    fontSize: Math.min(18, p.size / 2.5), fontWeight: p.weight, color: DARK,
+                    lineHeight: 1.2,
+                  }}>{p.label}</button>
+                ))}
+              </div>
+              <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${BORDER}` }}>
+                <SectionLabel>Font</SectionLabel>
+                <div style={{
+                  marginTop: 10, padding: "10px 12px",
+                  border: `1px solid ${BORDER}`, borderRadius: 6,
+                  fontSize: 13, color: DARK, display: "flex", justifyContent: "space-between",
+                }}>
+                  <span>Instrument Sans</span><span style={{ color: MUTED }}>▾</span>
+                </div>
+                <div style={{ marginTop: 8, fontSize: 11, color: MUTED }}>Brand font · V3.2</div>
+              </div>
+            </>
+          )}
+
+          {tool === "shape" && (
+            <>
+              <SectionLabel>Shapes</SectionLabel>
+              <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                {SHAPE_PRESETS.map(s => (
+                  <button key={s.key} style={{
+                    padding: 14, borderRadius: 6, cursor: "pointer",
+                    border: `1px solid ${BORDER}`, background: "white",
+                    display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
                   }}>
                     <div style={{
-                      height: 56, background: FAINT, borderRadius: 3,
-                      border: `1px solid ${BORDER}`,
-                      position: "relative", padding: 4,
-                    }}>
-                      {t === 2 && <div style={{ height: "55%", background: "#bbb", borderRadius: 1, marginBottom: 3 }} />}
-                      <div style={{
-                        height: 4, width: "70%", background: DARK, borderRadius: 1,
-                        marginTop: t === 0 ? "40%" : t === 1 ? "auto" : 0,
-                        marginLeft: t === 3 ? "auto" : 0,
-                        marginRight: t === 3 ? "auto" : 0,
-                      }} />
-                      <div style={{
-                        marginTop: 3, height: 2, width: "50%", background: "#999", borderRadius: 1,
-                        marginLeft: t === 3 ? "auto" : 0,
-                        marginRight: t === 3 ? "auto" : 0,
-                      }} />
-                    </div>
-                    <div style={{
-                      marginTop: 6, fontSize: 10, color: on ? DARK : "#666",
-                      letterSpacing: 0.6, textTransform: "uppercase",
-                      fontWeight: on ? 600 : 500,
-                    }}>
-                      {["Centered","Caption","Image","Hero"][t]}
-                    </div>
+                      width: 28, height: 28,
+                      background: s.key === "line" ? "transparent" : DARK,
+                      borderRadius: s.key === "circ" ? 14 : s.key === "rect" ? 2 : 0,
+                      borderTop: s.key === "line" ? `2px solid ${DARK}` : undefined,
+                      marginTop: s.key === "line" ? 13 : 0,
+                      clipPath:
+                        s.key === "tri" ? "polygon(50% 0%, 0% 100%, 100% 100%)" :
+                        s.key === "star" ? "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)" :
+                        s.key === "arrow" ? "polygon(0 40%, 60% 40%, 60% 20%, 100% 50%, 60% 80%, 60% 60%, 0 60%)" :
+                        undefined,
+                    }} />
+                    <div style={{ fontSize: 10, color: "#555", letterSpacing: 0.4, textTransform: "uppercase" }}>{s.label}</div>
                   </button>
-                );
-              })}
+                ))}
+              </div>
+            </>
+          )}
+
+          {tool === "image" && (
+            <>
+              <SectionLabel>Brand Photos</SectionLabel>
+              <div style={{
+                marginTop: 10, fontSize: 11, color: MUTED,
+              }}>From Team Photos library</div>
+              <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <div key={i} style={{
+                    aspectRatio: "1", borderRadius: 4,
+                    background: PHOTO_GRADIENTS[i % PHOTO_GRADIENTS.length],
+                    border: `1px solid ${BORDER}`, cursor: "pointer",
+                  }} />
+                ))}
+              </div>
+              <div style={{
+                marginTop: 12,
+                border: `1px dashed ${BORDER}`, borderRadius: 6,
+                padding: 16, textAlign: "center", fontSize: 11, color: MUTED,
+                cursor: "pointer",
+              }}>↑ Upload your own</div>
+            </>
+          )}
+
+          {tool === "sticker" && (
+            <>
+              <SectionLabel>Stickers & Badges</SectionLabel>
+              <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                {["NEW","V3.2","✦","◆","●","▲","◐","✕","↑"].map((s, i) => (
+                  <button key={i} style={{
+                    aspectRatio: "1", borderRadius: 6, cursor: "pointer",
+                    border: `1px solid ${BORDER}`, background: "white",
+                    fontSize: 14, fontWeight: 700, color: DARK,
+                  }}>{s}</button>
+                ))}
+              </div>
+            </>
+          )}
+
+          {tool === "template" && (
+            <>
+              <SectionLabel>Templates</SectionLabel>
+              <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                {[0,1,2,3,4,5].map(t => {
+                  const on = template === t;
+                  return (
+                    <button key={t} onClick={() => setTemplate(t)} style={{
+                      aspectRatio: "1", borderRadius: 6, cursor: "pointer",
+                      border: on ? `2px solid ${ACCENT}` : `1px solid ${BORDER}`,
+                      background: "white", padding: 8, position: "relative",
+                    }}>
+                      <div style={{
+                        height: "100%", borderRadius: 3, background: FAINT,
+                        border: `1px solid ${BORDER}`, padding: 6,
+                        display: "flex", flexDirection: "column",
+                        justifyContent: t === 0 ? "center" : t === 1 ? "flex-end" : t === 2 ? "flex-start" : "space-between",
+                        alignItems: t === 4 ? "center" : "flex-start",
+                        textAlign: t === 4 ? "center" : "left",
+                      }}>
+                        {t === 2 && <div style={{ height: "45%", background: "#bbb", borderRadius: 1, marginBottom: 4 }} />}
+                        <div style={{ height: 4, width: "70%", background: DARK, borderRadius: 1,
+                          marginLeft: t === 4 ? "auto" : 0, marginRight: t === 4 ? "auto" : 0 }} />
+                        <div style={{ marginTop: 3, height: 2, width: "50%", background: "#999", borderRadius: 1,
+                          marginLeft: t === 4 ? "auto" : 0, marginRight: t === 4 ? "auto" : 0 }} />
+                        {t === 5 && <div style={{ marginTop: 3, height: 6, width: 6, borderRadius: 3, background: DARK }} />}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          {tool === "colour" && (
+            <>
+              <SectionLabel>Brand Palette</SectionLabel>
+              <div style={{ marginTop: 10, fontSize: 11, color: MUTED }}>V3.2 · 10 colours</div>
+              <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr", gap: 6 }}>
+                {SOCIAL_BG_COLOURS.map((c, i) => (
+                  <div
+                    key={i}
+                    onClick={() => setBg(i)}
+                    style={{
+                      aspectRatio: "1", borderRadius: 4,
+                      background: c,
+                      border: bg === i ? `2px solid ${ACCENT}` : `1px solid ${BORDER}`,
+                      cursor: "pointer",
+                    }}
+                  />
+                ))}
+              </div>
+              <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${BORDER}` }}>
+                <SectionLabel>Gradient</SectionLabel>
+                <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+                  {[
+                    "linear-gradient(135deg, #C5B8D8, #7A6E8A)",
+                    "linear-gradient(135deg, #B8C8B0, #6E8A70)",
+                    "linear-gradient(135deg, #1E1C23, #3A3744)",
+                    "linear-gradient(135deg, #F0E0C8, #D0B8B0)",
+                  ].map((g, i) => (
+                    <div key={i} style={{
+                      aspectRatio: "2", borderRadius: 4, background: g,
+                      border: `1px solid ${BORDER}`, cursor: "pointer",
+                    }} />
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* CANVAS COLUMN */}
+        <div style={{
+          display: "flex", flexDirection: "column",
+          background: "#EFEFED",
+          borderRight: `1px solid ${BORDER}`,
+        }}>
+          {/* Format toolbar */}
+          <div style={{
+            height: 48, flexShrink: 0,
+            borderBottom: `1px solid ${BORDER}`,
+            background: "white",
+            display: "flex", alignItems: "center", padding: "0 14px", gap: 10,
+          }}>
+            <span style={{ fontSize: 11, color: MUTED, letterSpacing: 0.6, textTransform: "uppercase" }}>Format</span>
+            <select
+              value={formatIdx}
+              onChange={(e) => setFormatIdx(parseInt(e.target.value, 10))}
+              style={{
+                padding: "6px 10px", border: `1px solid ${BORDER}`, borderRadius: 6,
+                fontSize: 12, color: DARK, background: "white", cursor: "pointer",
+                appearance: "auto",
+              }}
+            >
+              {SOCIAL_FORMATS.map((f, i) => (
+                <option key={i} value={i}>{f.platform} · {f.label} ({f.dims})</option>
+              ))}
+            </select>
+            <span style={{ fontSize: 10, color: MUTED, fontFamily: MONO, letterSpacing: 0.4 }}>
+              {fmt.dims}
+            </span>
+
+            <div style={{ flex: 1 }} />
+
+            <button style={{
+              padding: "6px 10px", border: `1px solid ${BORDER}`, borderRadius: 14,
+              fontSize: 12, color: DARK, background: "white", cursor: "pointer",
+            }}>↶ Undo</button>
+            <button style={{
+              padding: "6px 10px", border: `1px solid ${BORDER}`, borderRadius: 14,
+              fontSize: 12, color: DARK, background: "white", cursor: "pointer",
+            }}>↷ Redo</button>
+          </div>
+
+          {/* Canvas stage */}
+          <div style={{
+            flex: 1, overflow: "auto",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            padding: 24,
+          }}>
+            <div style={{
+              width: fmt.w * (zoomPct / 100),
+              height: fmt.h * (zoomPct / 100),
+              background: SOCIAL_BG_COLOURS[bg],
+              border: `1px solid ${BORDER}`, borderRadius: 4,
+              boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+              position: "relative", overflow: "hidden",
+              color: bg === 2 || bg === 3 ? "white" : DARK,
+              padding: 24, boxSizing: "border-box",
+              display: "flex", flexDirection: "column",
+              justifyContent: template === 0 ? "center" : template === 1 ? "flex-end" : template === 2 ? "flex-start" : template === 4 ? "center" : "space-between",
+              alignItems: template === 4 ? "center" : "flex-start",
+              textAlign: template === 4 ? "center" : "left",
+              transition: "all 0.15s ease",
+            }}>
+              {template === 2 && (
+                <div style={{
+                  width: "100%", height: "50%",
+                  background: PHOTO_GRADIENTS[2],
+                  borderRadius: 2, marginBottom: 12,
+                }} />
+              )}
+
+              {/* HEADLINE — selectable */}
+              <div
+                onClick={() => { setSelectedElement("headline"); setTool("text"); }}
+                style={{
+                  fontSize: Math.max(14, fmt.w * 0.07 * (zoomPct / 100)),
+                  fontWeight: 700, lineHeight: 1.12, letterSpacing: -0.4,
+                  outline: selectedElement === "headline" ? `2px solid ${ACCENT}` : "none",
+                  outlineOffset: 4, cursor: "pointer", maxWidth: "100%",
+                }}
+              >{headline}</div>
+
+              {/* BODY — selectable */}
+              <div
+                onClick={() => { setSelectedElement("body"); setTool("text"); }}
+                style={{
+                  marginTop: 8,
+                  fontSize: Math.max(10, fmt.w * 0.035 * (zoomPct / 100)),
+                  opacity: 0.85, lineHeight: 1.3,
+                  outline: selectedElement === "body" ? `2px solid ${ACCENT}` : "none",
+                  outlineOffset: 4, cursor: "pointer",
+                }}
+              >{body}</div>
+
+              {template !== 2 && template !== 1 && (
+                <div style={{ flex: 1 }} />
+              )}
+
+              {/* Footer accent */}
+              {template === 5 && (
+                <div style={{
+                  marginTop: 12, width: 28, height: 28, borderRadius: 14,
+                  background: bg === 2 || bg === 3 ? "white" : DARK,
+                }} />
+              )}
             </div>
           </div>
-        </Card>
 
-        {/* RIGHT — Content & Style + Export */}
-        <Card style={{ padding: 20 }}>
-          <SectionLabel>Content</SectionLabel>
-          <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 10 }}>
-            <div>
-              <div style={{ fontSize: 10, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 4 }}>Headline</div>
-              <input
+          {/* Bottom bar: pages + zoom */}
+          <div style={{
+            height: 48, flexShrink: 0,
+            borderTop: `1px solid ${BORDER}`,
+            background: "white",
+            display: "flex", alignItems: "center", padding: "0 14px", gap: 14,
+          }}>
+            <span style={{ fontSize: 10, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase" }}>Pages</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              {[0, 1].map(p => {
+                const on = activePage === p;
+                return (
+                  <button key={p} onClick={() => setActivePage(p)} style={{
+                    width: 32, height: 32, borderRadius: 4,
+                    border: on ? `2px solid ${ACCENT}` : `1px solid ${BORDER}`,
+                    background: "white", cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 11, fontWeight: 600, color: on ? DARK : "#666",
+                  }}>{p + 1}</button>
+                );
+              })}
+              <button style={{
+                width: 32, height: 32, borderRadius: 4,
+                border: `1px dashed ${BORDER}`,
+                background: "transparent", cursor: "pointer",
+                fontSize: 14, color: MUTED,
+              }}>+</button>
+            </div>
+
+            <div style={{ flex: 1 }} />
+
+            <span style={{ fontSize: 10, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase" }}>Zoom</span>
+            <button onClick={() => setZoomPct(z => Math.max(40, z - 10))} style={{
+              width: 24, height: 24, borderRadius: 12,
+              border: `1px solid ${BORDER}`, background: "white", cursor: "pointer",
+              fontSize: 13, color: DARK,
+            }}>−</button>
+            <span style={{ fontSize: 11, color: DARK, fontFamily: MONO, minWidth: 36, textAlign: "center" }}>
+              {zoomPct}%
+            </span>
+            <button onClick={() => setZoomPct(z => Math.min(200, z + 10))} style={{
+              width: 24, height: 24, borderRadius: 12,
+              border: `1px solid ${BORDER}`, background: "white", cursor: "pointer",
+              fontSize: 13, color: DARK,
+            }}>+</button>
+            <button onClick={() => setZoomPct(100)} style={{
+              padding: "4px 10px", borderRadius: 12,
+              border: `1px solid ${BORDER}`, background: "white", cursor: "pointer",
+              fontSize: 11, color: DARK, letterSpacing: 0.4,
+            }}>Fit</button>
+          </div>
+        </div>
+
+        {/* PROPERTIES COLUMN */}
+        <div style={{
+          padding: 16, overflowY: "auto",
+          display: "flex", flexDirection: "column", gap: 14,
+        }}>
+          <div>
+            <SectionLabel>Selected</SectionLabel>
+            <div style={{
+              marginTop: 8, padding: "10px 12px",
+              background: "#F2F2F0", borderRadius: 6,
+              display: "flex", alignItems: "center", gap: 10,
+            }}>
+              <div style={{
+                width: 16, height: 16, borderRadius: 3,
+                background: DARK,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: "white", fontSize: 10, fontFamily: "Georgia, serif", fontWeight: 700,
+              }}>T</div>
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: DARK }}>
+                  {selectedElement === "headline" ? "Headline" : "Body"}
+                </div>
+                <div style={{ fontSize: 10, color: MUTED, fontFamily: MONO, letterSpacing: 0.4 }}>
+                  TEXT ELEMENT
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style={{ fontSize: 10, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 6 }}>Content</div>
+            {selectedElement === "headline" ? (
+              <textarea
                 value={headline}
                 onChange={(e) => setHeadline(e.target.value)}
+                rows={2}
                 style={{
-                  width: "100%", padding: "8px 12px", border: `1px solid ${BORDER}`,
-                  borderRadius: 6, fontSize: 13, color: DARK, background: "white",
+                  width: "100%", padding: "8px 10px", border: `1px solid ${BORDER}`,
+                  borderRadius: 6, fontSize: 12, color: DARK, background: "white",
+                  resize: "vertical", boxSizing: "border-box", fontFamily: "inherit",
                 }}
               />
-            </div>
-            <div>
-              <div style={{ fontSize: 10, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 4 }}>Body</div>
-              <input
+            ) : (
+              <textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
+                rows={2}
                 style={{
-                  width: "100%", padding: "8px 12px", border: `1px solid ${BORDER}`,
-                  borderRadius: 6, fontSize: 13, color: DARK, background: "white",
+                  width: "100%", padding: "8px 10px", border: `1px solid ${BORDER}`,
+                  borderRadius: 6, fontSize: 12, color: DARK, background: "white",
+                  resize: "vertical", boxSizing: "border-box", fontFamily: "inherit",
                 }}
               />
+            )}
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+            <div>
+              <div style={{ fontSize: 10, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 6 }}>Size</div>
+              <div style={{ padding: "8px 10px", border: `1px solid ${BORDER}`, borderRadius: 6, fontSize: 12, color: DARK }}>
+                {selectedElement === "headline" ? "64" : "16"} px
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: 10, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 6 }}>Weight</div>
+              <div style={{ padding: "8px 10px", border: `1px solid ${BORDER}`, borderRadius: 6, fontSize: 12, color: DARK }}>
+                {selectedElement === "headline" ? "700" : "400"}
+              </div>
             </div>
           </div>
 
-          <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${BORDER}` }}>
-            <SectionLabel>Background</SectionLabel>
-            <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
-              {bgColors.map((c, i) => (
-                <div
-                  key={i}
-                  onClick={() => setBg(i)}
-                  style={{
-                    width: 30, height: 30, borderRadius: 4,
-                    background: c,
-                    border: bg === i ? `2px solid ${ACCENT}` : `1px solid ${BORDER}`,
-                    cursor: "pointer",
-                  }}
-                />
+          <div>
+            <div style={{ fontSize: 10, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 6 }}>Alignment</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 4 }}>
+              {["←","↔","→","≡"].map((s, i) => (
+                <button key={i} style={{
+                  padding: "6px 0", borderRadius: 4,
+                  border: `1px solid ${BORDER}`, background: i === 0 ? "#F2F2F0" : "white",
+                  cursor: "pointer", fontSize: 12, color: DARK,
+                }}>{s}</button>
               ))}
             </div>
           </div>
 
-          <div style={{ marginTop: 18 }}>
-            <SectionLabel>Logo Placement</SectionLabel>
-            <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
-              {[
-                ["TL", "Top Left"],
-                ["TR", "Top Right"],
-                ["BL", "Bottom Left"],
-                ["BR", "Bottom Right"],
-              ].map(([k, label]) => {
-                const on = logoPos === k;
-                return (
-                  <button key={k} onClick={() => setLogoPos(k)} style={{
-                    padding: "8px 10px", borderRadius: 6,
-                    border: on ? `1px solid ${ACCENT}` : `1px solid ${BORDER}`,
-                    background: on ? "#F2F2F0" : "white",
-                    fontSize: 11, color: on ? DARK : "#555",
-                    fontWeight: on ? 600 : 400, textAlign: "left",
-                    cursor: "pointer",
-                  }}>{label}</button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${BORDER}` }}>
-            <SectionLabel>Format</SectionLabel>
-            <div style={{ marginTop: 10, display: "flex", gap: 6 }}>
-              {["PNG","JPG","MP4"].map(f => (
-                <Pill key={f} active={format === f} onClick={() => setFormat(f)}>{f}</Pill>
+          <div>
+            <div style={{ fontSize: 10, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 6 }}>Colour</div>
+            <div style={{ display: "flex", gap: 6 }}>
+              {[DARK, "white", "#7A6E8A", "#6E8A70", "#8A6E68"].map((c, i) => (
+                <div key={i} style={{
+                  width: 22, height: 22, borderRadius: 4,
+                  background: c, border: `1px solid ${BORDER}`,
+                  cursor: "pointer",
+                }} />
               ))}
             </div>
           </div>
 
-          <div style={{ marginTop: 22 }}>
-            <DarkButton full>↓ Download Post</DarkButton>
+          <div style={{ paddingTop: 12, borderTop: `1px solid ${BORDER}` }}>
+            <div style={{ fontSize: 10, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 6 }}>Layer</div>
+            <div style={{ display: "flex", gap: 4 }}>
+              {["↑", "↓", "⤒", "⤓", "⌬"].map((s, i) => (
+                <button key={i} title={["Bring forward","Send backward","To front","To back","Lock"][i]} style={{
+                  flex: 1, padding: "6px 0", borderRadius: 4,
+                  border: `1px solid ${BORDER}`, background: "white",
+                  cursor: "pointer", fontSize: 12, color: "#555",
+                }}>{s}</button>
+              ))}
+            </div>
           </div>
-          <div style={{ marginTop: 10, fontSize: 11, color: MUTED, textAlign: "center" }}>
-            Uses brand V3.2 · Instrument Sans
+
+          <div style={{ flex: 1 }} />
+
+          <div style={{ paddingTop: 12, borderTop: `1px solid ${BORDER}` }}>
+            <div style={{ display: "flex", gap: 6 }}>
+              <OutlineButton style={{ flex: 1, padding: "8px 10px", fontSize: 11 }}>Save Draft</OutlineButton>
+            </div>
+            <div style={{ marginTop: 8 }}>
+              <DarkButton full style={{ padding: "10px 14px", fontSize: 13 }}>↑ Export Post</DarkButton>
+            </div>
+            <div style={{ marginTop: 8, fontSize: 10, color: MUTED, textAlign: "center", fontFamily: MONO, letterSpacing: 0.4 }}>
+              PNG · JPG · MP4 · GIF
+            </div>
           </div>
-        </Card>
+        </div>
       </div>
     </Shell>
   );
@@ -1724,6 +2016,7 @@ function ScreenMemory({ go }) {
   const [zoom, setZoom] = useState(0.6);
   const [activeYear, setActiveYear] = useState(2022);
   const [pillHover, setPillHover] = useState(false);
+  const [previewPhoto, setPreviewPhoto] = useState(null);
 
   const scrollRef = useRef(null);
   const zoomRef = useRef(0.6);
@@ -1739,33 +2032,18 @@ function ScreenMemory({ go }) {
   }
   function clearSelection() { setSelected(new Set()); }
 
-  function zoomToPoint(canvasX, newZoom) {
-    setZoom(newZoom);
-    zoomRef.current = newZoom;
-    requestAnimationFrame(() => {
-      const el = scrollRef.current;
-      if (!el) return;
-      el.scrollLeft = canvasX * newZoom - el.clientWidth / 2;
-    });
-  }
-
-  function onPhotoEvent(id, photoCanvasX) {
+  function onPhotoEvent(id) {
     if (clickTimerRef.current) {
       clearTimeout(clickTimerRef.current);
       clickTimerRef.current = null;
-      // double click → select for download
+      // double click → select for download (no modal)
       toggleSelect(id);
       return;
     }
     clickTimerRef.current = setTimeout(() => {
       clickTimerRef.current = null;
-      // single click → progressive zoom
-      const z = zoomRef.current;
-      let next;
-      if (z < 0.95)      next = 1.1;   // overview → year level
-      else if (z < 1.5)  next = 1.8;   // year → month / event level
-      else               next = z;     // already deep — no-op
-      if (next !== z) zoomToPoint(photoCanvasX, next);
+      // single click → open full-size preview
+      setPreviewPhoto(id);
     }, 230);
   }
 
@@ -1989,7 +2267,7 @@ function ScreenMemory({ go }) {
                             cy={MEMORY_AXIS_Y + p.y}
                             gradIdx={(idx * 3 + i) % PHOTO_GRADIENTS.length}
                             selected={selected.has(id)}
-                            onToggle={toggleSelect}
+                            onPhotoEvent={onPhotoEvent}
                           />
                         );
                       })}
@@ -2088,7 +2366,7 @@ function ScreenMemory({ go }) {
           bottom: 24, right: 24,
           display: "flex", alignItems: "center", gap: 12,
           padding: "8px 12px",
-          background: "rgba(245,245,245,0.85)",
+          background: "rgba(245,245,245,0.9)",
           backdropFilter: "blur(8px)",
           WebkitBackdropFilter: "blur(8px)",
           border: "1px solid rgba(211,209,199,0.5)",
@@ -2097,15 +2375,67 @@ function ScreenMemory({ go }) {
           pointerEvents: selected.size > 0 ? "auto" : "none",
           transition: "opacity 0.2s ease",
           zIndex: 90,
+          maxWidth: "calc(100vw - 80px - 48px)",
         }}>
           <span
             onClick={clearSelection}
             style={{
               fontSize: 13, color: "#7A7885",
               cursor: "pointer", padding: "0 4px",
-              userSelect: "none",
+              userSelect: "none", flexShrink: 0,
             }}
           >✕ Clear</span>
+
+          {/* Preview row of selected photos */}
+          {(() => {
+            const ids = Array.from(selected);
+            const MAX = 6;
+            const shown = ids.slice(0, MAX);
+            const extra = ids.length - shown.length;
+            return (
+              <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+                {shown.map(id => {
+                  const [evIdxStr, photoIdxStr] = id.split("_");
+                  const evIdx = parseInt(evIdxStr, 10);
+                  const phIdx = parseInt(photoIdxStr, 10);
+                  const gradIdx = (evIdx * 3 + phIdx) % PHOTO_GRADIENTS.length;
+                  return (
+                    <div
+                      key={id}
+                      onClick={() => toggleSelect(id)}
+                      title="Click to remove"
+                      style={{
+                        position: "relative",
+                        width: 26, height: 26, borderRadius: 13,
+                        background: PHOTO_GRADIENTS[gradIdx],
+                        border: "1.5px solid white",
+                        cursor: "pointer",
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
+                      }}
+                    >
+                      <span style={{
+                        position: "absolute",
+                        top: -4, right: -4,
+                        width: 14, height: 14, borderRadius: 7,
+                        background: "#1E1C23", color: "white",
+                        fontSize: 8, fontWeight: 700,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        border: "1.5px solid white",
+                        lineHeight: 1,
+                      }}>✓</span>
+                    </div>
+                  );
+                })}
+                {extra > 0 && (
+                  <span style={{
+                    fontSize: 11, color: "#7A7885", marginLeft: 4,
+                    fontFamily: MONO, letterSpacing: 0.4,
+                  }}>+{extra}</span>
+                )}
+              </div>
+            );
+          })()}
+
           <button
             onMouseEnter={() => setPillHover(true)}
             onMouseLeave={() => setPillHover(false)}
@@ -2117,6 +2447,7 @@ function ScreenMemory({ go }) {
               fontSize: 14, fontWeight: 500, color: "#1E1C23",
               cursor: "pointer",
               transition: "background 0.15s ease, border-color 0.15s ease",
+              flexShrink: 0,
             }}
           >↓ Download ({selected.size})</button>
         </div>
