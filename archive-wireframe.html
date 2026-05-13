@@ -1574,6 +1574,7 @@ function ScreenOnboarding({ go }) {
   const [volume, setVolume] = useState(70);
   const [muted, setMuted] = useState(false);
   const [progress, setProgress] = useState(28); // 0–100
+  const [videoHover, setVideoHover] = useState(false);
   return (
     <Shell active="onboarding" screenName="Onboarding" go={go}>
       <div style={{ display: "flex", gap: 16 }}>
@@ -1634,27 +1635,160 @@ function ScreenOnboarding({ go }) {
           </div>
 
           <div
-            onClick={() => { setVideoOpen(true); setPlaying(true); }}
+            onMouseEnter={() => setVideoHover(true)}
+            onMouseLeave={() => setVideoHover(false)}
             style={{
               background: DARK, borderRadius: 8,
               width: "100%", aspectRatio: "16 / 9",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              color: "white", cursor: "pointer", position: "relative",
-              overflow: "hidden",
+              position: "relative", overflow: "hidden",
+              color: "white", cursor: "pointer",
             }}>
-            <div style={{ textAlign: "center" }}>
-              <div style={{
-                width: 56, height: 56, borderRadius: 28, border: "2px solid white",
-                margin: "0 auto 12px", display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 18,
-              }}>▶</div>
-              <div style={{ fontSize: 11, letterSpacing: 1.2, textTransform: "uppercase" }}>Play Video</div>
-              <div style={{ fontSize: 10, color: "#999", marginTop: 4 }}>04 · 32</div>
+            {/* Click area — toggles play */}
+            <div
+              onClick={() => setPlaying(p => !p)}
+              style={{
+                position: "absolute", inset: 0,
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+              {!playing ? (
+                <div style={{ textAlign: "center" }}>
+                  <div style={{
+                    width: 56, height: 56, borderRadius: 28, border: "2px solid white",
+                    margin: "0 auto 12px", display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 18,
+                  }}>▶</div>
+                  <div style={{ fontSize: 11, letterSpacing: 1.2, textTransform: "uppercase" }}>Play Video</div>
+                  <div style={{ fontSize: 10, color: "#999", marginTop: 4 }}>04 · 32</div>
+                </div>
+              ) : (
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 8,
+                  opacity: videoHover ? 0 : 0.45,
+                  transition: "opacity 0.2s ease",
+                  fontSize: 10, letterSpacing: 1.6, textTransform: "uppercase",
+                  color: "rgba(255,255,255,0.7)",
+                }}>
+                  <div style={{ width: 6, height: 6, borderRadius: 3, background: "white" }} />
+                  Now Playing
+                </div>
+              )}
             </div>
-            <div style={{
-              position: "absolute", bottom: 10, right: 12,
-              fontSize: 10, color: "rgba(255,255,255,0.4)", letterSpacing: 0.6,
-            }}>16 : 9 · CLICK TO EXPAND ⤢</div>
+
+            {/* Hint when paused */}
+            {!playing && (
+              <div style={{
+                position: "absolute", bottom: 10, right: 12,
+                fontSize: 10, color: "rgba(255,255,255,0.4)", letterSpacing: 0.6,
+                pointerEvents: "none",
+              }}>16 : 9 · CLICK TO PLAY</div>
+            )}
+
+            {/* Hover controls — only when playing and hovered */}
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                position: "absolute", left: 0, right: 0, bottom: 0,
+                padding: "28px 14px 12px",
+                background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%)",
+                opacity: (playing && videoHover) ? 1 : 0,
+                pointerEvents: (playing && videoHover) ? "auto" : "none",
+                transition: "opacity 0.2s ease",
+              }}>
+              {/* Progress row */}
+              <div style={{
+                display: "flex", alignItems: "center", gap: 10,
+                fontSize: 10, fontFamily: MONO, color: "rgba(255,255,255,0.75)",
+              }}>
+                <span>01:18</span>
+                <div
+                  onClick={(e) => {
+                    const r = e.currentTarget.getBoundingClientRect();
+                    setProgress(Math.round(((e.clientX - r.left) / r.width) * 100));
+                  }}
+                  style={{
+                    flex: 1, height: 3, background: "rgba(255,255,255,0.2)",
+                    borderRadius: 1.5, position: "relative", cursor: "pointer",
+                  }}>
+                  <div style={{
+                    position: "absolute", left: 0, top: 0, bottom: 0,
+                    width: `${progress}%`, background: "white", borderRadius: 1.5,
+                  }} />
+                  <div style={{
+                    position: "absolute", left: `calc(${progress}% - 5px)`, top: -3.5,
+                    width: 10, height: 10, borderRadius: 5, background: "white",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.4)",
+                  }} />
+                </div>
+                <span style={{ color: "rgba(255,255,255,0.55)" }}>04:32</span>
+              </div>
+
+              {/* Buttons row */}
+              <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 10 }}>
+                <button
+                  onClick={() => setPlaying(p => !p)}
+                  style={{
+                    width: 28, height: 28, borderRadius: 14,
+                    border: "1px solid rgba(255,255,255,0.25)",
+                    background: "rgba(255,255,255,0.05)",
+                    color: "white", fontSize: 11, cursor: "pointer",
+                  }}
+                >{playing ? "❚❚" : "▶"}</button>
+
+                {/* Volume */}
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 4 }}>
+                  <button
+                    onClick={() => setMuted(m => !m)}
+                    style={{
+                      color: "white", fontSize: 12, cursor: "pointer",
+                      width: 22, background: "transparent",
+                    }}
+                  >{muted || volume === 0 ? "🔇" : volume < 50 ? "🔈" : "🔊"}</button>
+                  <div
+                    onClick={(e) => {
+                      const r = e.currentTarget.getBoundingClientRect();
+                      const v = Math.max(0, Math.min(100, Math.round(((e.clientX - r.left) / r.width) * 100)));
+                      setVolume(v); setMuted(false);
+                    }}
+                    style={{
+                      width: 72, height: 3, background: "rgba(255,255,255,0.2)",
+                      borderRadius: 1.5, position: "relative", cursor: "pointer",
+                    }}>
+                    <div style={{
+                      position: "absolute", left: 0, top: 0, bottom: 0,
+                      width: `${muted ? 0 : volume}%`, background: "white", borderRadius: 1.5,
+                    }} />
+                  </div>
+                </div>
+
+                <button style={{
+                  marginLeft: 6,
+                  padding: "4px 9px", borderRadius: 11,
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  background: "transparent", color: "white",
+                  fontSize: 10, cursor: "pointer", fontFamily: MONO,
+                }}>1.0×</button>
+
+                <button style={{
+                  padding: "4px 9px", borderRadius: 11,
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  background: "transparent", color: "white",
+                  fontSize: 10, cursor: "pointer", letterSpacing: 0.4,
+                }}>CC</button>
+
+                <div style={{ flex: 1 }} />
+
+                <button
+                  onClick={() => setVideoOpen(true)}
+                  title="Fullscreen"
+                  style={{
+                    width: 28, height: 28, borderRadius: 14,
+                    border: "1px solid rgba(255,255,255,0.25)",
+                    background: "rgba(255,255,255,0.05)",
+                    color: "white", fontSize: 12, cursor: "pointer",
+                  }}
+                >⤢</button>
+              </div>
+            </div>
           </div>
 
           <div style={{ marginTop: 18, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
@@ -1980,7 +2114,7 @@ function PhotoCircle({ id, size, cx, cy, gradIdx, selected, onPhotoEvent }) {
     <div
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      onClick={(e) => { e.stopPropagation(); onPhotoEvent(id, cx, cy); }}
+      onClick={(e) => { e.stopPropagation(); onPhotoEvent(id); }}
       style={{
         position: "absolute",
         left: cx - size / 2,
@@ -2451,6 +2585,147 @@ function ScreenMemory({ go }) {
             }}
           >↓ Download ({selected.size})</button>
         </div>
+
+        {/* FULL-SIZE PHOTO PREVIEW MODAL */}
+        {previewPhoto && (() => {
+          const [evIdxStr, phIdxStr] = previewPhoto.split("_");
+          const evIdx = parseInt(evIdxStr, 10);
+          const phIdx = parseInt(phIdxStr, 10);
+          const ev = MEMORY_EVENTS[evIdx];
+          const gradIdx = (evIdx * 3 + phIdx) % PHOTO_GRADIENTS.length;
+          const isSel = selected.has(previewPhoto);
+          return (
+            <div
+              onClick={(e) => { if (e.target === e.currentTarget) setPreviewPhoto(null); }}
+              style={{
+                position: "fixed", inset: 0, zIndex: 200,
+                background: "rgba(20,19,24,0.88)",
+                backdropFilter: "blur(6px)",
+                WebkitBackdropFilter: "blur(6px)",
+                display: "flex", flexDirection: "column",
+              }}
+            >
+              {/* Modal top bar */}
+              <div style={{
+                height: 56, flexShrink: 0,
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                padding: "0 24px", color: "white",
+                borderBottom: "1px solid rgba(255,255,255,0.06)",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{
+                    fontSize: 11, letterSpacing: 1.2, color: "rgba(255,255,255,0.45)",
+                    textTransform: "uppercase", fontFamily: MONO,
+                  }}>Photo Archive</span>
+                  <span style={{ color: "rgba(255,255,255,0.25)" }}>·</span>
+                  <span style={{ fontSize: 13, fontWeight: 600 }}>{ev.name}</span>
+                  <span style={{ color: "rgba(255,255,255,0.3)" }}>·</span>
+                  <span style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", fontFamily: MONO, letterSpacing: 0.6 }}>
+                    {ev.mon} {ev.year}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setPreviewPhoto(null)}
+                  style={{
+                    color: "white", fontSize: 16,
+                    background: "transparent", cursor: "pointer",
+                    width: 32, height: 32, borderRadius: 16,
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}
+                >✕</button>
+              </div>
+
+              {/* Stage with the photo */}
+              <div
+                onClick={() => setPreviewPhoto(null)}
+                style={{
+                  flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
+                  padding: 32, cursor: "pointer", position: "relative",
+                }}
+              >
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    width: "min(620px, 72vw)",
+                    aspectRatio: "4 / 5",
+                    maxHeight: "78vh",
+                    borderRadius: 10,
+                    background: PHOTO_GRADIENTS[gradIdx],
+                    boxShadow: "0 24px 80px rgba(0,0,0,0.6)",
+                    border: isSel ? "3px solid white" : "1px solid rgba(255,255,255,0.1)",
+                    position: "relative",
+                    cursor: "default",
+                    overflow: "hidden",
+                  }}
+                >
+                  {isSel && (
+                    <div style={{
+                      position: "absolute", top: 16, left: 16,
+                      width: 28, height: 28, borderRadius: 14,
+                      background: "white", color: "#1E1C23",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 13, fontWeight: 700,
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+                    }}>✓</div>
+                  )}
+                  <div style={{
+                    position: "absolute", bottom: 14, right: 16,
+                    fontSize: 10, fontFamily: MONO,
+                    color: "rgba(255,255,255,0.55)", letterSpacing: 0.8,
+                    textTransform: "uppercase",
+                  }}>4 : 5 · 3024×3780</div>
+                </div>
+              </div>
+
+              {/* Bottom action bar */}
+              <div style={{
+                flexShrink: 0, padding: "18px 24px 24px",
+                color: "white",
+                borderTop: "1px solid rgba(255,255,255,0.06)",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 18,
+              }}>
+                <div style={{ textAlign: "right", color: "rgba(255,255,255,0.7)" }}>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: "white", letterSpacing: -0.2 }}>
+                    {ev.name}
+                  </div>
+                  <div style={{ fontSize: 10, fontFamily: MONO, letterSpacing: 0.6, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>
+                    PHOTO {String(phIdx + 1).padStart(2, "0")} OF {String(ev.count).padStart(2, "0")} · {ev.mon} {ev.year}
+                  </div>
+                </div>
+                <div style={{ width: 1, height: 36, background: "rgba(255,255,255,0.15)" }} />
+                <button
+                  onClick={() => toggleSelect(previewPhoto)}
+                  style={{
+                    padding: "10px 18px", borderRadius: 20,
+                    border: isSel ? "1px solid white" : "1px solid rgba(255,255,255,0.3)",
+                    background: isSel ? "white" : "transparent",
+                    color: isSel ? "#1E1C23" : "white",
+                    fontSize: 13, fontWeight: 500, cursor: "pointer",
+                    letterSpacing: 0.2,
+                  }}
+                >
+                  {isSel ? "✓ Selected for download" : "+ Add to download"}
+                </button>
+                <button style={{
+                  padding: "10px 20px", borderRadius: 20,
+                  background: "white", color: "#1E1C23",
+                  border: "none", fontSize: 13, fontWeight: 600,
+                  cursor: "pointer", letterSpacing: 0.2,
+                }}>↓ Download now</button>
+              </div>
+
+              <div style={{
+                position: "absolute", bottom: 8, left: 0, right: 0,
+                textAlign: "center", fontSize: 10, fontFamily: MONO,
+                color: "rgba(255,255,255,0.25)", letterSpacing: 0.8,
+                pointerEvents: "none",
+              }}>
+                CLICK OUTSIDE OR ESC TO CLOSE · DOUBLE CLICK A PHOTO TO SELECT WITHOUT OPENING
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </Shell>
   );
