@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3)",
+      "Bash(awk 'NR==966,/^\\\\/\\\\/ =============== SCREEN 7/' \"/Users/gpiliugina/Desktop/Brand HQ/archive-wireframe.html\")"
+    ]
+  }
+}

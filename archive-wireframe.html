@@ -1,0 +1,2149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Archive — Wireframe Prototype</title>
+<meta name="viewport" content="width=1280" />
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body, #root { height: 100%; width: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif;
+    background: #F5F5F5;
+    color: #2C2C2A;
+    font-size: 13px;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+    min-width: 1280px;
+  }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+  input { font-family: inherit; outline: none; }
+  a { color: inherit; text-decoration: none; cursor: pointer; }
+  ::placeholder { color: #999; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo, useRef, useEffect, Fragment } = React;
+
+const ACCENT = "#6B6B6B";
+const DARK = "#2C2C2A";
+const BORDER = "#E0E0E0";
+const BG = "#F5F5F5";
+const MUTED = "#999999";
+const FAINT = "#EFEFEF";
+
+// =============== SIDEBAR ===============
+function Sidebar({ active, go }) {
+  const items = [
+    { key: "hq", label: "Brand HQ", icon: "grid" },
+    { key: "creator", label: "Creator", icon: "pencil" },
+    { key: "onboarding", label: "Onboarding", icon: "book" },
+    { key: "memory", label: "Memory", icon: "clock" },
+  ];
+  return (
+    <div style={{
+      width: 56, background: DARK, height: "100vh",
+      display: "flex", flexDirection: "column", alignItems: "center",
+      paddingTop: 14, paddingBottom: 14, position: "fixed", left: 0, top: 0,
+      zIndex: 100,
+    }}>
+      <div style={{
+        color: "white", fontSize: 16, fontWeight: 700, letterSpacing: 0.5,
+        marginBottom: 32, fontFamily: "Georgia, serif"
+      }}>A</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 24, flex: 1 }}>
+        {items.map(it => {
+          const on = active === it.key || (it.key === "hq" && (active === "library" || active === "files" || active === "photo"))
+                  || (it.key === "creator" && (active === "creator" || active === "signature" || active === "social"));
+          return (
+            <div key={it.key} style={{ position: "relative", display: "flex", alignItems: "center" }}>
+              {on && (
+                <div style={{
+                  position: "absolute", left: -12, top: "50%", transform: "translateY(-50%)",
+                  width: 6, height: 6, borderRadius: 3, background: ACCENT,
+                }} />
+              )}
+              <button
+                onClick={() => go(it.key === "hq" ? "library" : it.key === "creator" ? "creator" : it.key)}
+                title={it.label}
+                style={{
+                  width: 28, height: 28, border: "1px solid #4a4a48",
+                  background: on ? "#3c3c3a" : "transparent",
+                  borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "#bbb",
+                }}
+              >
+                <IconShape kind={it.icon} />
+              </button>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{
+        width: 28, height: 28, borderRadius: 14, background: "#5a5a58",
+        color: "white", fontSize: 10, display: "flex", alignItems: "center",
+        justifyContent: "center", letterSpacing: 0.5,
+      }}>EM</div>
+    </div>
+  );
+}
+
+function IconShape({ kind }) {
+  if (kind === "grid") {
+    return (
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, width: 14, height: 14 }}>
+        {[0,1,2,3].map(i => <div key={i} style={{ background: "#bbb" }} />)}
+      </div>
+    );
+  }
+  if (kind === "pencil") {
+    return <div style={{ width: 14, height: 14, border: "1.5px solid #bbb", transform: "rotate(45deg)", borderRadius: 1 }} />;
+  }
+  if (kind === "book") {
+    return <div style={{ width: 14, height: 12, border: "1.5px solid #bbb", borderLeft: "3px solid #bbb" }} />;
+  }
+  if (kind === "clock") {
+    return <div style={{ width: 14, height: 14, borderRadius: 7, border: "1.5px solid #bbb", position: "relative" }}>
+      <div style={{ position: "absolute", top: 1, left: 5.5, width: 1.5, height: 5, background: "#bbb" }} />
+    </div>;
+  }
+  return null;
+}
+
+// =============== TOPBAR ===============
+function TopBar({ screenName, primaryLabel, onPrimary }) {
+  return (
+    <div style={{
+      height: 48, background: "white", borderBottom: `1px solid ${BORDER}`,
+      display: "flex", alignItems: "center", paddingLeft: 16, paddingRight: 16,
+      position: "sticky", top: 0, zIndex: 50,
+    }}>
+      <div style={{ fontSize: 13, color: DARK, minWidth: 280 }}>
+        <span style={{ fontWeight: 600 }}>Archive</span>
+        <span style={{ color: MUTED, margin: "0 6px" }}>·</span>
+        <span style={{ color: "#555" }}>{screenName}</span>
+      </div>
+      <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
+        <div style={{
+          width: 360, height: 28, border: `1px solid ${BORDER}`,
+          borderRadius: 14, paddingLeft: 14, display: "flex", alignItems: "center",
+          color: MUTED, fontSize: 12,
+        }}>
+          <div style={{ width: 10, height: 10, border: `1.5px solid ${MUTED}`, borderRadius: 5, marginRight: 8 }} />
+          Search assets, files, guidelines…
+        </div>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <Avatar initials="JT" />
+        <Avatar initials="RS" />
+        {primaryLabel && (
+          <button onClick={onPrimary} style={{
+            background: DARK, color: "white", padding: "6px 14px",
+            borderRadius: 14, fontSize: 11, letterSpacing: 0.4, fontWeight: 500,
+            textTransform: "uppercase",
+          }}>{primaryLabel}</button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Avatar({ initials, size = 24, ring = false }) {
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: size / 2,
+      background: "#D8D8D6", color: "#555",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      fontSize: size < 30 ? 9 : 11, letterSpacing: 0.4, fontWeight: 500,
+      border: ring ? `2px solid ${ACCENT}` : "1px solid #C8C8C6",
+    }}>{initials}</div>
+  );
+}
+
+// =============== SHELL ===============
+function Shell({ active, screenName, primaryLabel, onPrimary, go, children, darkContent }) {
+  return (
+    <div style={{ minHeight: "100vh", background: darkContent ? "#141318" : BG }}>
+      <Sidebar active={active} go={go} />
+      <div style={{ marginLeft: 56 }}>
+        <TopBar screenName={screenName} primaryLabel={primaryLabel} onPrimary={onPrimary} />
+        <div style={darkContent
+          ? { padding: 0, background: "#141318", minHeight: "calc(100vh - 48px)" }
+          : { padding: 24 }}>{children}</div>
+      </div>
+    </div>
+  );
+}
+
+// =============== Reusable bits ===============
+function SectionLabel({ children, style }) {
+  return (
+    <div style={{
+      fontSize: 11, letterSpacing: 1.2, color: "#666",
+      textTransform: "uppercase", fontWeight: 600, ...style,
+    }}>{children}</div>
+  );
+}
+
+function PillBadge({ children, filled, dashed, dimmed, tint }) {
+  const bg = filled ? DARK : tint || "transparent";
+  const color = filled ? "white" : tint ? "#7a5050" : "#555";
+  return (
+    <span style={{
+      display: "inline-block", padding: "4px 10px", borderRadius: 12,
+      border: filled ? "none" : dashed ? `1px dashed ${BORDER}` : `1px solid ${BORDER}`,
+      background: bg, color, fontSize: 10, letterSpacing: 0.8,
+      textTransform: "uppercase", fontWeight: 500, opacity: dimmed ? 0.5 : 1,
+    }}>{children}</span>
+  );
+}
+
+function Pill({ active, children, onClick, dimmed }) {
+  return (
+    <button onClick={onClick} style={{
+      padding: "6px 12px", borderRadius: 14,
+      border: active ? `1px solid ${ACCENT}` : `1px solid ${BORDER}`,
+      background: active ? "#EAEAE8" : "white",
+      fontSize: 11, color: active ? DARK : "#555", letterSpacing: 0.4,
+      fontWeight: active ? 500 : 400, opacity: dimmed ? 0.5 : 1,
+    }}>{children}</button>
+  );
+}
+
+function DarkButton({ children, onClick, full, style }) {
+  return (
+    <button onClick={onClick} style={{
+      background: DARK, color: "white", padding: "10px 18px",
+      borderRadius: 18, fontSize: 12, fontWeight: 500, letterSpacing: 0.4,
+      width: full ? "100%" : "auto", ...style,
+    }}>{children}</button>
+  );
+}
+
+function OutlineButton({ children, onClick, full, style }) {
+  return (
+    <button onClick={onClick} style={{
+      background: "white", color: DARK, padding: "9px 18px",
+      borderRadius: 18, fontSize: 12, fontWeight: 500, letterSpacing: 0.4,
+      border: `1px solid ${BORDER}`, width: full ? "100%" : "auto", ...style,
+    }}>{children}</button>
+  );
+}
+
+function Card({ children, style, dashed, thick, dimmed }) {
+  return (
+    <div style={{
+      background: "white",
+      border: dashed ? `1px dashed ${BORDER}` :
+             thick ? `2px solid ${DARK}` : `1px solid ${BORDER}`,
+      borderRadius: 8, padding: 16, opacity: dimmed ? 0.6 : 1,
+      ...style,
+    }}>{children}</div>
+  );
+}
+
+// =============== SCREEN 1 — LIBRARY ===============
+function ScreenLibrary({ go }) {
+  const [activeCat, setActiveCat] = useState("Logos");
+  const cats = [
+    ["Logos", 12], ["Typography", "04"], ["Colours", 11],
+    ["Templates", 38], ["Guidelines", "02"], ["Onboarding", "07"],
+  ];
+  return (
+    <Shell active="library" screenName="Brand HQ" primaryLabel="+ Request Asset" go={go}>
+      <Tabs active="library" go={go} />
+      <div style={{ display: "flex", gap: 16, marginTop: 16 }}>
+        {/* LEFT */}
+        <div style={{ width: 280, flexShrink: 0 }}>
+          <Card style={{ padding: 14 }}>
+            <SectionLabel>Library / Categories</SectionLabel>
+            <div style={{ marginTop: 12, display: "flex", flexDirection: "column" }}>
+              {cats.map(([name, count]) => {
+                const on = activeCat === name;
+                return (
+                  <div key={name} onClick={() => setActiveCat(name)} style={{
+                    display: "flex", justifyContent: "space-between",
+                    padding: "10px 10px 10px 12px", cursor: "pointer",
+                    borderLeft: on ? `3px solid ${ACCENT}` : "3px solid transparent",
+                    background: on ? "#F2F2F0" : "transparent",
+                    fontSize: 13, color: on ? DARK : "#555", fontWeight: on ? 500 : 400,
+                  }}>
+                    <span>{name}</span>
+                    <span style={{ color: MUTED, fontSize: 12 }}>{count}</span>
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${BORDER}` }}>
+              {[
+                ["OWNER", "Brand Team"],
+                ["LAST AUDIT", "12 · 03 · 2026"],
+                ["CONTRIBUTORS", "08"],
+                ["COVERAGE", "94%"],
+              ].map(([k, v]) => (
+                <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", fontSize: 11, color: "#666" }}>
+                  <span style={{ letterSpacing: 0.8, textTransform: "uppercase" }}>{k}</span>
+                  <span style={{ color: DARK, letterSpacing: 0.4 }}>{v}</span>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+
+        {/* RIGHT */}
+        <div style={{ flex: 1 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+            <div>
+              <div style={{ fontSize: 48, fontWeight: 700, color: DARK, letterSpacing: -1.2, lineHeight: 1 }}>The Brand, 2026.</div>
+              <div style={{ marginTop: 14, display: "flex", alignItems: "center", gap: 8 }}>
+                <PillBadge filled>Current — V3.2</PillBadge>
+                <PillBadge>V3.0 — Archived</PillBadge>
+                <span style={{ fontSize: 11, color: MUTED, marginLeft: 6 }}>Released 12 Mar 2026</span>
+              </div>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontSize: 48, fontWeight: 600, color: DARK, lineHeight: 1, letterSpacing: -1 }}>847</div>
+              <div style={{ fontSize: 10, letterSpacing: 1.2, color: MUTED, textTransform: "uppercase", marginTop: 4 }}>Assets in library</div>
+            </div>
+          </div>
+
+          {/* Section 01 */}
+          <SectionLabel style={{ marginTop: 28, marginBottom: 12 }}>01 — Logos · Primary Marks</SectionLabel>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+            <LogoCard variant="current" />
+            <LogoCard variant="secondary" />
+            <LogoCard variant="deprecated" />
+          </div>
+
+          {/* Section 02 */}
+          <SectionLabel style={{ marginTop: 32, marginBottom: 12 }}>02 — Usage Guidelines</SectionLabel>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+            <Card>
+              <SectionLabel>Clear Space</SectionLabel>
+              <div style={{
+                marginTop: 12, height: 140, border: `1px solid ${BORDER}`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                position: "relative",
+              }}>
+                <div style={{
+                  position: "absolute", inset: 16, border: `1px dotted ${MUTED}`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <div style={{ width: 60, height: 30, background: DARK }} />
+                </div>
+              </div>
+              <div style={{ fontSize: 11, color: MUTED, marginTop: 10 }}>Min. clearance = 1× cap height on all sides</div>
+            </Card>
+            <Card>
+              <SectionLabel>Colour Variants</SectionLabel>
+              <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+                {[
+                  ["On Light", "white", DARK],
+                  ["On Dark", DARK, "white"],
+                  ["Mono", "#EEE", "#555"],
+                ].map(([label, bg, fg]) => (
+                  <div key={label} style={{
+                    background: bg, border: `1px solid ${BORDER}`,
+                    padding: "8px 12px", borderRadius: 4, display: "flex",
+                    alignItems: "center", justifyContent: "space-between",
+                  }}>
+                    <div style={{ width: 36, height: 14, background: fg }} />
+                    <span style={{ fontSize: 10, color: fg, letterSpacing: 1, textTransform: "uppercase" }}>{label}</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+            <Card>
+              <SectionLabel>Usage Rules</SectionLabel>
+              <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+                {[
+                  ["✓", "Use on solid backgrounds"],
+                  ["✓", "Maintain clear space"],
+                  ["✗", "Don't rotate or skew"],
+                  ["✗", "Don't recolour outside palette"],
+                ].map(([m, t]) => (
+                  <div key={t} style={{ display: "flex", gap: 8, fontSize: 12, color: "#555" }}>
+                    <span style={{ color: m === "✓" ? DARK : "#999", width: 12 }}>{m}</span>
+                    <span>{t}</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </Shell>
+  );
+}
+
+function LogoCard({ variant }) {
+  const isCurrent = variant === "current";
+  const isDep = variant === "deprecated";
+  return (
+    <Card thick={isCurrent} dashed={isDep} style={{ padding: 16 }}>
+      <div style={{
+        height: 120, background: isDep ? FAINT : "#FAFAFA",
+        border: `1px solid ${BORDER}`, borderRadius: 4,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        opacity: isDep ? 0.4 : 1, marginBottom: 14,
+      }}>
+        <div style={{ width: 80, height: 36, background: isDep ? "#bbb" : DARK }} />
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+        <SectionLabel>
+          {isCurrent ? "Primary · V3.2 · Current" :
+           variant === "secondary" ? "Secondary · Stamp · V3.2" :
+           "Wordmark · V2.4"}
+        </SectionLabel>
+        {isDep && <span style={{
+          fontSize: 9, padding: "2px 6px", borderRadius: 8,
+          background: "#F4DDDD", color: "#7a5050", letterSpacing: 0.8,
+          textTransform: "uppercase", fontWeight: 500,
+        }}>Deprecated</span>}
+      </div>
+      <div style={{ display: "flex", gap: 4, marginBottom: 12, opacity: isDep ? 0.4 : 1 }}>
+        {["SVG","PNG","PDF"].map(f => (
+          <span key={f} style={{
+            fontSize: 9, padding: "2px 6px", borderRadius: 3,
+            border: `1px solid ${BORDER}`, color: "#666", letterSpacing: 0.6,
+          }}>{f}</span>
+        ))}
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", opacity: isDep ? 0.4 : 1 }}>
+        <DarkButton style={{ padding: "6px 12px", fontSize: 11 }}>↓ Download</DarkButton>
+        <a style={{ fontSize: 11, color: ACCENT, fontWeight: 500 }}>Open in Figma →</a>
+      </div>
+    </Card>
+  );
+}
+
+function Tabs({ active, go }) {
+  return (
+    <div style={{ display: "flex", gap: 24, borderBottom: `1px solid ${BORDER}`, paddingBottom: 0 }}>
+      {[["library", "Library"], ["files", "Files"]].map(([k, l]) => {
+        const on = active === k;
+        return (
+          <button key={k} onClick={() => go(k)} style={{
+            fontSize: 13, padding: "10px 0",
+            color: on ? DARK : "#888", fontWeight: on ? 600 : 400,
+            borderBottom: on ? `2px solid ${DARK}` : "2px solid transparent",
+            marginBottom: -1,
+          }}>{l}</button>
+        );
+      })}
+    </div>
+  );
+}
+
+// =============== SCREEN 2 — FILES ===============
+function ScreenFiles({ go }) {
+  const [selected, setSelected] = useState(new Set([0]));
+  const folders = [
+    { name: "Campaigns", count: 214, expanded: false },
+    { name: "Team Photos", count: 42, expanded: false, active: true },
+    { name: "Brand Archive", count: 156, expanded: false },
+    { name: "Working Files", count: 51, expanded: false },
+  ];
+  const photos = Array.from({ length: 14 }, (_, i) => ({
+    name: ["Eli M.","Jess R.","Tom S.","Kira O.","Alex V.","Mia P.","Dan W.","Sam K.","Noa L.","Rin H.","Ivy C.","Pete N.","Aya G.","Leo F."][i],
+    role: ["Brand Lead","Designer","Engineer","Founder","PM","Engineer","Designer","Ops","PM","Engineer","Designer","Sales","Marketing","Engineer"][i],
+  }));
+  function toggle(i) {
+    const next = new Set(selected);
+    if (next.has(i)) next.delete(i); else next.add(i);
+    setSelected(next);
+  }
+  return (
+    <Shell active="files" screenName="Brand HQ · Files" primaryLabel="+ Upload" go={go} onPrimary={() => go("photo")}>
+      <Tabs active="files" go={go} />
+      <div style={{ display: "flex", gap: 16, marginTop: 16 }}>
+        {/* LEFT */}
+        <div style={{ width: 280, flexShrink: 0, display: "flex", flexDirection: "column", gap: 14 }}>
+          <Card style={{ padding: 14 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <SectionLabel>Folders</SectionLabel>
+              <span style={{ fontSize: 11, color: MUTED }}>04</span>
+            </div>
+            <div style={{ marginTop: 10 }}>
+              {folders.map(f => (
+                <Fragment key={f.name}>
+                  <FolderRow name={f.name} count={f.count} expanded={f.expanded} active={f.active} />
+                </Fragment>
+              ))}
+            </div>
+          </Card>
+
+          <Card style={{ padding: 14 }}>
+            <SectionLabel>Filters</SectionLabel>
+            <div style={{ marginTop: 10, display: "flex", gap: 6, flexWrap: "wrap" }}>
+              <Pill active>All Roles</Pill>
+              <Pill>Engineering</Pill>
+              <Pill>Design</Pill>
+            </div>
+          </Card>
+
+          <Card style={{ padding: 14 }}>
+            <SectionLabel>Recently Added</SectionLabel>
+            <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 10 }}>
+              {[
+                ["team-headshot-eli.jpg", "JPG", "2h"],
+                ["conference-2026.zip", "ZIP", "1d"],
+                ["product-shoot-final.png", "PNG", "3d"],
+              ].map(([n, t, ts]) => (
+                <div key={n} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12 }}>
+                  <span style={{ color: "#555", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 150 }}>{n}</span>
+                  <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                    <span style={{ fontSize: 9, padding: "1px 5px", border: `1px solid ${BORDER}`, borderRadius: 3, color: "#666" }}>{t}</span>
+                    <span style={{ color: MUTED, fontSize: 10 }}>{ts}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card style={{ padding: 14 }}>
+            <SectionLabel>Storage</SectionLabel>
+            <div style={{ marginTop: 8, fontSize: 12, color: "#555" }}>12.4 / 20.0 GB</div>
+            <div style={{ marginTop: 6, height: 4, background: FAINT, borderRadius: 2, overflow: "hidden" }}>
+              <div style={{ width: "62%", height: "100%", background: ACCENT }} />
+            </div>
+          </Card>
+        </div>
+
+        {/* RIGHT */}
+        <div style={{ flex: 1 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 12 }}>
+            <span>Files</span><span>/</span>
+            <span style={{
+              background: "#EAEAE8", padding: "3px 10px", borderRadius: 10,
+              color: DARK, fontWeight: 500,
+            }}>Team Photos</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div>
+              <div style={{ fontSize: 48, fontWeight: 700, color: DARK, letterSpacing: -1.2, lineHeight: 1 }}>Team Photos.</div>
+              <div style={{ marginTop: 10, fontSize: 11, color: MUTED, letterSpacing: 1, textTransform: "uppercase" }}>
+                42 Portraits · Last shoot 03 · 2026
+              </div>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontSize: 48, fontWeight: 600, color: DARK, lineHeight: 1, letterSpacing: -1 }}>42</div>
+              <div style={{ fontSize: 10, letterSpacing: 1.2, color: MUTED, textTransform: "uppercase", marginTop: 4 }}>Members captured</div>
+            </div>
+          </div>
+
+          <div style={{ marginTop: 24, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", gap: 6 }}>
+              <Pill active>Grid</Pill>
+              <Pill>List</Pill>
+            </div>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <div style={{
+                fontSize: 11, color: "#555", padding: "6px 12px",
+                border: `1px solid ${BORDER}`, borderRadius: 14, background: "white",
+              }}>Sort: Recent ▾</div>
+              <DarkButton style={{ padding: "6px 14px", fontSize: 11 }}>+ New Folder</DarkButton>
+            </div>
+          </div>
+
+          <Card style={{ marginTop: 12, padding: 24 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 24, rowGap: 28 }}>
+              {photos.map((p, i) => (
+                <div key={i} onClick={() => i === 0 ? go("photo") : toggle(i)} style={{ textAlign: "center", cursor: "pointer" }}>
+                  <div style={{ position: "relative", display: "inline-block" }}>
+                    <div style={{
+                      width: 80, height: 80, borderRadius: 40, background: FAINT,
+                      border: selected.has(i) ? `2px solid ${ACCENT}` : `1px solid ${BORDER}`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      color: MUTED, fontSize: 18, fontWeight: 300,
+                    }}>{p.name.split(' ')[0][0]}</div>
+                    {selected.has(i) && (
+                      <div style={{
+                        position: "absolute", top: -4, right: -4, width: 18, height: 18,
+                        borderRadius: 9, background: ACCENT, color: "white",
+                        fontSize: 10, display: "flex", alignItems: "center", justifyContent: "center",
+                        border: "2px solid white",
+                      }}>✓</div>
+                    )}
+                  </div>
+                  <div style={{ marginTop: 8, fontSize: 13, color: DARK }}>{p.name}</div>
+                  <div style={{ fontSize: 11, color: MUTED }}>{p.role}</div>
+                  <div style={{ fontSize: 10, color: MUTED, marginTop: 2 }}>JPG · 2.4MB</div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {selected.size > 0 && (
+            <div style={{
+              position: "fixed", bottom: 24, left: 80, right: 24,
+              background: DARK, color: "white", borderRadius: 24,
+              padding: "12px 20px", display: "flex", alignItems: "center", gap: 24,
+              fontSize: 11, letterSpacing: 0.4, zIndex: 80,
+            }}>
+              <span style={{ fontWeight: 600 }}>{selected.size} SELECTED</span>
+              <Sep />
+              <span>SHAPE:</span>
+              <FloatPill active>Circle</FloatPill>
+              <FloatPill>Square</FloatPill>
+              <FloatPill>Original</FloatPill>
+              <Sep />
+              <span>SIZE:</span>
+              <FloatPill active>Medium 800px</FloatPill>
+              <Sep />
+              <span>FORMAT:</span>
+              <FloatPill active>JPG</FloatPill>
+              <FloatPill>PNG</FloatPill>
+              <FloatPill>WebP</FloatPill>
+              <div style={{ flex: 1 }} />
+              <button onClick={() => setSelected(new Set())} style={{ color: "#bbb", fontSize: 11 }}>✕ Clear</button>
+              <button style={{
+                background: "white", color: DARK, padding: "6px 14px",
+                borderRadius: 12, fontSize: 11, fontWeight: 600,
+              }}>↓ Download ({selected.size})</button>
+            </div>
+          )}
+        </div>
+      </div>
+    </Shell>
+  );
+}
+
+function FolderRow({ name, count, expanded, active }) {
+  return (
+    <div style={{
+      display: "flex", justifyContent: "space-between",
+      padding: "8px 10px",
+      borderLeft: active ? `3px solid ${ACCENT}` : "3px solid transparent",
+      background: active ? "#F2F2F0" : "transparent",
+      fontSize: 13,
+      color: active ? DARK : "#555",
+      fontWeight: active ? 500 : 400,
+    }}>
+      <span><span style={{ color: MUTED, marginRight: 4 }}>{expanded ? "▾" : "▸"}</span>{name}</span>
+      <span style={{ color: MUTED, fontSize: 12 }}>{count}</span>
+    </div>
+  );
+}
+
+function FloatPill({ active, children }) {
+  return (
+    <span style={{
+      padding: "4px 10px", borderRadius: 10,
+      background: active ? "white" : "transparent",
+      color: active ? DARK : "#bbb",
+      border: active ? "none" : "1px solid #555",
+      fontSize: 10, fontWeight: 500, letterSpacing: 0.4,
+    }}>{children}</span>
+  );
+}
+
+function Sep() {
+  return <span style={{ color: "#555", fontSize: 14 }}>·</span>;
+}
+
+// =============== SCREEN 3 — PHOTO DETAIL ===============
+function ScreenPhoto({ go }) {
+  const [shape, setShape] = useState("Circle");
+  return (
+    <Shell active="photo" screenName="Brand HQ · Photo Detail" primaryLabel="+ Upload" go={go}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18 }}>
+        <button onClick={() => go("files")} style={{
+          width: 28, height: 28, borderRadius: 14, border: `1px solid ${BORDER}`,
+          background: "white", color: DARK, fontSize: 14,
+        }}>←</button>
+        <div style={{ fontSize: 11, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase" }}>
+          Files / Team Photos / <span style={{ color: DARK }}>Eli M.</span>
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "60% 40%", gap: 16 }}>
+        <div style={{
+          background: "white", border: `1px dashed ${BORDER}`, borderRadius: 8,
+          height: 460, display: "flex", alignItems: "center", justifyContent: "center",
+          color: MUTED, fontSize: 11, letterSpacing: 1.2, textTransform: "uppercase",
+        }}>
+          <div style={{ textAlign: "center" }}>
+            <div style={{
+              width: 200, height: 200, borderRadius: 100, background: FAINT,
+              border: `1px solid ${BORDER}`, margin: "0 auto 14px",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 56, color: MUTED, fontWeight: 300,
+            }}>E</div>
+            Photo Preview
+          </div>
+        </div>
+
+        <Card style={{ padding: 20 }}>
+          <div style={{ fontSize: 24, fontWeight: 700, color: DARK }}>Eli Marchetti</div>
+          <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>Brand Lead · Marketing</div>
+
+          <div style={{ marginTop: 18, display: "flex", flexDirection: "column", gap: 6, fontSize: 12 }}>
+            {[
+              ["Format", "JPG · 4096×4096"],
+              ["Size", "3.8 MB"],
+              ["Date", "12 · 03 · 2026"],
+              ["Uploader", "Brand Team"],
+            ].map(([k,v]) => (
+              <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", borderBottom: `1px solid ${FAINT}` }}>
+                <span style={{ color: MUTED, letterSpacing: 0.4 }}>{k}</span>
+                <span style={{ color: DARK }}>{v}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ marginTop: 14 }}>
+            <span style={{
+              padding: "4px 10px", borderRadius: 12, fontSize: 10,
+              background: "#E8E2D6", color: "#7a6a3a", letterSpacing: 0.8,
+              textTransform: "uppercase", fontWeight: 500,
+            }}>Pending Review</span>
+          </div>
+
+          <div style={{ marginTop: 18 }}>
+            <DarkButton full>↓ Download Original</DarkButton>
+          </div>
+
+          <div style={{ marginTop: 22, paddingTop: 18, borderTop: `1px solid ${BORDER}` }}>
+            <SectionLabel>Shape</SectionLabel>
+            <div style={{ marginTop: 10, display: "flex", gap: 6 }}>
+              {["Circle","Square","Original"].map(s => (
+                <Pill key={s} active={shape === s} onClick={() => setShape(s)}>{s}</Pill>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ marginTop: 18 }}>
+            <SectionLabel>Background</SectionLabel>
+            <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
+              {["#FFF","#EEE","#999",DARK,"transparent"].map((c,i) => (
+                <div key={i} style={{
+                  width: 28, height: 28, borderRadius: 4,
+                  background: c === "transparent" ? "white" : c,
+                  border: `1px solid ${BORDER}`,
+                  backgroundImage: c === "transparent" ?
+                    "linear-gradient(45deg, #ddd 25%, transparent 25%), linear-gradient(-45deg, #ddd 25%, transparent 25%)" : "none",
+                  backgroundSize: "8px 8px",
+                }} />
+              ))}
+            </div>
+          </div>
+
+          <div style={{ marginTop: 18 }}>
+            <SectionLabel>Size</SectionLabel>
+            <div style={{
+              marginTop: 8, padding: "8px 12px",
+              border: `1px solid ${BORDER}`, borderRadius: 6,
+              fontSize: 12, color: "#555", display: "flex", justifyContent: "space-between",
+            }}>
+              <span>Medium — 800×800px</span><span style={{ color: MUTED }}>▾</span>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <div style={{ marginTop: 24 }}>
+        <SectionLabel>Submit a Photo</SectionLabel>
+        <Card style={{ marginTop: 10, padding: 24 }}>
+          <div style={{
+            border: `1px dashed ${BORDER}`, borderRadius: 6, padding: 40,
+            textAlign: "center", color: MUTED,
+          }}>
+            <div style={{
+              width: 36, height: 36, border: `1.5px solid ${MUTED}`,
+              borderRadius: 18, margin: "0 auto 12px",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>↑</div>
+            <div style={{ fontSize: 13, color: "#555" }}>Drag and drop or browse</div>
+            <div style={{ fontSize: 11, color: MUTED, marginTop: 6 }}>
+              Goes to admin review queue. Not published until approved.
+            </div>
+          </div>
+          <div style={{ marginTop: 16, display: "flex", justifyContent: "flex-end" }}>
+            <DarkButton>Submit for Review</DarkButton>
+          </div>
+        </Card>
+      </div>
+    </Shell>
+  );
+}
+
+// =============== SCREEN 4 — CREATOR ===============
+function ScreenCreator({ go }) {
+  const tools = [
+    { key: "sig", title: "Email Signature", desc: "Fill in your details → get branded signature", action: () => go("signature") },
+    { key: "soc", title: "Social Post",    desc: "Pick a platform format · drop in text, logo & background · export ready-to-post", action: () => go("social") },
+    { key: "qt",  title: "Quote Card",     desc: "Coming soon", v2: true },
+  ];
+  return (
+    <Shell active="creator" screenName="Creator" go={go}>
+      <SectionLabel style={{ marginBottom: 14 }}>Make</SectionLabel>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+        {tools.map(t => (
+          <Card key={t.key} dimmed={t.v2}>
+            <div style={{
+              width: "100%", height: 80, background: FAINT,
+              border: `1px solid ${BORDER}`, borderRadius: 4, marginBottom: 14,
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <div style={{ width: 40, height: 24, background: t.v2 ? "#bbb" : DARK, borderRadius: 2 }} />
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: DARK }}>{t.title}</div>
+              {t.v2 && <span style={{
+                fontSize: 9, padding: "2px 6px", borderRadius: 3,
+                border: `1px solid ${BORDER}`, color: MUTED, letterSpacing: 0.6,
+              }}>V2</span>}
+            </div>
+            <div style={{ fontSize: 12, color: "#666", marginTop: 6, minHeight: 32 }}>{t.desc}</div>
+            <div style={{ marginTop: 12 }}>
+              {t.v2 ? (
+                <span style={{ fontSize: 11, color: MUTED }}>Coming soon</span>
+              ) : (
+                <a onClick={t.action} style={{ fontSize: 11, color: ACCENT, fontWeight: 600, letterSpacing: 0.4 }}>Open tool →</a>
+              )}
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <SectionLabel style={{ marginTop: 32, marginBottom: 14 }}>Check — Brand Checker</SectionLabel>
+      <Card style={{ padding: 0 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+          <div style={{ padding: 24, borderRight: `1px solid ${BORDER}` }}>
+            <div style={{
+              border: `1px dashed ${BORDER}`, borderRadius: 6, padding: 32,
+              textAlign: "center", color: MUTED, marginBottom: 14,
+            }}>
+              <div style={{
+                width: 36, height: 36, border: `1.5px solid ${MUTED}`,
+                borderRadius: 18, margin: "0 auto 12px",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>↑</div>
+              <div style={{ fontSize: 13, color: "#555" }}>Upload any file to check brand consistency</div>
+              <div style={{ fontSize: 11, color: MUTED, marginTop: 6 }}>PDF, PNG, JPG, PPTX, FIG…</div>
+            </div>
+            <div style={{ fontSize: 11, color: MUTED, marginBottom: 8, letterSpacing: 0.8, textTransform: "uppercase" }}>or paste a URL</div>
+            <div style={{
+              padding: "10px 12px", border: `1px solid ${BORDER}`, borderRadius: 6,
+              fontSize: 12, color: MUTED, marginBottom: 14,
+            }}>https://example.com/landing</div>
+            <DarkButton>Run Check</DarkButton>
+          </div>
+          <div style={{ padding: 24 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+              <SectionLabel>Result</SectionLabel>
+              <span style={{ fontSize: 11, color: MUTED }}>brand-deck-q2.pdf</span>
+            </div>
+            {[
+              [true, "Logo version correct (V3.2)", null],
+              [true, "Colours within palette", null],
+              [false, "Font not in approved set", "Arial detected, should be Instrument Sans"],
+              [false, "Clear space violation detected", "Logo too close to edge on slide 4"],
+            ].map(([ok, t, sub], i) => (
+              <div key={i} style={{
+                display: "flex", gap: 10, padding: "10px 0",
+                borderBottom: `1px solid ${FAINT}`,
+              }}>
+                <div style={{
+                  width: 18, height: 18, borderRadius: 9,
+                  background: ok ? "#DDE5DD" : "#F4DDDD",
+                  color: ok ? "#3a6a3a" : "#7a5050", fontSize: 11,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  flexShrink: 0, marginTop: 1,
+                }}>{ok ? "✓" : "✗"}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 13, color: DARK }}>{t}</div>
+                  {sub && <div style={{ fontSize: 11, color: "#888", marginTop: 2 }}>{sub}</div>}
+                </div>
+              </div>
+            ))}
+            <div style={{ marginTop: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ fontSize: 12, color: "#555" }}>
+                <span style={{ fontWeight: 600 }}>2 issues found</span>
+                <span style={{ color: MUTED }}> · 4 checks complete</span>
+              </div>
+              <OutlineButton>↓ Download Report</OutlineButton>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </Shell>
+  );
+}
+
+// =============== SCREEN 5 — EMAIL SIGNATURE ===============
+function ScreenSignature({ go }) {
+  const [style, setStyle] = useState("Standard");
+  return (
+    <Shell active="signature" screenName="Creator · Email Signature" go={go}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18 }}>
+        <button onClick={() => go("creator")} style={{
+          width: 28, height: 28, borderRadius: 14, border: `1px solid ${BORDER}`,
+          background: "white", color: DARK, fontSize: 14,
+        }}>←</button>
+        <div style={{ fontSize: 11, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase" }}>
+          Creator / <span style={{ color: DARK }}>Email Signature</span>
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "45% 55%", gap: 16 }}>
+        <Card style={{ padding: 24 }}>
+          <SectionLabel>Your Details</SectionLabel>
+          <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 10 }}>
+            {[
+              ["Full Name", "Eli Marchetti"],
+              ["Job Title", "Brand Lead"],
+              ["Department", "Marketing"],
+              ["Phone", "+1 (415) 555 · 0148"],
+              ["LinkedIn URL", "linkedin.com/in/elim"],
+            ].map(([k,v]) => (
+              <div key={k}>
+                <div style={{ fontSize: 10, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 4 }}>{k}</div>
+                <input defaultValue={v} style={{
+                  width: "100%", padding: "8px 12px", border: `1px solid ${BORDER}`,
+                  borderRadius: 6, fontSize: 13, color: DARK, background: "white",
+                }} />
+              </div>
+            ))}
+          </div>
+
+          <div style={{ borderTop: `1px solid ${BORDER}`, marginTop: 22, paddingTop: 18 }}>
+            <SectionLabel>Signature Style</SectionLabel>
+            <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+              {["Minimal","Standard","Detailed"].map(s => (
+                <button key={s} onClick={() => setStyle(s)} style={{
+                  padding: "12px 8px", borderRadius: 6,
+                  border: style === s ? `2px solid ${ACCENT}` : `1px solid ${BORDER}`,
+                  background: "white", textAlign: "center",
+                }}>
+                  <div style={{ height: 24, background: FAINT, marginBottom: 6, borderRadius: 2 }} />
+                  <div style={{ fontSize: 11, color: DARK, fontWeight: style === s ? 600 : 400 }}>{s}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ marginTop: 22 }}>
+            <DarkButton full>Generate Signature</DarkButton>
+          </div>
+        </Card>
+
+        <Card style={{ padding: 24 }}>
+          <SectionLabel>Preview</SectionLabel>
+          <div style={{
+            marginTop: 14, height: 160, background: FAINT,
+            border: `1px dashed ${BORDER}`, borderRadius: 4, padding: 20,
+            display: "flex", flexDirection: "column", justifyContent: "center", gap: 4,
+          }}>
+            <div style={{ height: 14, width: 160, background: DARK, borderRadius: 2 }} />
+            <div style={{ height: 10, width: 110, background: "#999", borderRadius: 2 }} />
+            <div style={{ height: 1, width: 200, background: BORDER, margin: "8px 0" }} />
+            <div style={{ height: 8, width: 180, background: "#bbb", borderRadius: 2 }} />
+            <div style={{ height: 8, width: 140, background: "#bbb", borderRadius: 2 }} />
+            <div style={{ height: 8, width: 200, background: "#bbb", borderRadius: 2 }} />
+          </div>
+          <div style={{ marginTop: 14, fontSize: 12, color: "#555" }}>Looks good?</div>
+          <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
+            <DarkButton>Copy HTML</DarkButton>
+            <OutlineButton>↓ Download PNG</OutlineButton>
+          </div>
+          <div style={{ marginTop: 14, fontSize: 11, color: MUTED }}>
+            This signature uses current brand version V3.2
+          </div>
+        </Card>
+      </div>
+    </Shell>
+  );
+}
+
+// =============== SCREEN 6 — SOCIAL POST ===============
+const SOCIAL_PLATFORMS = [
+  { name: "Instagram", formats: [
+    { label: "Square Post",    dims: "1080 × 1080", ratio: "1:1",   w: 200, h: 200 },
+    { name: "story",
+      label: "Story / Reel",   dims: "1080 × 1920", ratio: "9:16",  w: 120, h: 213 },
+    { label: "Portrait",       dims: "1080 × 1350", ratio: "4:5",   w: 170, h: 213 },
+  ]},
+  { name: "LinkedIn", formats: [
+    { label: "Feed Post",      dims: "1200 × 627",  ratio: "1.91:1", w: 220, h: 115 },
+    { label: "Square",         dims: "1200 × 1200", ratio: "1:1",   w: 200, h: 200 },
+  ]},
+  { name: "X / Twitter", formats: [
+    { label: "Post",           dims: "1600 × 900",  ratio: "16:9",  w: 240, h: 135 },
+  ]},
+  { name: "Facebook", formats: [
+    { label: "Feed Post",      dims: "1200 × 630",  ratio: "1.91:1", w: 220, h: 115 },
+  ]},
+  { name: "YouTube", formats: [
+    { label: "Thumbnail",      dims: "1280 × 720",  ratio: "16:9",  w: 240, h: 135 },
+  ]},
+  { name: "TikTok", formats: [
+    { label: "Video Cover",    dims: "1080 × 1920", ratio: "9:16",  w: 120, h: 213 },
+  ]},
+];
+
+function ScreenSocial({ go }) {
+  const [platform, setPlatform] = useState("Instagram");
+  const [formatIdx, setFormatIdx] = useState(0);
+  const [template, setTemplate] = useState(1);
+  const [bg, setBg] = useState(0);
+  const [logoPos, setLogoPos] = useState("BL");
+  const [format, setFormat] = useState("PNG");
+  const [headline, setHeadline] = useState("A bold headline goes here.");
+  const [body, setBody] = useState("Short supporting line for the campaign.");
+
+  const platformObj = SOCIAL_PLATFORMS.find(p => p.name === platform);
+  const current = platformObj.formats[formatIdx] || platformObj.formats[0];
+
+  // Compute canvas display size — fit within 360 × 360 box
+  const maxBox = 360;
+  let canvasW = current.w, canvasH = current.h;
+  const scale = Math.min(maxBox / canvasW, maxBox / canvasH);
+  canvasW = canvasW * scale;
+  canvasH = canvasH * scale;
+
+  const bgColors = ["#FFFFFF", "#1E1C23", "#EAEAE8", "#D8D2C0", "#B8C8D8"];
+
+  return (
+    <Shell active="social" screenName="Creator · Social Post" go={go}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18 }}>
+        <button onClick={() => go("creator")} style={{
+          width: 28, height: 28, borderRadius: 14, border: `1px solid ${BORDER}`,
+          background: "white", color: DARK, fontSize: 14,
+        }}>←</button>
+        <div style={{ fontSize: 11, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase" }}>
+          Creator / <span style={{ color: DARK }}>Social Post</span>
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "26% 44% 30%", gap: 16 }}>
+
+        {/* LEFT — Platform & Size presets */}
+        <Card style={{ padding: 16 }}>
+          <SectionLabel>Platform</SectionLabel>
+          <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 4 }}>
+            {SOCIAL_PLATFORMS.map(p => {
+              const on = platform === p.name;
+              return (
+                <div
+                  key={p.name}
+                  onClick={() => { setPlatform(p.name); setFormatIdx(0); }}
+                  style={{
+                    padding: "8px 10px",
+                    borderLeft: on ? `3px solid ${ACCENT}` : "3px solid transparent",
+                    background: on ? "#F2F2F0" : "transparent",
+                    fontSize: 13, color: on ? DARK : "#555",
+                    fontWeight: on ? 500 : 400,
+                    cursor: "pointer",
+                    display: "flex", justifyContent: "space-between",
+                  }}
+                >
+                  <span>{p.name}</span>
+                  <span style={{ color: MUTED, fontSize: 11 }}>{p.formats.length}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${BORDER}` }}>
+            <SectionLabel>Size Preset</SectionLabel>
+            <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }}>
+              {platformObj.formats.map((f, i) => {
+                const on = formatIdx === i;
+                return (
+                  <div
+                    key={i}
+                    onClick={() => setFormatIdx(i)}
+                    style={{
+                      padding: "10px 12px",
+                      border: on ? `2px solid ${ACCENT}` : `1px solid ${BORDER}`,
+                      borderRadius: 6, cursor: "pointer",
+                      background: "white",
+                      display: "flex", alignItems: "center", gap: 10,
+                    }}
+                  >
+                    <div style={{
+                      width: 28, height: 28 * (f.h / f.w),
+                      minWidth: 12, minHeight: 12,
+                      background: "#EAEAE8", border: `1px solid ${BORDER}`,
+                      borderRadius: 2, flexShrink: 0,
+                    }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 12, color: DARK, fontWeight: on ? 600 : 500 }}>{f.label}</div>
+                      <div style={{ fontSize: 10, color: MUTED, marginTop: 2 }}>{f.dims} · {f.ratio}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </Card>
+
+        {/* MIDDLE — Preview canvas + Templates */}
+        <Card style={{ padding: 24 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <SectionLabel>Preview</SectionLabel>
+            <span style={{ fontSize: 10, color: MUTED, letterSpacing: 0.6, fontFamily: '"SF Mono", monospace' }}>
+              {current.dims} · {current.ratio}
+            </span>
+          </div>
+
+          <div style={{
+            marginTop: 18, height: 380,
+            background: FAINT, borderRadius: 6,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <div style={{
+              width: canvasW, height: canvasH,
+              background: bgColors[bg],
+              border: `1px solid ${BORDER}`, borderRadius: 4,
+              position: "relative",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
+              color: bg === 1 ? "white" : DARK,
+              padding: 16, boxSizing: "border-box",
+              display: "flex", flexDirection: "column",
+              justifyContent: template === 0 ? "center" : template === 1 ? "flex-end" : template === 2 ? "flex-start" : "space-between",
+              alignItems: template === 3 ? "center" : "flex-start",
+              textAlign: template === 3 ? "center" : "left",
+            }}>
+              {/* photo placeholder for some templates */}
+              {(template === 2) && (
+                <div style={{
+                  width: "100%", height: "55%",
+                  background: "linear-gradient(135deg, #C5B8D8, #7A6E8A)",
+                  borderRadius: 2, marginBottom: 10,
+                }} />
+              )}
+              <div style={{ fontSize: Math.max(10, canvasW * 0.06), fontWeight: 700, lineHeight: 1.15, letterSpacing: -0.3 }}>
+                {headline}
+              </div>
+              <div style={{ fontSize: Math.max(8, canvasW * 0.035), marginTop: 6, opacity: 0.8 }}>
+                {body}
+              </div>
+              {/* logo placeholder */}
+              <div style={{
+                position: "absolute",
+                width: Math.max(20, canvasW * 0.12),
+                height: Math.max(10, canvasW * 0.05),
+                background: bg === 1 ? "white" : DARK,
+                ...(logoPos === "TL" ? { top: 12, left: 12 }
+                  : logoPos === "TR" ? { top: 12, right: 12 }
+                  : logoPos === "BL" ? { bottom: 12, left: 12 }
+                  :                    { bottom: 12, right: 12 }),
+              }} />
+            </div>
+          </div>
+
+          <div style={{ marginTop: 22 }}>
+            <SectionLabel>Template</SectionLabel>
+            <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8 }}>
+              {[0,1,2,3].map(t => {
+                const on = template === t;
+                return (
+                  <button key={t} onClick={() => setTemplate(t)} style={{
+                    padding: 10, borderRadius: 6,
+                    border: on ? `2px solid ${ACCENT}` : `1px solid ${BORDER}`,
+                    background: "white", cursor: "pointer",
+                  }}>
+                    <div style={{
+                      height: 56, background: FAINT, borderRadius: 3,
+                      border: `1px solid ${BORDER}`,
+                      position: "relative", padding: 4,
+                    }}>
+                      {t === 2 && <div style={{ height: "55%", background: "#bbb", borderRadius: 1, marginBottom: 3 }} />}
+                      <div style={{
+                        height: 4, width: "70%", background: DARK, borderRadius: 1,
+                        marginTop: t === 0 ? "40%" : t === 1 ? "auto" : 0,
+                        marginLeft: t === 3 ? "auto" : 0,
+                        marginRight: t === 3 ? "auto" : 0,
+                      }} />
+                      <div style={{
+                        marginTop: 3, height: 2, width: "50%", background: "#999", borderRadius: 1,
+                        marginLeft: t === 3 ? "auto" : 0,
+                        marginRight: t === 3 ? "auto" : 0,
+                      }} />
+                    </div>
+                    <div style={{
+                      marginTop: 6, fontSize: 10, color: on ? DARK : "#666",
+                      letterSpacing: 0.6, textTransform: "uppercase",
+                      fontWeight: on ? 600 : 500,
+                    }}>
+                      {["Centered","Caption","Image","Hero"][t]}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </Card>
+
+        {/* RIGHT — Content & Style + Export */}
+        <Card style={{ padding: 20 }}>
+          <SectionLabel>Content</SectionLabel>
+          <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 10 }}>
+            <div>
+              <div style={{ fontSize: 10, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 4 }}>Headline</div>
+              <input
+                value={headline}
+                onChange={(e) => setHeadline(e.target.value)}
+                style={{
+                  width: "100%", padding: "8px 12px", border: `1px solid ${BORDER}`,
+                  borderRadius: 6, fontSize: 13, color: DARK, background: "white",
+                }}
+              />
+            </div>
+            <div>
+              <div style={{ fontSize: 10, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 4 }}>Body</div>
+              <input
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                style={{
+                  width: "100%", padding: "8px 12px", border: `1px solid ${BORDER}`,
+                  borderRadius: 6, fontSize: 13, color: DARK, background: "white",
+                }}
+              />
+            </div>
+          </div>
+
+          <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${BORDER}` }}>
+            <SectionLabel>Background</SectionLabel>
+            <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
+              {bgColors.map((c, i) => (
+                <div
+                  key={i}
+                  onClick={() => setBg(i)}
+                  style={{
+                    width: 30, height: 30, borderRadius: 4,
+                    background: c,
+                    border: bg === i ? `2px solid ${ACCENT}` : `1px solid ${BORDER}`,
+                    cursor: "pointer",
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div style={{ marginTop: 18 }}>
+            <SectionLabel>Logo Placement</SectionLabel>
+            <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+              {[
+                ["TL", "Top Left"],
+                ["TR", "Top Right"],
+                ["BL", "Bottom Left"],
+                ["BR", "Bottom Right"],
+              ].map(([k, label]) => {
+                const on = logoPos === k;
+                return (
+                  <button key={k} onClick={() => setLogoPos(k)} style={{
+                    padding: "8px 10px", borderRadius: 6,
+                    border: on ? `1px solid ${ACCENT}` : `1px solid ${BORDER}`,
+                    background: on ? "#F2F2F0" : "white",
+                    fontSize: 11, color: on ? DARK : "#555",
+                    fontWeight: on ? 600 : 400, textAlign: "left",
+                    cursor: "pointer",
+                  }}>{label}</button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${BORDER}` }}>
+            <SectionLabel>Format</SectionLabel>
+            <div style={{ marginTop: 10, display: "flex", gap: 6 }}>
+              {["PNG","JPG","MP4"].map(f => (
+                <Pill key={f} active={format === f} onClick={() => setFormat(f)}>{f}</Pill>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ marginTop: 22 }}>
+            <DarkButton full>↓ Download Post</DarkButton>
+          </div>
+          <div style={{ marginTop: 10, fontSize: 11, color: MUTED, textAlign: "center" }}>
+            Uses brand V3.2 · Instrument Sans
+          </div>
+        </Card>
+      </div>
+    </Shell>
+  );
+}
+
+// =============== SCREEN 7 — ONBOARDING ===============
+function ScreenOnboarding({ go }) {
+  const [videoOpen, setVideoOpen] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [volume, setVolume] = useState(70);
+  const [muted, setMuted] = useState(false);
+  const [progress, setProgress] = useState(28); // 0–100
+  return (
+    <Shell active="onboarding" screenName="Onboarding" go={go}>
+      <div style={{ display: "flex", gap: 16 }}>
+        <div style={{ width: 280, flexShrink: 0, display: "flex", flexDirection: "column", gap: 14 }}>
+          <Card style={{ padding: 16 }}>
+            <SectionLabel>Your Progress</SectionLabel>
+            <div style={{ marginTop: 12, height: 6, background: FAINT, borderRadius: 3, overflow: "hidden" }}>
+              <div style={{ width: "40%", height: "100%", background: ACCENT }} />
+            </div>
+            <div style={{ marginTop: 8, fontSize: 11, color: MUTED }}>2 of 5 modules complete</div>
+
+            <div style={{ marginTop: 18, display: "flex", flexDirection: "column" }}>
+              {[
+                ["Welcome to Archive", "done"],
+                ["Our Brand Story", "done"],
+                ["Logo & Visual Identity", "active"],
+                ["Colour & Typography", "locked"],
+                ["Tone of Voice", "locked"],
+              ].map(([t, s], i) => (
+                <div key={t} style={{
+                  display: "flex", gap: 10, padding: "10px 8px",
+                  borderLeft: s === "active" ? `3px solid ${ACCENT}` : "3px solid transparent",
+                  background: s === "active" ? "#F2F2F0" : "transparent",
+                  fontSize: 13,
+                  color: s === "locked" ? MUTED : s === "active" ? DARK : "#666",
+                  fontWeight: s === "active" ? 600 : 400,
+                  opacity: s === "locked" ? 0.55 : 1,
+                }}>
+                  <span style={{ width: 14, color: s === "done" ? "#666" : s === "active" ? ACCENT : MUTED }}>
+                    {s === "done" ? "✓" : s === "active" ? "→" : "·"}
+                  </span>
+                  <span>0{i+1} · {t}</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ borderTop: `1px solid ${BORDER}`, marginTop: 16, paddingTop: 14 }}>
+              <SectionLabel>Guides</SectionLabel>
+              <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }}>
+                {[
+                  "How to use logo in a deck",
+                  "LinkedIn photo guide",
+                  "Brand do's and don'ts",
+                ].map(g => (
+                  <a key={g} style={{ fontSize: 12, color: "#555" }}>· {g}</a>
+                ))}
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 11, letterSpacing: 1.2, color: MUTED, textTransform: "uppercase", marginBottom: 8 }}>
+            03 · Logo & Visual Identity
+          </div>
+          <div style={{ fontSize: 36, fontWeight: 700, color: DARK, letterSpacing: -0.8, marginBottom: 20 }}>
+            How to use our logo correctly.
+          </div>
+
+          <div
+            onClick={() => { setVideoOpen(true); setPlaying(true); }}
+            style={{
+              background: DARK, borderRadius: 8,
+              width: "100%", aspectRatio: "16 / 9",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              color: "white", cursor: "pointer", position: "relative",
+              overflow: "hidden",
+            }}>
+            <div style={{ textAlign: "center" }}>
+              <div style={{
+                width: 56, height: 56, borderRadius: 28, border: "2px solid white",
+                margin: "0 auto 12px", display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 18,
+              }}>▶</div>
+              <div style={{ fontSize: 11, letterSpacing: 1.2, textTransform: "uppercase" }}>Play Video</div>
+              <div style={{ fontSize: 10, color: "#999", marginTop: 4 }}>04 · 32</div>
+            </div>
+            <div style={{
+              position: "absolute", bottom: 10, right: 12,
+              fontSize: 10, color: "rgba(255,255,255,0.4)", letterSpacing: 0.6,
+            }}>16 : 9 · CLICK TO EXPAND ⤢</div>
+          </div>
+
+          <div style={{ marginTop: 18, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+            <Card>
+              <SectionLabel>Key Rules</SectionLabel>
+              <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+                {[
+                  "Use Primary mark on solid backgrounds",
+                  "Maintain 1× cap-height clearance",
+                  "Never recolour outside the palette",
+                  "Don't rotate, skew, or distort",
+                ].map(t => (
+                  <div key={t} style={{ display: "flex", gap: 8, fontSize: 12, color: "#555" }}>
+                    <span style={{ width: 6, height: 6, borderRadius: 3, background: ACCENT, marginTop: 6, flexShrink: 0 }} />
+                    <span>{t}</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+            <Card>
+              <SectionLabel>Where to find it</SectionLabel>
+              <div style={{ marginTop: 12, fontSize: 12, color: "#555" }}>
+                All current logo files (SVG · PNG · PDF) live in the Logos category of the Brand HQ Library.
+              </div>
+              <a onClick={() => go("library")} style={{ display: "block", marginTop: 14, fontSize: 12, color: ACCENT, fontWeight: 600 }}>
+                Go to Brand HQ →
+              </a>
+            </Card>
+            <Card>
+              <SectionLabel>Common Mistakes</SectionLabel>
+              <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+                {[
+                  "Stretched mark on landing pages",
+                  "Old V3.0 logo still in decks",
+                  "Logo too close to image edge",
+                ].map(t => (
+                  <div key={t} style={{ display: "flex", gap: 8, fontSize: 12, color: "#555" }}>
+                    <span style={{ color: "#a06b6b", marginTop: -1 }}>✗</span>
+                    <span>{t}</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+
+          <div style={{ marginTop: 22, display: "flex", gap: 10 }}>
+            <DarkButton>Mark as complete</DarkButton>
+            <OutlineButton>Next module →</OutlineButton>
+          </div>
+        </div>
+      </div>
+
+      {/* FULLSCREEN VIDEO MODAL */}
+      {videoOpen && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 200,
+          background: "rgba(20,19,24,0.96)",
+          display: "flex", flexDirection: "column",
+        }}>
+          {/* Modal top bar */}
+          <div style={{
+            height: 56, flexShrink: 0,
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            padding: "0 24px", color: "white",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <span style={{ fontSize: 11, letterSpacing: 1.2, color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>
+                03 · Logo & Visual Identity
+              </span>
+              <span style={{ color: "rgba(255,255,255,0.3)" }}>·</span>
+              <span style={{ fontSize: 13, fontWeight: 600 }}>How to use our logo correctly.</span>
+            </div>
+            <button
+              onClick={() => { setVideoOpen(false); setPlaying(false); }}
+              style={{
+                color: "white", fontSize: 18, padding: 6,
+                background: "transparent", cursor: "pointer",
+                width: 32, height: 32, borderRadius: 16,
+                border: "1px solid rgba(255,255,255,0.15)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}
+            >✕</button>
+          </div>
+
+          {/* Video stage */}
+          <div
+            onClick={() => setPlaying(p => !p)}
+            style={{
+              flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
+              padding: 24, cursor: "pointer",
+            }}>
+            <div style={{
+              maxWidth: "100%", maxHeight: "100%",
+              aspectRatio: "16 / 9", width: "min(1280px, 92%)",
+              background: "#0d0c10", borderRadius: 8,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              position: "relative", color: "white",
+              border: "1px solid rgba(255,255,255,0.06)",
+            }}>
+              <div style={{ textAlign: "center" }}>
+                <div style={{
+                  width: 72, height: 72, borderRadius: 36, border: "2px solid white",
+                  margin: "0 auto 14px", display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 26,
+                }}>{playing ? "❚❚" : "▶"}</div>
+                <div style={{ fontSize: 11, letterSpacing: 1.6, color: "rgba(255,255,255,0.6)", textTransform: "uppercase" }}>
+                  {playing ? "Now Playing" : "Paused"}
+                </div>
+              </div>
+              <div style={{
+                position: "absolute", top: 14, left: 16,
+                fontSize: 10, color: "rgba(255,255,255,0.35)",
+                letterSpacing: 0.8, textTransform: "uppercase",
+              }}>16 : 9 · 1920×1080 · HD</div>
+            </div>
+          </div>
+
+          {/* Controls bar */}
+          <div style={{
+            flexShrink: 0, padding: "14px 24px 22px",
+            color: "white",
+            borderTop: "1px solid rgba(255,255,255,0.08)",
+          }}>
+            {/* Scrub bar */}
+            <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 11, fontFamily: '"SF Mono", monospace' }}>
+              <span style={{ color: "rgba(255,255,255,0.7)" }}>01:18</span>
+              <div
+                onClick={(e) => {
+                  const r = e.currentTarget.getBoundingClientRect();
+                  setProgress(Math.round(((e.clientX - r.left) / r.width) * 100));
+                }}
+                style={{
+                  flex: 1, height: 4, background: "rgba(255,255,255,0.15)",
+                  borderRadius: 2, position: "relative", cursor: "pointer",
+                }}>
+                <div style={{
+                  position: "absolute", left: 0, top: 0, bottom: 0,
+                  width: `${progress}%`, background: "white", borderRadius: 2,
+                }} />
+                <div style={{
+                  position: "absolute", left: `calc(${progress}% - 6px)`, top: -4,
+                  width: 12, height: 12, borderRadius: 6, background: "white",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.4)",
+                }} />
+              </div>
+              <span style={{ color: "rgba(255,255,255,0.5)" }}>04:32</span>
+            </div>
+
+            {/* Buttons row */}
+            <div style={{ marginTop: 14, display: "flex", alignItems: "center", gap: 16 }}>
+              <button
+                onClick={() => setPlaying(p => !p)}
+                style={{
+                  width: 38, height: 38, borderRadius: 19,
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  background: "transparent", color: "white",
+                  fontSize: 14, cursor: "pointer",
+                }}
+              >{playing ? "❚❚" : "▶"}</button>
+              <button style={{
+                color: "white", fontSize: 16, cursor: "pointer", padding: "0 4px",
+              }}>⏮</button>
+              <button style={{
+                color: "white", fontSize: 16, cursor: "pointer", padding: "0 4px",
+              }}>⏭</button>
+
+              {/* Volume */}
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: 12 }}>
+                <button
+                  onClick={() => setMuted(m => !m)}
+                  style={{ color: "white", fontSize: 14, cursor: "pointer", width: 22 }}
+                >{muted || volume === 0 ? "🔇" : volume < 50 ? "🔈" : "🔊"}</button>
+                <div style={{ width: 100, height: 4, background: "rgba(255,255,255,0.15)", borderRadius: 2, position: "relative", cursor: "pointer" }}
+                  onClick={(e) => {
+                    const r = e.currentTarget.getBoundingClientRect();
+                    const v = Math.max(0, Math.min(100, Math.round(((e.clientX - r.left) / r.width) * 100)));
+                    setVolume(v); setMuted(false);
+                  }}>
+                  <div style={{
+                    position: "absolute", left: 0, top: 0, bottom: 0,
+                    width: `${muted ? 0 : volume}%`, background: "white", borderRadius: 2,
+                  }} />
+                </div>
+                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", fontFamily: '"SF Mono", monospace', minWidth: 28 }}>
+                  {muted ? "MUTE" : volume}
+                </span>
+              </div>
+
+              {/* Speed */}
+              <button style={{
+                marginLeft: 12,
+                padding: "5px 10px", borderRadius: 12,
+                border: "1px solid rgba(255,255,255,0.2)",
+                background: "transparent", color: "white",
+                fontSize: 11, cursor: "pointer", fontFamily: '"SF Mono", monospace',
+              }}>1.0×</button>
+
+              {/* CC */}
+              <button style={{
+                padding: "5px 10px", borderRadius: 12,
+                border: "1px solid rgba(255,255,255,0.2)",
+                background: "transparent", color: "white",
+                fontSize: 11, cursor: "pointer", letterSpacing: 0.6,
+              }}>CC</button>
+
+              <div style={{ flex: 1 }} />
+
+              {/* Quality */}
+              <button style={{
+                padding: "5px 10px", borderRadius: 12,
+                border: "1px solid rgba(255,255,255,0.2)",
+                background: "transparent", color: "white",
+                fontSize: 11, cursor: "pointer", fontFamily: '"SF Mono", monospace',
+              }}>HD ▾</button>
+
+              {/* Exit fullscreen */}
+              <button
+                onClick={() => { setVideoOpen(false); setPlaying(false); }}
+                style={{
+                  padding: "5px 10px", borderRadius: 12,
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  background: "transparent", color: "white",
+                  fontSize: 11, cursor: "pointer", letterSpacing: 0.6,
+                }}
+              >⤢ EXIT FULLSCREEN</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </Shell>
+  );
+}
+
+// =============== SCREEN 8 — MEMORY (Constellation Timeline) ===============
+const MONO = '"SF Mono", "JetBrains Mono", "Menlo", "Consolas", monospace';
+
+const PHOTO_GRADIENTS = [
+  "radial-gradient(circle at 30% 40%, #C5B8D8, #7A6E8A)",
+  "radial-gradient(circle at 60% 30%, #B8C8B0, #6E8A70)",
+  "radial-gradient(circle at 40% 60%, #D0B8B0, #8A6E68)",
+  "radial-gradient(circle at 50% 50%, #B8C0D0, #6E7A8A)",
+  "radial-gradient(circle at 20% 70%, #C8B8D0, #8A78A0)",
+  "radial-gradient(circle at 70% 40%, #C0C8B8, #788A70)",
+  "radial-gradient(circle at 35% 55%, #D0C8B0, #8A8068)",
+];
+
+const MEMORY_EVENTS = [
+  { name: "FIRST HIRES",    mon: "JAN", year: 2022, count: 4,  L: 1, M: 2,  S: 1  },
+  { name: "SERIES A",       mon: "MAR", year: 2022, count: 8,  L: 1, M: 4,  S: 3  },
+  { name: "STUDIO OPEN",    mon: "JAN", year: 2023, count: 11, L: 2, M: 5,  S: 4  },
+  { name: "KICKOFF",        mon: "APR", year: 2023, count: 14, L: 2, M: 7,  S: 5  },
+  { name: "OFFSITE",        mon: "SEP", year: 2023, count: 18, L: 2, M: 9,  S: 7  },
+  { name: "BRAND LAUNCH",   mon: "JAN", year: 2024, count: 22, L: 3, M: 11, S: 8  },
+  { name: "CONFERENCE",     mon: "FEB", year: 2024, count: 34, L: 3, M: 17, S: 14 },
+  { name: "OFFSITE",        mon: "SEP", year: 2024, count: 28, L: 3, M: 14, S: 11 },
+  { name: "PRODUCT LAUNCH", mon: "FEB", year: 2025, count: 31, L: 3, M: 16, S: 12 },
+  { name: "KICKOFF",        mon: "APR", year: 2025, count: 26, L: 2, M: 13, S: 11 },
+  { name: "ANNIVERSARY",    mon: "NOV", year: 2025, count: 44, L: 4, M: 22, S: 18 },
+  { name: "HOLIDAY PARTY",  mon: "JAN", year: 2026, count: 38, L: 3, M: 19, S: 16 },
+  { name: "VOLTAGE LAUNCH", mon: "MAR", year: 2026, count: 52, L: 4, M: 26, S: 22 },
+  { name: "TEAM SHOOT",     mon: "APR", year: 2026, count: 61, L: 5, M: 30, S: 26 },
+];
+
+function memoryDensity(count) {
+  if (count <= 4)  return { spread: 50,  height: 120, width: 180 };
+  if (count <= 14) return { spread: 70,  height: 220, width: 200 };
+  if (count <= 34) return { spread: 90,  height: 320, width: 240 };
+  return                  { spread: 110, height: 420, width: 260 };
+}
+
+function memoryPRNG(eventIdx, i, salt) {
+  const v = Math.sin(eventIdx * 999.31 + i * 73.71 + salt * 17.13) * 43758.5453;
+  return v - Math.floor(v);
+}
+
+function memoryCirclePos(eventIdx, i, spread, height, size) {
+  const ry = memoryPRNG(eventIdx, i, 1);
+  const rx = memoryPRNG(eventIdx, i, 2);
+  const yt = ry * 2 - 1;
+  const y = yt * (height / 2);
+  const xMax = spread * (1 - Math.pow(Math.abs(yt), 1.4));
+  const x = (rx * 2 - 1) * xMax;
+  return { x, y };
+}
+
+function memorySizes(L, M, S) {
+  const arr = [];
+  for (let i = 0; i < L; i++) arr.push(64);
+  for (let i = 0; i < M; i++) arr.push(40);
+  for (let i = 0; i < S; i++) arr.push(24);
+  return arr
+    .map((v, i) => ({ v, k: Math.sin(i * 12.91 + L * 7.3 + arr.length * 1.7) }))
+    .sort((a, b) => a.k - b.k)
+    .map(x => x.v);
+}
+
+const MEMORY_PAD_START = 60;
+const MEMORY_PAD_END = 100;
+const MEMORY_TIMELINE_H = 600;
+const MEMORY_AXIS_Y = MEMORY_TIMELINE_H / 2;
+
+const MEMORY_CLUSTERS = (() => {
+  let x = MEMORY_PAD_START;
+  return MEMORY_EVENTS.map((e, idx) => {
+    const d = memoryDensity(e.count);
+    const cx = x + d.width / 2;
+    x += d.width;
+    return { ...e, idx, ...d, cx };
+  });
+})();
+
+const MEMORY_CANVAS_W =
+  MEMORY_CLUSTERS[MEMORY_CLUSTERS.length - 1].cx +
+  memoryDensity(MEMORY_CLUSTERS[MEMORY_CLUSTERS.length - 1].count).width / 2 +
+  MEMORY_PAD_END;
+
+const MEMORY_YEARS = [2022, 2023, 2024, 2025, 2026];
+
+function PhotoCircle({ id, size, cx, cy, gradIdx, selected, onPhotoEvent }) {
+  const [hover, setHover] = useState(false);
+  return (
+    <div
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      onClick={(e) => { e.stopPropagation(); onPhotoEvent(id, cx, cy); }}
+      style={{
+        position: "absolute",
+        left: cx - size / 2,
+        top: cy - size / 2,
+        width: size,
+        height: size,
+        borderRadius: "50%",
+        background: PHOTO_GRADIENTS[gradIdx % PHOTO_GRADIENTS.length],
+        boxShadow: (selected || hover) ? "0 0 0 2px white" : "none",
+        filter: selected ? "brightness(1.2)" : "none",
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        transition: "filter 0.15s ease, box-shadow 0.15s ease",
+      }}
+    >
+      {selected && (
+        <span style={{
+          color: "white",
+          fontSize: Math.max(10, Math.min(14, size * 0.32)),
+          fontWeight: 700,
+          textShadow: "0 1px 2px rgba(0,0,0,0.4)",
+          lineHeight: 1,
+        }}>✓</span>
+      )}
+    </div>
+  );
+}
+
+function ScreenMemory({ go }) {
+  const [selected, setSelected] = useState(new Set());
+  const [zoom, setZoom] = useState(0.6);
+  const [activeYear, setActiveYear] = useState(2022);
+  const [pillHover, setPillHover] = useState(false);
+
+  const scrollRef = useRef(null);
+  const zoomRef = useRef(0.6);
+  const clickTimerRef = useRef(null);
+  useEffect(() => { zoomRef.current = zoom; }, [zoom]);
+
+  function toggleSelect(id) {
+    setSelected(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  }
+  function clearSelection() { setSelected(new Set()); }
+
+  function zoomToPoint(canvasX, newZoom) {
+    setZoom(newZoom);
+    zoomRef.current = newZoom;
+    requestAnimationFrame(() => {
+      const el = scrollRef.current;
+      if (!el) return;
+      el.scrollLeft = canvasX * newZoom - el.clientWidth / 2;
+    });
+  }
+
+  function onPhotoEvent(id, photoCanvasX) {
+    if (clickTimerRef.current) {
+      clearTimeout(clickTimerRef.current);
+      clickTimerRef.current = null;
+      // double click → select for download
+      toggleSelect(id);
+      return;
+    }
+    clickTimerRef.current = setTimeout(() => {
+      clickTimerRef.current = null;
+      // single click → progressive zoom
+      const z = zoomRef.current;
+      let next;
+      if (z < 0.95)      next = 1.1;   // overview → year level
+      else if (z < 1.5)  next = 1.8;   // year → month / event level
+      else               next = z;     // already deep — no-op
+      if (next !== z) zoomToPoint(photoCanvasX, next);
+    }, 230);
+  }
+
+  function scrollToYear(y) {
+    setActiveYear(y);
+    const evs = MEMORY_CLUSTERS.filter(c => c.year === y);
+    if (!evs.length || !scrollRef.current) return;
+    const z = zoomRef.current;
+    const targetX = evs[0].cx * z;
+    scrollRef.current.scrollTo({ left: Math.max(0, targetX - 80), behavior: "smooth" });
+  }
+
+  function onTimelineScroll() {
+    if (!scrollRef.current) return;
+    const sl = scrollRef.current.scrollLeft;
+    const vw = scrollRef.current.clientWidth;
+    const z = zoomRef.current;
+    const centerX = (sl + vw / 2) / z;
+    let closest = MEMORY_YEARS[0];
+    let minDist = Infinity;
+    MEMORY_YEARS.forEach(y => {
+      const evs = MEMORY_CLUSTERS.filter(c => c.year === y);
+      const c = (evs[0].cx + evs[evs.length - 1].cx) / 2;
+      const d = Math.abs(centerX - c);
+      if (d < minDist) { minDist = d; closest = y; }
+    });
+    setActiveYear(closest);
+  }
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const handler = (e) => {
+      e.preventDefault();
+      if (e.ctrlKey || e.metaKey) {
+        // Cursor-anchored zoom
+        const rect = el.getBoundingClientRect();
+        const cursorX = e.clientX - rect.left;
+        const prevScale = zoomRef.current;
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        const newScale = Math.min(2.0, Math.max(0.5, +(prevScale + delta).toFixed(2)));
+        if (newScale === prevScale) return;
+        const canvasX = (el.scrollLeft + cursorX) / prevScale;
+        setZoom(newScale);
+        zoomRef.current = newScale;
+        requestAnimationFrame(() => {
+          el.scrollLeft = canvasX * newScale - cursorX;
+        });
+        return;
+      }
+      // Horizontal scroll: deltaX wins if larger; otherwise deltaY → horizontal
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      el.scrollLeft += delta * 1.5;
+    };
+    el.addEventListener("wheel", handler, { passive: false });
+    return () => el.removeEventListener("wheel", handler);
+  }, []);
+
+  const yearMarkers = MEMORY_YEARS.map(y => {
+    const evs = MEMORY_CLUSTERS.filter(c => c.year === y);
+    const cxFirst = evs[0].cx;
+    const cxCenter = (evs[0].cx + evs[evs.length - 1].cx) / 2;
+    return { year: y, cx: cxFirst, cxCenter };
+  });
+
+  // Year boundary x-positions (left edge of each year's first cluster, except 2022)
+  const yearBoundaries = MEMORY_YEARS.slice(1).map(y => {
+    const first = MEMORY_CLUSTERS.find(c => c.year === y);
+    return { year: y, x: first.cx - first.width / 2 };
+  });
+
+  const layoutByCluster = useMemo(
+    () => MEMORY_CLUSTERS.map(c => {
+      const sizes = memorySizes(c.L, c.M, c.S);
+      const arr = sizes.map((sz, i) => {
+        const p = memoryCirclePos(c.idx, i, c.spread, c.height, sz);
+        return { sz, x: p.x, y: p.y };
+      });
+      for (let it = 0; it < 5; it++) {
+        for (let a = 0; a < arr.length; a++) {
+          for (let b = a + 1; b < arr.length; b++) {
+            const A = arr[a], B = arr[b];
+            const dx = B.x - A.x, dy = B.y - A.y;
+            const d = Math.sqrt(dx * dx + dy * dy) || 0.0001;
+            const minD = (A.sz + B.sz) / 2 + 2;
+            if (d < minD) {
+              const push = (minD - d) / 2;
+              const ux = dx / d, uy = dy / d;
+              A.x -= ux * push; A.y -= uy * push;
+              B.x += ux * push; B.y += uy * push;
+            }
+          }
+        }
+      }
+      return arr;
+    }),
+    []
+  );
+
+  return (
+    <Shell active="memory" screenName="Memory" primaryLabel="+ Contribute" go={go}>
+      <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 48px)" }}>
+
+        {/* INNER TOP BAR — heading + subtitle + TODAY only */}
+        <div style={{
+          flexShrink: 0,
+          padding: "20px 24px 18px",
+          borderBottom: "1px solid rgba(0,0,0,0.06)",
+          background: "#F5F5F5",
+          display: "flex", alignItems: "flex-start", justifyContent: "space-between",
+        }}>
+          <div>
+            <div style={{
+              fontSize: 28, fontWeight: 700, color: "#1E1C23",
+              letterSpacing: -0.6, lineHeight: 1,
+            }}>Photo Archive.</div>
+            <div style={{
+              marginTop: 8, fontSize: 11, color: "#7A7885",
+              fontFamily: MONO, letterSpacing: 0.6,
+            }}>
+              TOTAL 2,418 PHOTOS · SPANS 2022–2026
+            </div>
+          </div>
+          <div style={{ position: "relative", paddingLeft: 18, paddingTop: 6 }}>
+            <span style={{
+              fontSize: 10, color: "#1E1C23", fontFamily: MONO,
+              letterSpacing: 1, fontWeight: 600,
+            }}>TODAY</span>
+            <div style={{
+              position: "absolute", left: 6, top: -10, bottom: -16,
+              width: 1, background: "#6B6B6B",
+            }} />
+          </div>
+        </div>
+
+        {/* TIMELINE AREA */}
+        <div style={{ position: "relative", flex: 1, minHeight: MEMORY_TIMELINE_H }}>
+          <div
+            ref={scrollRef}
+            onScroll={onTimelineScroll}
+            style={{
+              position: "absolute", inset: 0,
+              overflowX: "scroll", overflowY: "hidden",
+              width: "100%",
+            }}
+          >
+            {/* Outer wrapper: provides scroll bounds at scaled dimensions */}
+            <div style={{
+              position: "relative",
+              width: MEMORY_CANVAS_W * zoom,
+              height: "100%",
+              minHeight: MEMORY_TIMELINE_H,
+            }}>
+              {/* Inner canvas: position relative + inline-block, transform-origin 0 0 */}
+              <div style={{
+                position: "relative",
+                display: "inline-block",
+                width: MEMORY_CANVAS_W,
+                height: MEMORY_TIMELINE_H,
+                transform: `scale(${zoom})`,
+                transformOrigin: "0 50%",
+              }}>
+                {/* AXIS LINE */}
+                <div style={{
+                  position: "absolute",
+                  left: 0, right: 0, top: MEMORY_AXIS_Y,
+                  height: 1, background: "rgba(0,0,0,0.12)",
+                }} />
+
+                {/* YEAR BOUNDARY DASHED LINES */}
+                {yearBoundaries.map(b => (
+                  <div key={b.year} style={{
+                    position: "absolute",
+                    left: b.x, top: 0, bottom: 0,
+                    width: 0,
+                    borderLeft: "1px dashed rgba(0,0,0,0.06)",
+                    pointerEvents: "none",
+                  }} />
+                ))}
+
+                {/* YEAR AXIS DOTS (subtle) */}
+                {yearMarkers.map(ym => (
+                  <div key={"dot-" + ym.year} style={{
+                    position: "absolute",
+                    left: ym.cxCenter - 3, top: MEMORY_AXIS_Y - 3,
+                    width: 6, height: 6, borderRadius: 3,
+                    background: "rgba(0,0,0,0.2)",
+                  }} />
+                ))}
+
+                {/* CLUSTERS */}
+                {MEMORY_CLUSTERS.map((c, idx) => {
+                  const positions = layoutByCluster[idx];
+                  const labelTop = MEMORY_AXIS_Y + c.height / 2 + 18;
+                  return (
+                    <Fragment key={idx}>
+                      <div style={{
+                        position: "absolute",
+                        left: c.cx - 0.5,
+                        top: MEMORY_AXIS_Y - c.height / 2,
+                        width: 1,
+                        height: c.height + 18,
+                        background: "rgba(0,0,0,0.08)",
+                        pointerEvents: "none",
+                      }} />
+                      <div style={{
+                        position: "absolute",
+                        left: c.cx - 2,
+                        top: MEMORY_AXIS_Y - 2,
+                        width: 4, height: 4, borderRadius: 2,
+                        background: "rgba(0,0,0,0.2)",
+                      }} />
+                      {positions.map((p, i) => {
+                        const id = `${idx}_${i}`;
+                        return (
+                          <PhotoCircle
+                            key={i}
+                            id={id}
+                            size={p.sz}
+                            cx={c.cx + p.x}
+                            cy={MEMORY_AXIS_Y + p.y}
+                            gradIdx={(idx * 3 + i) % PHOTO_GRADIENTS.length}
+                            selected={selected.has(id)}
+                            onToggle={toggleSelect}
+                          />
+                        );
+                      })}
+                      <div style={{
+                        position: "absolute",
+                        left: c.cx - 80,
+                        top: labelTop,
+                        width: 160, textAlign: "center",
+                        pointerEvents: "none",
+                      }}>
+                        <div style={{
+                          fontSize: 10, fontFamily: MONO,
+                          color: "#1E1C23", letterSpacing: 0.8,
+                          fontWeight: 500,
+                        }}>{c.name}</div>
+                        <div style={{
+                          marginTop: 3, fontSize: 10, fontFamily: MONO,
+                          color: "#7A7885", letterSpacing: 0.6,
+                        }}>{c.mon} {c.year}</div>
+                      </div>
+                    </Fragment>
+                  );
+                })}
+
+                {/* YEAR LABELS — bottom of timeline, at first cluster x of each year */}
+                {yearMarkers.map(ym => {
+                  const on = activeYear === ym.year;
+                  return (
+                    <div
+                      key={"yl-" + ym.year}
+                      onClick={() => scrollToYear(ym.year)}
+                      style={{
+                        position: "absolute",
+                        bottom: 16,
+                        left: ym.cx - 80,
+                        width: 160, textAlign: "center",
+                        fontSize: on ? 32 : 22,
+                        fontWeight: on ? 700 : 400,
+                        color: on ? "#1E1C23" : "#B0AEAA",
+                        letterSpacing: -0.4,
+                        lineHeight: 1,
+                        cursor: "pointer",
+                        transition: "font-size 0.2s ease, color 0.2s ease",
+                      }}
+                    >{ym.year}</div>
+                  );
+                })}
+
+                {/* TODAY line at far right of canvas */}
+                <div style={{
+                  position: "absolute",
+                  left: MEMORY_CANVAS_W - 40,
+                  top: 0, bottom: 0,
+                  width: 1, background: "#6B6B6B",
+                  pointerEvents: "none",
+                }}>
+                  <div style={{
+                    position: "absolute",
+                    top: 8, left: 6,
+                    fontSize: 10, fontFamily: MONO,
+                    color: "#6B6B6B",
+                    letterSpacing: 0.8,
+                  }}>TODAY</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ZOOM INDICATOR */}
+          <div style={{
+            position: "absolute",
+            top: 14, right: 24,
+            fontSize: 10, fontFamily: MONO,
+            color: "#9A9AA8",
+            letterSpacing: 0.8,
+            pointerEvents: "none",
+          }}>
+            ZOOM {zoom.toFixed(1)}×
+          </div>
+        </div>
+
+        {/* HINT TEXT — bottom-left */}
+        <div style={{
+          position: "fixed",
+          bottom: 24, left: 80,
+          fontSize: 10, color: "#9A9AA8",
+          letterSpacing: 0.4, fontFamily: MONO,
+          pointerEvents: "none", zIndex: 80,
+        }}>
+          scroll to navigate · ⌘ scroll to zoom
+        </div>
+
+        {/* DOWNLOAD CARD — bottom-right, glass style */}
+        <div style={{
+          position: "fixed",
+          bottom: 24, right: 24,
+          display: "flex", alignItems: "center", gap: 12,
+          padding: "8px 12px",
+          background: "rgba(245,245,245,0.85)",
+          backdropFilter: "blur(8px)",
+          WebkitBackdropFilter: "blur(8px)",
+          border: "1px solid rgba(211,209,199,0.5)",
+          borderRadius: 24,
+          opacity: selected.size > 0 ? 1 : 0,
+          pointerEvents: selected.size > 0 ? "auto" : "none",
+          transition: "opacity 0.2s ease",
+          zIndex: 90,
+        }}>
+          <span
+            onClick={clearSelection}
+            style={{
+              fontSize: 13, color: "#7A7885",
+              cursor: "pointer", padding: "0 4px",
+              userSelect: "none",
+            }}
+          >✕ Clear</span>
+          <button
+            onMouseEnter={() => setPillHover(true)}
+            onMouseLeave={() => setPillHover(false)}
+            style={{
+              background: pillHover ? "#F5F5F5" : "white",
+              border: pillHover ? "1px solid #B0AEAA" : "1px solid #D3D1C7",
+              borderRadius: 20,
+              padding: "10px 20px",
+              fontSize: 14, fontWeight: 500, color: "#1E1C23",
+              cursor: "pointer",
+              transition: "background 0.15s ease, border-color 0.15s ease",
+            }}
+          >↓ Download ({selected.size})</button>
+        </div>
+      </div>
+    </Shell>
+  );
+}
+
+// =============== ROUTER ===============
+function App() {
+  const [screen, setScreen] = useState("library");
+  const go = (s) => { setScreen(s); window.scrollTo(0,0); };
+
+  switch (screen) {
+    case "library":     return <ScreenLibrary go={go} />;
+    case "files":       return <ScreenFiles go={go} />;
+    case "photo":       return <ScreenPhoto go={go} />;
+    case "creator":     return <ScreenCreator go={go} />;
+    case "signature":   return <ScreenSignature go={go} />;
+    case "social":      return <ScreenSocial go={go} />;
+    case "onboarding":  return <ScreenOnboarding go={go} />;
+    case "memory":      return <ScreenMemory go={go} />;
+    default:            return <ScreenLibrary go={go} />;
+  }
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
