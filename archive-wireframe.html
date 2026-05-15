@@ -23,159 +23,217 @@
   input { font-family: inherit; outline: none; }
   a { color: inherit; text-decoration: none; cursor: pointer; }
   ::placeholder { color: #999; }
+
+  @keyframes chipIdleFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+  }
+  @keyframes faviconPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(0.94); }
+    100% { transform: scale(1); }
+  }
+  @keyframes lineDraw {
+    from { stroke-dashoffset: 200; }
+    to { stroke-dashoffset: 0; }
+  }
 </style>
 </head>
 <body>
 <div id="root"></div>
 
 <script type="text/babel">
-const { useState, useMemo, useRef, useEffect, Fragment } = React;
+const { useState, useMemo, useRef, useEffect, useContext, createContext, Fragment } = React;
+
+const AppContext = createContext({
+  role: null,
+  changeRole: () => {},
+  resetOnboarding: () => {},
+});
 
 const ACCENT = "#6B6B6B";
 const DARK = "#2C2C2A";
 const BORDER = "#E0E0E0";
-const BG = "#F5F5F5";
+const BG = "#F2EAD5"; // unified warm cream across every screen
 const MUTED = "#999999";
 const FAINT = "#EFEFEF";
+const HOME_BG = "#F2EAD5";
+const HOME_TILE_BORDER = "rgba(0,0,0,0.07)";
+const HOME_SERIF = '"Instrument Serif", "Iowan Old Style", "Hoefler Text", Georgia, "Times New Roman", serif';
 
-// =============== SIDEBAR ===============
-function Sidebar({ active, go }) {
-  const items = [
-    { key: "hq", label: "Brand HQ", icon: "grid" },
-    { key: "creator", label: "Creator", icon: "pencil" },
-    { key: "onboarding", label: "Onboarding", icon: "book" },
-    { key: "memory", label: "Memory", icon: "clock" },
-  ];
+// =============== UNIVERSAL TOP BAR (favicon + profile) ===============
+function UniversalTopBar({ activeScreen, go }) {
+  const { role, changeRole, resetOnboarding } = useContext(AppContext);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [faviconPressed, setFaviconPressed] = useState(false);
+  const profileRef = useRef(null);
+
+  const isHome = activeScreen === "home";
+
+  useEffect(() => {
+    function onDocDown(e) {
+      if (profileOpen && profileRef.current && !profileRef.current.contains(e.target)) {
+        setProfileOpen(false);
+      }
+    }
+    window.addEventListener("mousedown", onDocDown);
+    return () => window.removeEventListener("mousedown", onDocDown);
+  }, [profileOpen]);
+
+  function onFaviconClick() {
+    setFaviconPressed(true);
+    setTimeout(() => setFaviconPressed(false), 300);
+    if (!isHome) go("home");
+  }
+
+  const roleLabels = {
+    designer: "Designer",
+    marketer: "Marketer",
+    hr: "HR Manager",
+    sales: "Sales Manager",
+  };
+  const roleLabel = role && roleLabels[role] ? roleLabels[role] : "No role yet";
+
   return (
-    <div style={{
-      width: 56, background: DARK, height: "100vh",
-      display: "flex", flexDirection: "column", alignItems: "center",
-      paddingTop: 14, paddingBottom: 14, position: "fixed", left: 0, top: 0,
-      zIndex: 100,
-    }}>
-      <div style={{
-        color: "white", fontSize: 16, fontWeight: 700, letterSpacing: 0.5,
-        marginBottom: 32, fontFamily: "Georgia, serif"
-      }}>A</div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 24, flex: 1 }}>
-        {items.map(it => {
-          const on = active === it.key || (it.key === "hq" && (active === "library" || active === "files" || active === "photo"))
-                  || (it.key === "creator" && (active === "creator" || active === "signature" || active === "social"));
-          return (
-            <div key={it.key} style={{ position: "relative", display: "flex", alignItems: "center" }}>
-              {on && (
-                <div style={{
-                  position: "absolute", left: -12, top: "50%", transform: "translateY(-50%)",
-                  width: 6, height: 6, borderRadius: 3, background: ACCENT,
-                }} />
-              )}
-              <button
-                onClick={() => go(it.key === "hq" ? "library" : it.key === "creator" ? "creator" : it.key)}
-                title={it.label}
-                style={{
-                  width: 28, height: 28, border: "1px solid #4a4a48",
-                  background: on ? "#3c3c3a" : "transparent",
-                  borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center",
-                  color: "#bbb",
-                }}
-              >
-                <IconShape kind={it.icon} />
-              </button>
+    <>
+      {/* Favicon (top-left) */}
+      <div style={{ position: "fixed", top: 20, left: 24, zIndex: 120 }}>
+        <button
+          onClick={onFaviconClick}
+          title={isHome ? "Archive" : "Back to Home"}
+          style={{
+            width: 46, height: 46, borderRadius: 23,
+            background: "white",
+            border: "1px solid rgba(0,0,0,0.06)",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+            fontFamily: HOME_SERIF, fontStyle: "italic",
+            fontSize: 26, fontWeight: 600, color: DARK,
+            cursor: "pointer", padding: 0,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            lineHeight: 1,
+            animation: faviconPressed ? "faviconPulse 0.3s ease" : "none",
+          }}
+        >A</button>
+      </div>
+
+      {/* Profile (top-right) */}
+      <div ref={profileRef} style={{ position: "fixed", top: 20, right: 24, zIndex: 120 }}>
+        <button
+          onClick={() => setProfileOpen(o => !o)}
+          title="Profile"
+          style={{
+            width: 46, height: 46, borderRadius: 23,
+            background: DARK, color: "white",
+            border: "none",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.12)",
+            fontSize: 13, fontWeight: 500, letterSpacing: 0.4,
+            cursor: "pointer", padding: 0,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+        >EM</button>
+
+        {profileOpen && (
+          <div style={{
+            position: "absolute", top: 56, right: 0,
+            width: 290, background: "white",
+            border: `1px solid ${BORDER}`, borderRadius: 12,
+            boxShadow: "0 12px 32px rgba(0,0,0,0.14)",
+            padding: 14,
+          }}>
+            <div style={{
+              display: "flex", alignItems: "center", gap: 12,
+              paddingBottom: 12, marginBottom: 12,
+              borderBottom: `1px solid ${BORDER}`,
+            }}>
+              <div style={{
+                width: 40, height: 40, borderRadius: 20,
+                background: DARK, color: "white",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 13, fontWeight: 500, letterSpacing: 0.4,
+              }}>EM</div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: DARK, lineHeight: 1.2 }}>Eli Marchetti</div>
+                <div style={{ fontSize: 11, color: MUTED, marginTop: 2 }}>eli@archive.brand</div>
+              </div>
             </div>
-          );
-        })}
-      </div>
-      <div style={{
-        width: 28, height: 28, borderRadius: 14, background: "#5a5a58",
-        color: "white", fontSize: 10, display: "flex", alignItems: "center",
-        justifyContent: "center", letterSpacing: 0.5,
-      }}>EM</div>
-    </div>
-  );
-}
 
-function IconShape({ kind }) {
-  if (kind === "grid") {
-    return (
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, width: 14, height: 14 }}>
-        {[0,1,2,3].map(i => <div key={i} style={{ background: "#bbb" }} />)}
-      </div>
-    );
-  }
-  if (kind === "pencil") {
-    return <div style={{ width: 14, height: 14, border: "1.5px solid #bbb", transform: "rotate(45deg)", borderRadius: 1 }} />;
-  }
-  if (kind === "book") {
-    return <div style={{ width: 14, height: 12, border: "1.5px solid #bbb", borderLeft: "3px solid #bbb" }} />;
-  }
-  if (kind === "clock") {
-    return <div style={{ width: 14, height: 14, borderRadius: 7, border: "1.5px solid #bbb", position: "relative" }}>
-      <div style={{ position: "absolute", top: 1, left: 5.5, width: 1.5, height: 5, background: "#bbb" }} />
-    </div>;
-  }
-  return null;
-}
+            <div style={{
+              padding: "0 4px 10px",
+              marginBottom: 8, borderBottom: `1px solid ${BORDER}`,
+            }}>
+              <div style={{
+                fontSize: 10, color: MUTED, letterSpacing: 0.8,
+                textTransform: "uppercase", fontWeight: 600, marginBottom: 4,
+              }}>Current role</div>
+              <div style={{ fontSize: 13, color: DARK, fontWeight: 500, paddingBottom: 8 }}>{roleLabel}</div>
+            </div>
 
-// =============== TOPBAR ===============
-function TopBar({ screenName, primaryLabel, onPrimary }) {
-  return (
-    <div style={{
-      height: 48, background: "white", borderBottom: `1px solid ${BORDER}`,
-      display: "flex", alignItems: "center", paddingLeft: 16, paddingRight: 16,
-      position: "sticky", top: 0, zIndex: 50,
-    }}>
-      <div style={{ fontSize: 13, color: DARK, minWidth: 280 }}>
-        <span style={{ fontWeight: 600 }}>Archive</span>
-        <span style={{ color: MUTED, margin: "0 6px" }}>·</span>
-        <span style={{ color: "#555" }}>{screenName}</span>
-      </div>
-      <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
-        <div style={{
-          width: 360, height: 28, border: `1px solid ${BORDER}`,
-          borderRadius: 14, paddingLeft: 14, display: "flex", alignItems: "center",
-          color: MUTED, fontSize: 12,
-        }}>
-          <div style={{ width: 10, height: 10, border: `1.5px solid ${MUTED}`, borderRadius: 5, marginRight: 8 }} />
-          Search assets, files, guidelines…
-        </div>
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <Avatar initials="JT" />
-        <Avatar initials="RS" />
-        {primaryLabel && (
-          <button onClick={onPrimary} style={{
-            background: DARK, color: "white", padding: "6px 14px",
-            borderRadius: 14, fontSize: 11, letterSpacing: 0.4, fontWeight: 500,
-            textTransform: "uppercase",
-          }}>{primaryLabel}</button>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {["Profile settings","Notifications","Team & permissions"].map(label => (
+                <button
+                  key={label}
+                  onClick={() => setProfileOpen(false)}
+                  style={{
+                    width: "100%", padding: "8px 10px", textAlign: "left",
+                    background: "transparent", border: "none",
+                    borderRadius: 6, cursor: "pointer",
+                    fontSize: 12, color: "#444",
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = "rgba(0,0,0,0.03)"}
+                  onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                >{label}</button>
+              ))}
+              <button
+                onClick={() => {
+                  try { localStorage.removeItem("archive-home-widgets"); } catch (_) {}
+                  setProfileOpen(false);
+                  window.location.reload();
+                }}
+                style={{
+                  width: "100%", padding: "8px 10px", textAlign: "left",
+                  background: "transparent", border: "none",
+                  borderRadius: 6, cursor: "pointer",
+                  fontSize: 12, color: "#444",
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = "rgba(0,0,0,0.03)"}
+                onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+              >Reset home widgets</button>
+
+              <div style={{ height: 1, background: BORDER, margin: "8px 0" }} />
+
+              <button
+                onClick={() => { resetOnboarding(); setProfileOpen(false); }}
+                style={{
+                  width: "100%", padding: "8px 10px", textAlign: "left",
+                  background: "transparent", border: "none",
+                  borderRadius: 6, cursor: "pointer",
+                  fontSize: 12, color: "#a06b6b",
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = "rgba(160,107,107,0.06)"}
+                onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+              >Sign out</button>
+            </div>
+          </div>
         )}
       </div>
-    </div>
-  );
-}
-
-function Avatar({ initials, size = 24, ring = false }) {
-  return (
-    <div style={{
-      width: size, height: size, borderRadius: size / 2,
-      background: "#D8D8D6", color: "#555",
-      display: "flex", alignItems: "center", justifyContent: "center",
-      fontSize: size < 30 ? 9 : 11, letterSpacing: 0.4, fontWeight: 500,
-      border: ring ? `2px solid ${ACCENT}` : "1px solid #C8C8C6",
-    }}>{initials}</div>
+    </>
   );
 }
 
 // =============== SHELL ===============
-function Shell({ active, screenName, primaryLabel, onPrimary, go, children, darkContent }) {
+function Shell({ active, go, children, fullBleed }) {
   return (
-    <div style={{ minHeight: "100vh", background: darkContent ? "#141318" : BG }}>
-      <Sidebar active={active} go={go} />
-      <div style={{ marginLeft: 56 }}>
-        <TopBar screenName={screenName} primaryLabel={primaryLabel} onPrimary={onPrimary} />
-        <div style={darkContent
-          ? { padding: 0, background: "#141318", minHeight: "calc(100vh - 48px)" }
-          : { padding: 24 }}>{children}</div>
+    <div style={{
+      minHeight: "100vh",
+      background: HOME_BG,
+      color: DARK,
+    }}>
+      <UniversalTopBar activeScreen={active} go={go} />
+      <div style={fullBleed
+        ? { paddingTop: 0 }
+        : { padding: "84px 24px 32px" }
+      }>
+        {children}
       </div>
     </div>
   );
@@ -1059,7 +1117,7 @@ function ScreenSocial({ go }) {
 
       {/* CONSTRUCTOR FRAME */}
       <div style={{
-        height: "calc(100vh - 48px - 48px - 56px)",
+        height: "calc(100vh - 84px - 48px - 56px - 32px)",
         minHeight: 540,
         display: "grid",
         gridTemplateColumns: "60px 240px 1fr 280px",
@@ -2278,8 +2336,8 @@ function ScreenMemory({ go }) {
   );
 
   return (
-    <Shell active="memory" screenName="Memory" primaryLabel="+ Contribute" go={go}>
-      <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 48px)" }}>
+    <Shell active="memory" go={go} fullBleed>
+      <div style={{ display: "flex", flexDirection: "column", height: "100vh", paddingTop: 84 }}>
 
         {/* INNER TOP BAR — heading + subtitle + TODAY only */}
         <div style={{
@@ -2731,22 +2789,1441 @@ function ScreenMemory({ go }) {
   );
 }
 
+// =============== SCREEN 9 — ROLE SELECTION (first login) ===============
+const ROLES = [
+  {
+    key: "designer",
+    label: "Designer",
+    desc: "Logos, colours, typography, photo library & brand evolution",
+    iconShape: "circle",
+  },
+  {
+    key: "marketer",
+    label: "Marketer",
+    desc: "Campaigns, social posts, templates & current brand assets",
+    iconShape: "triangle",
+  },
+  {
+    key: "hr",
+    label: "HR Manager",
+    desc: "Team photos, onboarding, tone of voice & company guides",
+    iconShape: "square",
+  },
+  {
+    key: "sales",
+    label: "Sales Manager",
+    desc: "Templates, decks, email signature & brand basics",
+    iconShape: "diamond",
+  },
+];
+
+function RoleIconShape({ kind, accent }) {
+  const fg = accent ? "white" : "#888";
+  if (kind === "circle") return <div style={{ width: 24, height: 24, borderRadius: 12, border: `2px solid ${fg}` }} />;
+  if (kind === "triangle") return (
+    <div style={{
+      width: 0, height: 0,
+      borderLeft: "12px solid transparent",
+      borderRight: "12px solid transparent",
+      borderBottom: `20px solid ${fg}`,
+    }} />
+  );
+  if (kind === "square") return <div style={{ width: 22, height: 22, border: `2px solid ${fg}` }} />;
+  if (kind === "diamond") return <div style={{ width: 18, height: 18, border: `2px solid ${fg}`, transform: "rotate(45deg)" }} />;
+  return null;
+}
+
+function ScreenRole({ onChoose, onSkip }) {
+  const [picked, setPicked] = useState(null);
+  return (
+    <div style={{
+      minHeight: "100vh", background: BG,
+      display: "flex", flexDirection: "column",
+      alignItems: "center", justifyContent: "center",
+      padding: "48px 24px",
+    }}>
+      {/* Top wordmark */}
+      <div style={{
+        position: "absolute", top: 24, left: 24,
+        display: "flex", alignItems: "center", gap: 10,
+      }}>
+        <div style={{
+          width: 28, height: 28, borderRadius: 4, background: DARK,
+          color: "white", display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: 14, fontWeight: 700, fontFamily: "Georgia, serif",
+        }}>A</div>
+        <span style={{ fontSize: 13, color: DARK, fontWeight: 600 }}>Archive</span>
+        <span style={{ color: MUTED, margin: "0 4px" }}>·</span>
+        <span style={{ fontSize: 12, color: "#666" }}>Set up your home</span>
+      </div>
+
+      <div style={{ maxWidth: 940, width: "100%" }}>
+        <div style={{
+          fontSize: 11, color: MUTED, letterSpacing: 1.2,
+          textTransform: "uppercase", fontWeight: 600,
+        }}>Step 01 — Welcome</div>
+
+        <div style={{
+          marginTop: 12, fontSize: 48, fontWeight: 700, color: DARK,
+          letterSpacing: -1.2, lineHeight: 1,
+        }}>Set up your home.</div>
+
+        <div style={{ marginTop: 14, fontSize: 14, color: "#555", maxWidth: 540 }}>
+          Pick a role and Archive will preset your home with the spaces you'll
+          actually use. You can drag, drop and rearrange anything later — this
+          is just a starting point.
+        </div>
+
+        <div style={{ marginTop: 32 }}>
+          <SectionLabel>What's your role?</SectionLabel>
+          <div style={{
+            marginTop: 14,
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: 16,
+          }}>
+            {ROLES.map(r => {
+              const on = picked === r.key;
+              return (
+                <button
+                  key={r.key}
+                  onClick={() => setPicked(r.key)}
+                  onDoubleClick={() => { setPicked(r.key); onChoose(r.key); }}
+                  style={{
+                    padding: 20, borderRadius: 8,
+                    border: on ? `2px solid ${DARK}` : `1px solid ${BORDER}`,
+                    background: on ? "white" : "white",
+                    boxShadow: on ? "0 8px 24px rgba(0,0,0,0.06)" : "none",
+                    textAlign: "left", cursor: "pointer", minHeight: 220,
+                    display: "flex", flexDirection: "column",
+                    transition: "border-color 0.15s, box-shadow 0.15s",
+                  }}
+                >
+                  <div style={{
+                    width: 56, height: 56, borderRadius: 8,
+                    background: on ? DARK : "#EAEAE8",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    marginBottom: 18,
+                  }}>
+                    <RoleIconShape kind={r.iconShape} accent={on} />
+                  </div>
+                  <div style={{
+                    fontSize: 11, color: MUTED, letterSpacing: 1, textTransform: "uppercase",
+                    marginBottom: 4, fontWeight: 600,
+                  }}>Role</div>
+                  <div style={{
+                    fontSize: 20, fontWeight: 700, color: DARK,
+                    letterSpacing: -0.4, marginBottom: 10,
+                  }}>{r.label}</div>
+                  <div style={{ fontSize: 12, color: "#666", lineHeight: 1.45, flex: 1 }}>
+                    {r.desc}
+                  </div>
+                  <div style={{
+                    marginTop: 14, fontSize: 11,
+                    color: on ? DARK : ACCENT, fontWeight: 600, letterSpacing: 0.4,
+                  }}>{on ? "✓ Selected" : "Choose →"}</div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div style={{
+          marginTop: 28, display: "flex", alignItems: "center",
+          justifyContent: "space-between", gap: 12,
+        }}>
+          <div style={{ fontSize: 11, color: MUTED, letterSpacing: 0.4 }}>
+            You can change role any time · Customise every tile on your home
+          </div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <OutlineButton onClick={onSkip}>Skip — go straight to home</OutlineButton>
+            <button
+              onClick={() => picked && onChoose(picked)}
+              disabled={!picked}
+              style={{
+                background: picked ? DARK : "#bbb",
+                color: "white",
+                padding: "10px 22px",
+                borderRadius: 18,
+                fontSize: 13, fontWeight: 600,
+                letterSpacing: 0.2,
+                cursor: picked ? "pointer" : "not-allowed",
+                border: "none",
+              }}
+            >Continue → Set up home</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =============== SCREEN 10 — HOME (sidebar-less, cream, radial picker) ===============
+const WIDGET_CATALOGUE = {
+  "logos": {
+    title: "Logos",
+    to: "library",
+    render: () => (
+      <div style={{ display: "flex", gap: 10, flex: 1, alignItems: "stretch" }}>
+        {[
+          { mark: "block" },
+          { mark: "stamp" },
+          { mark: "word" },
+        ].map((m, i) => (
+          <div key={i} style={{
+            flex: i === 0 ? 1.6 : 1,
+            background: i === 0 ? "#FAFAFA" : i === 1 ? "#F2F2F0" : "#EAEAE8",
+            border: `1px solid ${HOME_TILE_BORDER}`, borderRadius: 6,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            {m.mark === "block" && <div style={{ width: 48, height: 22, background: DARK, borderRadius: 1 }} />}
+            {m.mark === "stamp" && <div style={{ width: 28, height: 28, borderRadius: 14, border: `3px solid ${DARK}` }} />}
+            {m.mark === "word" && (
+              <div style={{ fontFamily: HOME_SERIF, fontStyle: "italic", fontSize: 22, fontWeight: 600, color: DARK, letterSpacing: -0.4 }}>
+                Archive
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    ),
+  },
+  "colours": {
+    title: "Palette",
+    to: "library",
+    render: () => (
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 6, flex: 1 }}>
+        {["#1E1C23","#7A6E8A","#B8C8B0","#D8D2C0","#B8C8D8","#E5C8B8","#C5D8B8","#F5F5F5"].map((c, i) => (
+          <div key={i} style={{ background: c, border: `1px solid ${HOME_TILE_BORDER}`, borderRadius: 4 }} />
+        ))}
+      </div>
+    ),
+  },
+  "typography": {
+    title: "Typography",
+    to: "library",
+    render: () => (
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start" }}>
+        <div style={{ fontSize: 96, fontWeight: 700, color: DARK, letterSpacing: -3, lineHeight: 0.9 }}>Aa</div>
+        <div style={{ marginTop: 8, fontSize: 13, color: DARK, fontWeight: 500 }}>Instrument Sans</div>
+      </div>
+    ),
+  },
+  "templates": {
+    title: "Templates",
+    to: "library",
+    render: () => (
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, flex: 1 }}>
+        {[0,1,2,3].map(i => (
+          <div key={i} style={{
+            background: FAINT, border: `1px solid ${HOME_TILE_BORDER}`, borderRadius: 4,
+            padding: 8, display: "flex", flexDirection: "column",
+            justifyContent: i % 2 === 0 ? "flex-start" : "flex-end",
+          }}>
+            {i === 2 && <div style={{ height: "50%", background: PHOTO_GRADIENTS[1], borderRadius: 2, marginBottom: 4 }} />}
+            <div style={{ height: 5, width: "75%", background: DARK, borderRadius: 1 }} />
+            <div style={{ marginTop: 3, height: 3, width: "55%", background: "#999", borderRadius: 1 }} />
+          </div>
+        ))}
+      </div>
+    ),
+  },
+  "team-photos": {
+    title: "Team",
+    to: "files",
+    render: () => (
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "flex-start", paddingLeft: 8 }}>
+        {[0,1,2,3,4,5].map(i => (
+          <div key={i} style={{
+            width: 56, height: 56, borderRadius: 28,
+            background: PHOTO_GRADIENTS[i % PHOTO_GRADIENTS.length],
+            border: "2px solid white",
+            marginLeft: i === 0 ? 0 : -16,
+            boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+            zIndex: 10 - i,
+          }} />
+        ))}
+      </div>
+    ),
+  },
+  "photo-library": {
+    title: "Photo Library",
+    to: "memory",
+    render: () => (
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 4, flex: 1 }}>
+        {[0,1,2,3,4,5].map(i => (
+          <div key={i} style={{
+            background: PHOTO_GRADIENTS[(i*2 + 1) % PHOTO_GRADIENTS.length],
+            border: `1px solid ${HOME_TILE_BORDER}`, borderRadius: 4,
+          }} />
+        ))}
+      </div>
+    ),
+  },
+  "memory-pulse": {
+    title: "Latest in Memory",
+    to: "memory",
+    render: () => (
+      <div style={{
+        flex: 1, borderRadius: 6,
+        background: PHOTO_GRADIENTS[2],
+        position: "relative", overflow: "hidden",
+        boxShadow: "inset 0 -40px 60px rgba(0,0,0,0.18)",
+      }}>
+        <div style={{ position: "absolute", left: 14, bottom: 12, right: 14, color: "white" }}>
+          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: -0.4, lineHeight: 1 }}>Voltage Launch</div>
+          <div style={{ marginTop: 4, fontSize: 10, fontFamily: '"SF Mono", monospace', letterSpacing: 0.6, opacity: 0.85 }}>
+            MAR 2026 · 52 PHOTOS
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  "brand-pulse": {
+    title: "Brand Pulse",
+    to: "library",
+    render: () => (
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        <div style={{ flex: 1, position: "relative", marginBottom: 12 }}>
+          <svg viewBox="0 0 200 60" preserveAspectRatio="none" style={{ width: "100%", height: "100%" }}>
+            <polyline fill="none" stroke={DARK} strokeWidth="1.5"
+              points="0,44 20,40 40,42 60,32 80,34 100,26 120,28 140,18 160,20 180,12 200,8" />
+            <polyline fill="rgba(30,28,35,0.06)" stroke="none"
+              points="0,44 20,40 40,42 60,32 80,34 100,26 120,28 140,18 160,20 180,12 200,8 200,60 0,60" />
+            <circle cx="200" cy="8" r="3" fill={DARK} />
+          </svg>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+          <div>
+            <div style={{ fontSize: 28, fontWeight: 700, color: DARK, letterSpacing: -0.8, lineHeight: 1 }}>847</div>
+            <div style={{ marginTop: 4, fontSize: 10, color: MUTED, letterSpacing: 0.6, textTransform: "uppercase", fontFamily: '"SF Mono", monospace' }}>
+              Assets · V3.2
+            </div>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <div style={{ fontSize: 18, fontWeight: 600, color: DARK, letterSpacing: -0.3, lineHeight: 1 }}>94%</div>
+            <div style={{ fontSize: 10, color: MUTED, letterSpacing: 0.4, marginTop: 4 }}>Coverage</div>
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  "onboarding": {
+    title: "Onboarding",
+    to: "onboarding",
+    render: () => (
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+          <div style={{ fontSize: 48, fontWeight: 700, color: DARK, letterSpacing: -1.6, lineHeight: 1 }}>40</div>
+          <div style={{ fontSize: 20, color: MUTED, fontWeight: 500 }}>%</div>
+        </div>
+        <div style={{ marginTop: 12, height: 6, background: FAINT, borderRadius: 3, overflow: "hidden" }}>
+          <div style={{ width: "40%", height: "100%", background: ACCENT }} />
+        </div>
+        <div style={{ marginTop: 14, fontSize: 11, color: MUTED, letterSpacing: 0.6, textTransform: "uppercase", fontFamily: '"SF Mono", monospace' }}>
+          Up next · 03 Logo & Visual Identity
+        </div>
+      </div>
+    ),
+  },
+  "guides": {
+    title: "Guides",
+    to: "onboarding",
+    render: () => (
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1, justifyContent: "center" }}>
+        {[
+          "How to use the logo in a deck",
+          "LinkedIn photo guide",
+          "Brand do's and don'ts",
+          "Tone of voice essentials",
+        ].map((g, i) => (
+          <div key={g} style={{ display: "flex", gap: 10, alignItems: "center" }}>
+            <div style={{
+              width: 22, height: 22, borderRadius: 4,
+              background: ["#EAEAE8","#D8D2C0","#B8C8D8","#E5C8B8"][i],
+              border: `1px solid ${HOME_TILE_BORDER}`, flexShrink: 0,
+            }} />
+            <span style={{ fontSize: 12, color: "#444" }}>{g}</span>
+          </div>
+        ))}
+      </div>
+    ),
+  },
+  "brand-checker": {
+    title: "Brand Checker",
+    to: "creator",
+    render: () => (
+      <div style={{
+        flex: 1, border: `1px dashed ${HOME_TILE_BORDER}`, borderRadius: 6,
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        gap: 10, padding: 14, color: MUTED,
+      }}>
+        <div style={{
+          width: 40, height: 40, border: `1.5px solid ${MUTED}`, borderRadius: 20,
+          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, color: "#888",
+        }}>↑</div>
+        <div style={{ fontSize: 12, color: "#555", textAlign: "center" }}>Drop a file to check</div>
+        <div style={{ fontSize: 9, color: MUTED, letterSpacing: 0.6, fontFamily: '"SF Mono", monospace' }}>PDF · PNG · PPTX · FIG</div>
+      </div>
+    ),
+  },
+  "campaigns": {
+    title: "Campaigns",
+    to: "files",
+    render: () => (
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1, justifyContent: "center" }}>
+        {[
+          ["Voltage Launch", "Live", PHOTO_GRADIENTS[2]],
+          ["Spring Hire Drive", "Live", PHOTO_GRADIENTS[1]],
+          ["Annual Report", "Draft", PHOTO_GRADIENTS[3]],
+        ].map(([n, s, g]) => (
+          <div key={n} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 36, height: 28, borderRadius: 4, background: g, border: `1px solid ${HOME_TILE_BORDER}`, flexShrink: 0 }} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13, color: DARK, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{n}</div>
+              <div style={{ fontSize: 10, color: s === "Live" ? "#3a6a3a" : "#888", letterSpacing: 0.6, textTransform: "uppercase", fontFamily: '"SF Mono", monospace' }}>● {s}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    ),
+  },
+  "social-posts": {
+    title: "Social Posts",
+    to: "social",
+    render: () => (
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6, flex: 1 }}>
+        {[
+          { gIdx: 0 }, { gIdx: 2 }, { gIdx: 4 },
+          { gIdx: 1, colSpan: 2 }, { gIdx: 5 },
+        ].map((s, i) => (
+          <div key={i} style={{
+            gridColumn: s.colSpan ? `span ${s.colSpan}` : undefined,
+            background: PHOTO_GRADIENTS[s.gIdx % PHOTO_GRADIENTS.length],
+            border: `1px solid ${HOME_TILE_BORDER}`, borderRadius: 4,
+          }} />
+        ))}
+      </div>
+    ),
+  },
+  "email-sig": {
+    title: "Email Signature",
+    to: "signature",
+    render: () => (
+      <div style={{
+        flex: 1, padding: 16, background: FAINT, borderRadius: 6,
+        border: `1px solid ${HOME_TILE_BORDER}`,
+        display: "flex", flexDirection: "column", justifyContent: "center", gap: 4,
+      }}>
+        <div style={{ fontSize: 15, fontWeight: 700, color: DARK, letterSpacing: -0.2 }}>Eli Marchetti</div>
+        <div style={{ fontSize: 11, color: "#666" }}>Brand Lead · Marketing</div>
+        <div style={{ marginTop: 8, height: 1, width: "70%", background: BORDER }} />
+        <div style={{ marginTop: 6, fontSize: 10, color: "#888" }}>+1 (415) 555 · 0148</div>
+        <div style={{ fontSize: 10, color: "#888" }}>linkedin.com/in/elim</div>
+      </div>
+    ),
+  },
+  "decks": {
+    title: "Recent Decks",
+    to: "library",
+    render: () => (
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1, justifyContent: "center" }}>
+        {[
+          ["Q2-pitch-final", "PPTX", "2d"],
+          ["customer-success", "PDF", "1w"],
+          ["board-update-jun", "PPTX", "2w"],
+        ].map(([n, t, ts]) => (
+          <div key={n} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{
+              width: 22, height: 28, borderRadius: 2, background: "white",
+              border: `1px solid ${HOME_TILE_BORDER}`, flexShrink: 0,
+              display: "flex", alignItems: "flex-end", justifyContent: "center", padding: 2,
+            }}>
+              <span style={{ fontSize: 7, color: "#888", fontWeight: 600, letterSpacing: 0.4 }}>{t}</span>
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 12, color: DARK, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{n}</div>
+              <div style={{ fontSize: 10, color: MUTED, letterSpacing: 0.4 }}>{ts} ago</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    ),
+  },
+  "brand-voice": {
+    title: "Tone of Voice",
+    to: "onboarding",
+    render: () => (
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1, justifyContent: "center" }}>
+        {[["✓","Direct, no jargon"],["✓","Warm, not corporate"],["✓","Confident, never loud"],["✗","Never 'leverage'"]].map(([m, t]) => (
+          <div key={t} style={{ display: "flex", gap: 10, alignItems: "center" }}>
+            <div style={{
+              width: 22, height: 22, borderRadius: 11,
+              background: m === "✓" ? "#E1E8DC" : "#F4DDDD",
+              color: m === "✓" ? "#3a6a3a" : "#7a5050",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 11, fontWeight: 700, flexShrink: 0,
+            }}>{m}</div>
+            <span style={{ fontSize: 13, color: "#444" }}>{t}</span>
+          </div>
+        ))}
+      </div>
+    ),
+  },
+  "recent-files": {
+    title: "Recent Files",
+    to: "files",
+    render: () => (
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1, justifyContent: "center" }}>
+        {[
+          ["team-headshot-eli", "JPG", PHOTO_GRADIENTS[0]],
+          ["conference-2026", "ZIP", PHOTO_GRADIENTS[2]],
+          ["product-shoot", "PNG", PHOTO_GRADIENTS[4]],
+          ["brand-deck-Q2", "PDF", "#EAEAE8"],
+        ].map(([n, t, g]) => (
+          <div key={n} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 24, height: 24, borderRadius: 4, background: g, border: `1px solid ${HOME_TILE_BORDER}`, flexShrink: 0 }} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 12, color: DARK, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{n}.{t.toLowerCase()}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    ),
+  },
+};
+
+const ROLE_PRESETS = {
+  designer: ["logos","colours","typography","templates","photo-library","memory-pulse"],
+  marketer: ["campaigns","social-posts","templates","brand-pulse","photo-library","brand-checker"],
+  hr:       ["team-photos","onboarding","guides","brand-voice","recent-files","memory-pulse"],
+  sales:    ["templates","email-sig","brand-pulse","guides","decks","recent-files"],
+};
+
+const AI_SUGGESTIONS = [
+  "Show me the current V3.2 logo",
+  "What fonts do we use?",
+  "Find team photos from Conference 2024",
+  "Brand do's and don'ts",
+  "Where are the templates for LinkedIn?",
+  "What are our brand colours?",
+];
+
+// ===== Widget tile (handles click-vs-hold discrimination) =====
+function HomeWidgetTile({ widgetKey, widget, go, isDragged, isAnyDragging, onDragStart }) {
+  const [hover, setHover] = useState(false);
+  const stateRef = useRef({ phase: "idle", startX: 0, startY: 0, timer: null });
+
+  function onPointerDown(e) {
+    if (e.button !== 0) return;
+    if (isAnyDragging) return;
+    e.preventDefault();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const startX = e.clientX, startY = e.clientY;
+    stateRef.current = { phase: "pressed", startX, startY, timer: null };
+
+    stateRef.current.timer = setTimeout(() => {
+      if (stateRef.current.phase === "pressed") {
+        stateRef.current.phase = "dragging";
+        onDragStart(widgetKey, rect, startX, startY);
+      }
+    }, 160);
+
+    function onMove(ev) {
+      const dx = ev.clientX - stateRef.current.startX;
+      const dy = ev.clientY - stateRef.current.startY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (stateRef.current.phase === "pressed" && dist > 5) {
+        clearTimeout(stateRef.current.timer);
+        stateRef.current.phase = "dragging";
+        onDragStart(widgetKey, rect, stateRef.current.startX, stateRef.current.startY);
+      }
+    }
+
+    function onUp(ev) {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      if (stateRef.current.timer) clearTimeout(stateRef.current.timer);
+      if (stateRef.current.phase === "pressed") {
+        if (widget.to) go(widget.to);
+      }
+      stateRef.current.phase = "idle";
+    }
+
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+  }
+
+  return (
+    <div
+      data-widget-key={widgetKey}
+      onPointerDown={onPointerDown}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        position: "relative",
+        background: isDragged ? "rgba(255,255,255,0.4)" : "white",
+        border: isDragged ? `1px dashed rgba(0,0,0,0.15)` : `1px solid ${HOME_TILE_BORDER}`,
+        borderRadius: 10,
+        padding: 20,
+        height: 260,
+        display: "flex", flexDirection: "column",
+        cursor: "pointer",
+        userSelect: "none",
+        opacity: isDragged ? 0.35 : 1,
+        transform: !isDragged && hover ? "translateY(-1px)" : "translateY(0)",
+        boxShadow: isDragged
+          ? "none"
+          : hover
+            ? "0 6px 18px rgba(0,0,0,0.06)"
+            : "0 1px 2px rgba(0,0,0,0.02)",
+        transition: "transform 0.18s ease, box-shadow 0.18s ease, opacity 0.15s, background 0.15s, border-color 0.15s",
+        touchAction: "none",
+      }}
+    >
+      <div style={{
+        fontSize: 14, fontWeight: 600, color: DARK,
+        letterSpacing: -0.1, marginBottom: 14,
+      }}>{widget.title}</div>
+      <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
+        {widget.render(go)}
+      </div>
+    </div>
+  );
+}
+
+// ===== Radial picker =====
+function ChipPreview({ widgetKey }) {
+  if (widgetKey === "logos") return (
+    <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+      <div style={{ width: 26, height: 14, background: DARK, borderRadius: 1 }} />
+      <div style={{ width: 18, height: 18, borderRadius: 9, border: `2px solid ${DARK}` }} />
+    </div>
+  );
+  if (widgetKey === "colours") return (
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 3, width: 50, height: 50 }}>
+      {["#1E1C23","#7A6E8A","#B8C8B0","#D8D2C0"].map((c, i) => (
+        <div key={i} style={{ background: c, borderRadius: 2 }} />
+      ))}
+    </div>
+  );
+  if (widgetKey === "typography") return (
+    <div style={{ fontSize: 44, fontWeight: 700, color: DARK, letterSpacing: -1.5, lineHeight: 1 }}>Aa</div>
+  );
+  if (widgetKey === "templates") return (
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 3, width: 50, height: 50 }}>
+      {[0,1,2,3].map(i => (
+        <div key={i} style={{ background: FAINT, border: `1px solid ${HOME_TILE_BORDER}`, borderRadius: 2, padding: 3, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+          <div style={{ height: 2, background: DARK, width: "70%", borderRadius: 1 }} />
+        </div>
+      ))}
+    </div>
+  );
+  if (widgetKey === "team-photos") return (
+    <div style={{ display: "flex" }}>
+      {[0,1,2,3].map(i => (
+        <div key={i} style={{
+          width: 24, height: 24, borderRadius: 12,
+          background: PHOTO_GRADIENTS[i % PHOTO_GRADIENTS.length],
+          border: "2px solid white",
+          marginLeft: i === 0 ? 0 : -7,
+        }} />
+      ))}
+    </div>
+  );
+  if (widgetKey === "photo-library") return (
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 2, width: 50, height: 36 }}>
+      {[0,1,2,3,4,5].map(i => (
+        <div key={i} style={{ background: PHOTO_GRADIENTS[(i*2+1) % PHOTO_GRADIENTS.length], borderRadius: 2 }} />
+      ))}
+    </div>
+  );
+  if (widgetKey === "memory-pulse") return (
+    <div style={{
+      width: 62, height: 48, borderRadius: 4,
+      background: PHOTO_GRADIENTS[2],
+      boxShadow: "inset 0 -10px 14px rgba(0,0,0,0.2)",
+    }} />
+  );
+  if (widgetKey === "brand-pulse") return (
+    <svg viewBox="0 0 80 40" style={{ width: 72, height: 36 }}>
+      <polyline fill="rgba(30,28,35,0.06)" stroke="none"
+        points="0,28 16,24 32,18 48,16 64,8 80,4 80,40 0,40" />
+      <polyline fill="none" stroke={DARK} strokeWidth="1.5"
+        points="0,28 16,24 32,18 48,16 64,8 80,4" />
+      <circle cx="80" cy="4" r="2.5" fill={DARK} />
+    </svg>
+  );
+  if (widgetKey === "onboarding") return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+      <div style={{ fontSize: 28, fontWeight: 700, color: DARK, letterSpacing: -1, lineHeight: 1 }}>40%</div>
+      <div style={{ width: 40, height: 3, background: FAINT, borderRadius: 1.5 }}>
+        <div style={{ width: "40%", height: "100%", background: ACCENT, borderRadius: 1.5 }} />
+      </div>
+    </div>
+  );
+  if (widgetKey === "guides") return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 4, width: 50 }}>
+      {[0,1,2].map(i => (
+        <div key={i} style={{ display: "flex", gap: 4, alignItems: "center" }}>
+          <div style={{
+            width: 9, height: 9, borderRadius: 2,
+            background: ["#EAEAE8","#D8D2C0","#B8C8D8"][i],
+            border: `1px solid ${HOME_TILE_BORDER}`,
+          }} />
+          <div style={{ flex: 1, height: 2, background: "#bbb", borderRadius: 1 }} />
+        </div>
+      ))}
+    </div>
+  );
+  if (widgetKey === "brand-checker") return (
+    <div style={{
+      width: 36, height: 36, borderRadius: 18,
+      border: `1.5px dashed ${MUTED}`,
+      display: "flex", alignItems: "center", justifyContent: "center",
+      fontSize: 14, color: MUTED,
+    }}>↑</div>
+  );
+  if (widgetKey === "campaigns") return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 4, width: 60 }}>
+      {[PHOTO_GRADIENTS[2], PHOTO_GRADIENTS[1], PHOTO_GRADIENTS[3]].map((g, i) => (
+        <div key={i} style={{ display: "flex", gap: 4, alignItems: "center" }}>
+          <div style={{ width: 16, height: 10, background: g, borderRadius: 1, border: `1px solid ${HOME_TILE_BORDER}` }} />
+          <div style={{ flex: 1, height: 2, background: "#bbb", borderRadius: 1 }} />
+        </div>
+      ))}
+    </div>
+  );
+  if (widgetKey === "social-posts") return (
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 3, width: 50, height: 50 }}>
+      {[0,1,2,3].map(i => (
+        <div key={i} style={{ background: PHOTO_GRADIENTS[(i*3) % PHOTO_GRADIENTS.length], borderRadius: 2 }} />
+      ))}
+    </div>
+  );
+  if (widgetKey === "email-sig") return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 2, padding: 6, background: FAINT, borderRadius: 4 }}>
+      <div style={{ height: 4, width: 38, background: DARK, borderRadius: 1 }} />
+      <div style={{ height: 2, width: 28, background: "#999", borderRadius: 1 }} />
+      <div style={{ height: 1, width: 42, background: BORDER, marginTop: 2 }} />
+      <div style={{ height: 2, width: 34, background: "#bbb", borderRadius: 1, marginTop: 2 }} />
+    </div>
+  );
+  if (widgetKey === "decks") return (
+    <div style={{ display: "flex", gap: 4 }}>
+      {["PDF","PPT","DOC"].map((t, i) => (
+        <div key={i} style={{
+          width: 15, height: 19, borderRadius: 1,
+          background: "white", border: `1px solid ${HOME_TILE_BORDER}`,
+          display: "flex", alignItems: "flex-end", justifyContent: "center", padding: 1,
+        }}>
+          <span style={{ fontSize: 5, color: "#888", fontWeight: 600 }}>{t}</span>
+        </div>
+      ))}
+    </div>
+  );
+  if (widgetKey === "brand-voice") return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      {["✓","✓","✗"].map((m, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+          <div style={{
+            width: 14, height: 14, borderRadius: 7,
+            background: m === "✓" ? "#E1E8DC" : "#F4DDDD",
+            color: m === "✓" ? "#3a6a3a" : "#7a5050",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 8, fontWeight: 700,
+          }}>{m}</div>
+          <div style={{ height: 2, width: 32, background: "#bbb", borderRadius: 1 }} />
+        </div>
+      ))}
+    </div>
+  );
+  if (widgetKey === "recent-files") return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 3, width: 56 }}>
+      {[0,1,2,3].map(i => (
+        <div key={i} style={{ display: "flex", gap: 4, alignItems: "center" }}>
+          <div style={{
+            width: 10, height: 10, borderRadius: 2,
+            background: i < 3 ? PHOTO_GRADIENTS[(i*2) % PHOTO_GRADIENTS.length] : "#EAEAE8",
+          }} />
+          <div style={{ flex: 1, height: 2, background: "#bbb", borderRadius: 1 }} />
+        </div>
+      ))}
+    </div>
+  );
+  const w = WIDGET_CATALOGUE[widgetKey];
+  return <span style={{ fontFamily: HOME_SERIF, fontStyle: "italic", fontSize: 28, color: DARK }}>{w ? w.title.charAt(0) : "?"}</span>;
+}
+
+function RadialPicker({ availableWidgets, anchorRect, onAdd, onClose }) {
+  const [mounted, setMounted] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const [hoveredKey, setHoveredKey] = useState(null);
+  const [selectingKey, setSelectingKey] = useState(null);
+  const [vp, setVp] = useState({
+    w: typeof window !== "undefined" ? window.innerWidth : 1280,
+    h: typeof window !== "undefined" ? window.innerHeight : 800,
+  });
+
+  useEffect(() => {
+    function onResize() { setVp({ w: window.innerWidth, h: window.innerHeight }); }
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 20);
+    return () => clearTimeout(t);
+  }, []);
+
+  function handleClose() {
+    if (closing || selectingKey) return;
+    setClosing(true);
+    setTimeout(() => onClose(), 420);
+  }
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === "Escape") handleClose();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
+
+  function handleAdd(key) {
+    if (selectingKey || closing) return;
+    setSelectingKey(key);
+    setTimeout(() => onAdd(key), 380);
+  }
+
+  const center = { x: vp.w / 2, y: vp.h / 2 };
+  const n = availableWidgets.length;
+  const CHIP_SIZE = 132;
+
+  // Adaptive arc:
+  //  - 8+ widgets: full circle (360°)
+  //  - 6–7: 300° dramatic arc
+  //  - 3–5: 220° wide fan
+  //  - 1–2: 0° (just stack at top)
+  const arcDeg =
+    n >= 8 ? 360 :
+    n >= 6 ? 300 :
+    n >= 3 ? 220 :
+    0;
+  const arcRad = (arcDeg / 360) * 2 * Math.PI;
+  const stepRad = arcDeg === 360
+    ? (2 * Math.PI) / Math.max(n, 1)
+    : (n > 1 ? arcRad / (n - 1) : 0);
+
+  // Min radius so chips don't overlap: chord between adjacent ≥ chipSize × 1.18
+  const chordTarget = CHIP_SIZE * 1.18;
+  const minRadiusByOverlap = stepRad > 0
+    ? chordTarget / (2 * Math.sin(stepRad / 2))
+    : 0;
+
+  // Max radius that fits inside viewport with 40px margin on every side
+  const maxRadiusFit = Math.min(vp.w, vp.h) / 2 - CHIP_SIZE / 2 - 40;
+
+  // Pick radius: prefer min-no-overlap if it fits; otherwise clamp.
+  // Floor at 200 so picker feels generous even for very few widgets.
+  const radius = Math.max(200, Math.min(Math.max(minRadiusByOverlap, 220), maxRadiusFit));
+
+  function getAngle(i) {
+    if (arcDeg === 360) {
+      return -Math.PI / 2 + (i / Math.max(n, 1)) * 2 * Math.PI;
+    }
+    if (n <= 1) return -Math.PI / 2;
+    const start = -Math.PI / 2 - arcRad / 2;
+    return start + i * stepRad;
+  }
+
+  function getPos(i) {
+    const a = getAngle(i);
+    return { x: Math.cos(a) * radius, y: Math.sin(a) * radius };
+  }
+
+  const isOpen = mounted && !closing;
+  const hoveredWidget = hoveredKey ? WIDGET_CATALOGUE[hoveredKey] : null;
+  const anchorCenter = anchorRect
+    ? { x: anchorRect.left + anchorRect.width / 2, y: anchorRect.top + anchorRect.height / 2 }
+    : null;
+
+  return (
+    <div
+      onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
+      style={{
+        position: "fixed", inset: 0, zIndex: 250,
+        background: isOpen ? "rgba(40,32,20,0.32)" : "rgba(40,32,20,0)",
+        backdropFilter: isOpen ? "blur(10px)" : "blur(0px)",
+        WebkitBackdropFilter: isOpen ? "blur(10px)" : "blur(0px)",
+        transition: "background 0.42s ease, backdrop-filter 0.42s ease",
+        cursor: "default",
+      }}
+    >
+      {/* Connecting dashed line: anchor → center */}
+      {anchorCenter && (
+        <svg
+          width={vp.w} height={vp.h}
+          style={{
+            position: "fixed", inset: 0,
+            pointerEvents: "none",
+            opacity: isOpen ? 0.55 : 0,
+            transition: "opacity 0.55s ease 0.1s",
+          }}
+        >
+          <line
+            x1={anchorCenter.x} y1={anchorCenter.y}
+            x2={center.x} y2={center.y}
+            stroke="rgba(255,255,255,0.85)"
+            strokeWidth="1.5"
+            strokeDasharray="4 6"
+            style={{
+              strokeDashoffset: isOpen ? 0 : 200,
+              transition: "stroke-dashoffset 0.7s ease 0.05s",
+            }}
+          />
+          <circle cx={anchorCenter.x} cy={anchorCenter.y} r="4" fill="rgba(255,255,255,0.75)" />
+          <circle cx={center.x} cy={center.y} r="3" fill="rgba(255,255,255,0.6)" />
+        </svg>
+      )}
+
+      {/* Picker hub */}
+      <div style={{
+        position: "fixed",
+        left: center.x, top: center.y,
+        width: 0, height: 0,
+        pointerEvents: "none",
+      }}>
+        {/* Center label (italic serif) — appears on hover */}
+        <div style={{
+          position: "absolute", top: 0, left: 0,
+          transform: "translate(-50%, -50%)",
+          fontFamily: HOME_SERIF, fontStyle: "italic",
+          fontSize: 72, fontWeight: 500, color: DARK,
+          letterSpacing: -2, lineHeight: 1,
+          whiteSpace: "nowrap",
+          opacity: hoveredWidget ? 0.95 : 0,
+          transition: "opacity 0.2s ease",
+          pointerEvents: "none",
+        }}>
+          {hoveredWidget ? hoveredWidget.title : ""}
+        </div>
+
+        {/* Faint + glyph when nothing is hovered */}
+        <div style={{
+          position: "absolute", top: 0, left: 0,
+          transform: "translate(-50%, -50%)",
+          width: 64, height: 64, borderRadius: 32,
+          border: "1.5px dashed rgba(0,0,0,0.22)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: 28, color: "#444", fontWeight: 300,
+          background: "rgba(255,255,255,0.45)",
+          opacity: hoveredWidget ? 0 : (isOpen ? 1 : 0),
+          transition: "opacity 0.2s ease",
+          pointerEvents: "none",
+        }}>+</div>
+
+        {/* Chips */}
+        {availableWidgets.map((key, i) => {
+          const pos = getPos(i);
+          const hovered = hoveredKey === key;
+          const selected = selectingKey === key;
+          const dimmed = hoveredKey && !hovered && !selected;
+          const otherSelected = selectingKey && !selected;
+
+          // Position transform — outer
+          let outerTransform;
+          if (selected && anchorCenter) {
+            // Fly back toward + button + shrink
+            const dx = anchorCenter.x - center.x;
+            const dy = anchorCenter.y - center.y;
+            outerTransform = `translate(${dx}px, ${dy}px) scale(0.18)`;
+          } else if (closing || !mounted) {
+            outerTransform = `translate(0px, 0px) scale(0)`;
+          } else {
+            outerTransform = `translate(${pos.x}px, ${pos.y}px) scale(1)`;
+          }
+
+          const transitionStyle =
+            selected
+              ? `transform 0.4s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.35s ease 0.1s`
+              : closing
+                ? `transform 0.42s cubic-bezier(0.36, 0, 0.66, -0.56) ${(n - 1 - i) * 22}ms, opacity 0.35s ease ${(n - 1 - i) * 22}ms`
+                : `transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 42}ms, opacity 0.4s ease ${i * 42}ms`;
+
+          const opacity = selected
+            ? 0
+            : (otherSelected || closing)
+              ? 0
+              : (mounted ? (dimmed ? 0.35 : 1) : 0);
+
+          const idleDelay = -((i * 0.41) % 4);
+
+          return (
+            <div
+              key={key}
+              style={{
+                position: "absolute", top: 0, left: 0,
+                width: CHIP_SIZE, height: CHIP_SIZE,
+                marginLeft: -CHIP_SIZE / 2, marginTop: -CHIP_SIZE / 2,
+                transform: outerTransform,
+                opacity,
+                transition: transitionStyle,
+                pointerEvents: selected || otherSelected || closing ? "none" : "auto",
+              }}
+            >
+              {/* Idle floating wrapper */}
+              <div style={{
+                width: "100%", height: "100%",
+                animation: (isOpen && !selected && !hovered) ? `chipIdleFloat 4.2s ease-in-out infinite` : "none",
+                animationDelay: `${idleDelay}s`,
+              }}>
+                {/* Hover scale wrapper */}
+                <div
+                  onClick={() => handleAdd(key)}
+                  onMouseEnter={() => setHoveredKey(key)}
+                  onMouseLeave={() => setHoveredKey(null)}
+                  style={{
+                    width: "100%", height: "100%",
+                    borderRadius: "50%",
+                    background: "white",
+                    border: hovered ? `1px solid rgba(0,0,0,0.18)` : `1px solid ${HOME_TILE_BORDER}`,
+                    boxShadow: hovered
+                      ? "0 18px 40px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.08)"
+                      : "0 6px 18px rgba(0,0,0,0.10)",
+                    cursor: "pointer",
+                    display: "flex", flexDirection: "column",
+                    alignItems: "center", justifyContent: "center",
+                    padding: 16, boxSizing: "border-box", overflow: "hidden",
+                    transform: hovered ? "scale(1.12)" : "scale(1)",
+                    transition: "transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease",
+                  }}
+                >
+                  <div style={{
+                    flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
+                    width: "100%",
+                  }}>
+                    <ChipPreview widgetKey={key} />
+                  </div>
+                  <div style={{
+                    marginTop: 8, fontSize: 10,
+                    color: "#555", letterSpacing: 0.4,
+                    fontWeight: 500, textAlign: "center",
+                    textTransform: "uppercase",
+                    opacity: hovered ? 0 : 1,
+                    transition: "opacity 0.18s ease",
+                  }}>{WIDGET_CATALOGUE[key]?.title}</div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Bottom hint */}
+      <div style={{
+        position: "fixed", bottom: 32, left: 0, right: 0,
+        textAlign: "center", fontSize: 10, color: "rgba(255,255,255,0.7)",
+        letterSpacing: 1, fontFamily: '"SF Mono", "JetBrains Mono", monospace',
+        pointerEvents: "none",
+        opacity: isOpen ? 1 : 0,
+        transition: "opacity 0.4s ease 0.2s",
+      }}>CLICK A WIDGET TO ADD · ESC OR CLICK BACKDROP TO CLOSE</div>
+    </div>
+  );
+}
+
+function ScreenHome({ role, go }) {
+  const startingWidgets = (role && ROLE_PRESETS[role]) ? ROLE_PRESETS[role] : ROLE_PRESETS.designer;
+
+  const [widgets, setWidgetsState] = useState(() => {
+    try {
+      const saved = localStorage.getItem("archive-home-widgets");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          return parsed.filter(k => WIDGET_CATALOGUE[k]);
+        }
+      }
+    } catch (_) {}
+    return startingWidgets;
+  });
+
+  function persist(next) {
+    try { localStorage.setItem("archive-home-widgets", JSON.stringify(next)); } catch (_) {}
+  }
+  function setWidgets(updater) {
+    setWidgetsState(prev => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      persist(next);
+      return next;
+    });
+  }
+
+  // ---- Drag state ----
+  const [draggedKey, setDraggedKey] = useState(null);
+  const [dragInfo, setDragInfo] = useState(null);
+  const [mousePos, setMousePos] = useState(null);
+  const [outsideGrid, setOutsideGrid] = useState(false);
+  const gridRef = useRef(null);
+  const ghostSlotRef = useRef(null);
+
+  function onWidgetDragStart(key, rect, mouseX, mouseY) {
+    setDraggedKey(key);
+    setDragInfo({
+      width: rect.width,
+      height: rect.height,
+      offsetX: mouseX - rect.left,
+      offsetY: mouseY - rect.top,
+    });
+    setMousePos({ x: mouseX, y: mouseY });
+    setOutsideGrid(false);
+  }
+
+  useEffect(() => {
+    if (!draggedKey) return;
+
+    function pointerInsideGrid(px, py) {
+      const r = gridRef.current && gridRef.current.getBoundingClientRect();
+      if (!r) return false;
+      return px >= r.left && px <= r.right && py >= r.top && py <= r.bottom;
+    }
+
+    function onMove(ev) {
+      setMousePos({ x: ev.clientX, y: ev.clientY });
+      const inside = pointerInsideGrid(ev.clientX, ev.clientY);
+      setOutsideGrid(!inside);
+
+      if (inside) {
+        const els = document.elementsFromPoint(ev.clientX, ev.clientY);
+        for (const el of els) {
+          const tk = el.dataset && el.dataset.widgetKey;
+          if (tk && tk !== draggedKey) {
+            setWidgetsState(prev => {
+              const fromIdx = prev.indexOf(draggedKey);
+              const toIdx = prev.indexOf(tk);
+              if (fromIdx < 0 || toIdx < 0 || fromIdx === toIdx) return prev;
+              const next = [...prev];
+              [next[fromIdx], next[toIdx]] = [next[toIdx], next[fromIdx]];
+              persist(next);
+              return next;
+            });
+            break;
+          }
+        }
+      }
+    }
+
+    function onUp(ev) {
+      const inside = pointerInsideGrid(ev.clientX, ev.clientY);
+      if (!inside) {
+        setWidgets(arr => arr.filter(w => w !== draggedKey));
+      }
+      setDraggedKey(null);
+      setDragInfo(null);
+      setMousePos(null);
+      setOutsideGrid(false);
+    }
+
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+  }, [draggedKey]);
+
+  // ---- Picker state ----
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerAnchor, setPickerAnchor] = useState(null);
+
+  function openPicker() {
+    if (!ghostSlotRef.current) return;
+    const r = ghostSlotRef.current.getBoundingClientRect();
+    setPickerAnchor({
+      left: r.left, top: r.top, width: r.width, height: r.height,
+    });
+    setPickerOpen(true);
+  }
+  function addWidget(key) {
+    setWidgets(arr => arr.includes(key) ? arr : [...arr, key]);
+    setPickerOpen(false);
+  }
+
+  const availableToAdd = Object.keys(WIDGET_CATALOGUE).filter(k => !widgets.includes(k));
+
+  // ---- Search state ----
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const filteredSuggestions = searchQuery.trim()
+    ? AI_SUGGESTIONS.filter(s => s.toLowerCase().includes(searchQuery.toLowerCase()))
+    : AI_SUGGESTIONS;
+
+  const draggedWidget = draggedKey ? WIDGET_CATALOGUE[draggedKey] : null;
+
+  return (
+    <Shell active="home" go={go} fullBleed>
+      <div style={{
+        padding: "92px 48px 80px",
+        maxWidth: 1280, margin: "0 auto",
+      }}>
+        {/* Headline */}
+        <h1 style={{
+          fontFamily: HOME_SERIF, fontStyle: "italic", fontWeight: 500,
+          fontSize: 68, color: DARK,
+          letterSpacing: -2, lineHeight: 1,
+          margin: 0,
+        }}>Welcome back, Eli.</h1>
+
+        {/* AI search */}
+        <div style={{ marginTop: 32, maxWidth: 760 }}>
+          <div style={{
+            background: "white",
+            border: searchFocused ? "1px solid rgba(0,0,0,0.18)" : `1px solid ${HOME_TILE_BORDER}`,
+            borderRadius: 14,
+            padding: "12px 16px",
+            boxShadow: searchFocused ? "0 8px 24px rgba(0,0,0,0.06)" : "0 1px 2px rgba(0,0,0,0.02)",
+            transition: "border-color 0.15s, box-shadow 0.18s",
+            position: "relative",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{
+                width: 30, height: 30, borderRadius: 8,
+                background: DARK, color: "white",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 13, fontWeight: 700, flexShrink: 0,
+              }}>✦</div>
+              <input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
+                placeholder="Ask Archive — find any brand space, file or rule…"
+                style={{
+                  flex: 1, border: "none", outline: "none",
+                  fontSize: 15, color: DARK, background: "transparent",
+                  padding: "6px 0",
+                }}
+              />
+              <span style={{
+                fontSize: 10, color: MUTED, letterSpacing: 0.6,
+                fontFamily: '"SF Mono", monospace',
+                padding: "4px 8px", border: `1px solid ${HOME_TILE_BORDER}`, borderRadius: 4,
+              }}>⌘ K</span>
+            </div>
+
+            {searchFocused && (
+              <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px solid ${HOME_TILE_BORDER}` }}>
+                <div style={{
+                  fontSize: 10, color: MUTED, letterSpacing: 0.8,
+                  textTransform: "uppercase", fontWeight: 600, marginBottom: 8,
+                }}>
+                  {searchQuery.trim() ? `${filteredSuggestions.length} suggestions` : "Try asking"}
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  {filteredSuggestions.slice(0, 6).map((s, i) => (
+                    <div key={i} onClick={() => setSearchQuery(s)} style={{
+                      padding: "8px 12px", borderRadius: 6, cursor: "pointer",
+                      background: i === 0 ? "rgba(0,0,0,0.04)" : "transparent",
+                      fontSize: 13, color: "#444",
+                      display: "flex", alignItems: "center", gap: 10,
+                    }}>
+                      <span style={{ color: MUTED, fontSize: 11 }}>↗</span>{s}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {!searchFocused && (
+            <div style={{ marginTop: 12, display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+              <span style={{
+                fontSize: 10, color: MUTED, letterSpacing: 0.8,
+                textTransform: "uppercase", fontWeight: 600, marginRight: 4,
+              }}>Try</span>
+              {AI_SUGGESTIONS.slice(0, 4).map((s, i) => (
+                <span
+                  key={i}
+                  onClick={() => { setSearchQuery(s); setSearchFocused(true); }}
+                  style={{
+                    padding: "6px 12px", borderRadius: 14,
+                    border: `1px solid ${HOME_TILE_BORDER}`,
+                    background: "rgba(255,255,255,0.5)",
+                    fontSize: 11, color: "#555", cursor: "pointer",
+                    transition: "background 0.15s",
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = "white"}
+                  onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.5)"}
+                >{s}</span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Widget grid */}
+        <div
+          ref={gridRef}
+          style={{
+            marginTop: 40,
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: 18,
+          }}
+        >
+          {widgets.map(key => {
+            const w = WIDGET_CATALOGUE[key];
+            if (!w) return null;
+            return (
+              <HomeWidgetTile
+                key={key}
+                widgetKey={key}
+                widget={w}
+                go={go}
+                isDragged={draggedKey === key}
+                isAnyDragging={!!draggedKey}
+                onDragStart={onWidgetDragStart}
+              />
+            );
+          })}
+
+          {/* Ghost slot */}
+          <button
+            ref={ghostSlotRef}
+            onClick={openPicker}
+            style={{
+              height: 260, borderRadius: 10,
+              border: `1px dashed rgba(0,0,0,0.18)`,
+              background: "transparent",
+              color: "#7A6E5A", fontSize: 12, cursor: "pointer",
+              display: "flex", flexDirection: "column",
+              alignItems: "center", justifyContent: "center", gap: 12,
+              transition: "border-color 0.15s, background 0.15s, color 0.15s",
+              fontFamily: "inherit",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "rgba(0,0,0,0.32)";
+              e.currentTarget.style.color = DARK;
+              e.currentTarget.style.background = "rgba(255,255,255,0.4)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(0,0,0,0.18)";
+              e.currentTarget.style.color = "#7A6E5A";
+              e.currentTarget.style.background = "transparent";
+            }}
+          >
+            <div style={{
+              width: 46, height: 46, borderRadius: 23,
+              border: `1.5px solid currentColor`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 22, fontWeight: 300,
+            }}>+</div>
+            <span style={{ letterSpacing: 0.4, fontStyle: "italic", fontFamily: HOME_SERIF, fontSize: 14 }}>Add widget</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Floating dragged ghost */}
+      {draggedKey && draggedWidget && mousePos && dragInfo && (
+        <div style={{
+          position: "fixed",
+          left: mousePos.x - dragInfo.offsetX,
+          top: mousePos.y - dragInfo.offsetY,
+          width: dragInfo.width, height: dragInfo.height,
+          background: "white",
+          border: outsideGrid ? "1px solid rgba(192,60,60,0.55)" : `1px solid ${HOME_TILE_BORDER}`,
+          borderRadius: 10,
+          padding: 20,
+          boxShadow: outsideGrid
+            ? "0 16px 36px rgba(192,60,60,0.18), 0 0 32px rgba(192,60,60,0.28)"
+            : "0 14px 36px rgba(0,0,0,0.16)",
+          pointerEvents: "none",
+          zIndex: 200,
+          transform: "scale(1.04)",
+          transformOrigin: "center",
+          display: "flex", flexDirection: "column",
+          transition: "box-shadow 0.15s, border-color 0.15s",
+        }}>
+          <div style={{
+            fontSize: 14, fontWeight: 600, color: DARK,
+            letterSpacing: -0.1, marginBottom: 14,
+          }}>{draggedWidget.title}</div>
+          <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
+            {draggedWidget.render(go)}
+          </div>
+        </div>
+      )}
+
+      {/* Outside-grid removal tooltip */}
+      {draggedKey && outsideGrid && mousePos && (
+        <div style={{
+          position: "fixed",
+          left: mousePos.x + 18, top: mousePos.y + 18,
+          background: "white",
+          border: "1px solid rgba(192,60,60,0.4)",
+          color: "#a04040",
+          padding: "6px 12px",
+          borderRadius: 14,
+          fontSize: 11, fontWeight: 500, letterSpacing: 0.2,
+          pointerEvents: "none", zIndex: 300,
+          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+        }}>Release to remove</div>
+      )}
+
+      {/* Radial picker */}
+      {pickerOpen && (
+        <RadialPicker
+          availableWidgets={availableToAdd}
+          anchorRect={pickerAnchor}
+          onAdd={addWidget}
+          onClose={() => setPickerOpen(false)}
+        />
+      )}
+    </Shell>
+  );
+}
+
 // =============== ROUTER ===============
 function App() {
-  const [screen, setScreen] = useState("library");
+  const [screen, setScreen] = useState("role");
+  const [role, setRole] = useState(null);
   const go = (s) => { setScreen(s); window.scrollTo(0,0); };
 
-  switch (screen) {
-    case "library":     return <ScreenLibrary go={go} />;
-    case "files":       return <ScreenFiles go={go} />;
-    case "photo":       return <ScreenPhoto go={go} />;
-    case "creator":     return <ScreenCreator go={go} />;
-    case "signature":   return <ScreenSignature go={go} />;
-    case "social":      return <ScreenSocial go={go} />;
-    case "onboarding":  return <ScreenOnboarding go={go} />;
-    case "memory":      return <ScreenMemory go={go} />;
-    default:            return <ScreenLibrary go={go} />;
+  function chooseRole(r) {
+    setRole(r);
+    go("home");
   }
+  function changeRole() { go("role"); }
+  function resetOnboarding() {
+    try {
+      localStorage.removeItem("archive-home-widgets");
+      localStorage.removeItem("archive-role");
+    } catch (_) {}
+    setRole(null);
+    go("role");
+  }
+
+  const ctx = { role, changeRole, resetOnboarding };
+
+  let content;
+  if (screen === "role") {
+    content = <ScreenRole onChoose={chooseRole} onSkip={() => go("home")} />;
+  } else {
+    switch (screen) {
+      case "home":        content = <ScreenHome role={role} go={go} onChangeRole={changeRole} />; break;
+      case "library":     content = <ScreenLibrary go={go} />; break;
+      case "files":       content = <ScreenFiles go={go} />; break;
+      case "photo":       content = <ScreenPhoto go={go} />; break;
+      case "creator":     content = <ScreenCreator go={go} />; break;
+      case "signature":   content = <ScreenSignature go={go} />; break;
+      case "social":      content = <ScreenSocial go={go} />; break;
+      case "onboarding":  content = <ScreenOnboarding go={go} />; break;
+      case "memory":      content = <ScreenMemory go={go} />; break;
+      default:            content = <ScreenHome role={role} go={go} onChangeRole={changeRole} />;
+    }
+  }
+
+  return <AppContext.Provider value={ctx}>{content}</AppContext.Provider>;
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);
