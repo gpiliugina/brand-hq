@@ -1,60 +1,104 @@
-# Brand HQ — "Archive"
+# Archive — Design System
 
-## What this project is
+A brand management and DAM platform. The visual signature: **a single acid-stroked word in a display-serif hero — and Inter doing everything else**. Restraint is the system.
 
-A high-fidelity **interactive prototype** for "Archive" — a brand-management / digital-asset-management (DAM) platform. It is not a production app; it is a clickable wireframe used to design and validate the product's screens, flows, and visual language.
+This project uses a token-based design system. Every visual decision has already been made and named. When writing UI, **look up**; don't decide.
 
-## Architecture
+## Read these before writing UI
 
-### The prototype: `archive-wireframe.html`
+- `design-system/tokens.css` — the closed set of variables
+- `design-system/specs/tokens/token-reference.md` — flat lookup table
+- `design-system/specs/foundations/` — color, typography, spacing, radius
+- `design-system/specs/components/[name].md` — read before building or modifying
 
-- **One file, no build step.** React 18 + ReactDOM + Babel Standalone loaded from the unpkg CDN. All JSX lives in a single `<script type="text/babel">`. All CSS lives in one inline `<style>` block with `:root` custom properties for design tokens.
-- **Routing** is a screen state machine in `App()`. `const [screen, setScreen]` + `go(screenKey)` navigates, scrolls to top, and tracks open tool tabs. No router library, no URL routing.
-- **Screens** (each a top-level `function ScreenX({ go })`):
-  - `role` — first-login role selection (`ScreenRole`), the default initial screen
-  - `home` — sidebar-less radial widget picker (`ScreenHome`)
-  - `library` — Brand Library (`ScreenLibrary`)
-  - `files` / `photo` — Team Photos grid + Photo Detail (`ScreenFiles`, `ScreenPhoto`)
-  - `creator` — Brand Checker (`ScreenCreator`)
-  - `signature` — Email Signature (`ScreenSignature`)
-  - `social` — Social Post Constructor (`ScreenSocial`)
-  - `onboarding` — `ScreenOnboarding`
-  - `memory` — Photo Archive / Constellation Timeline (`ScreenMemory`)
-- **Data constants:** `TOOLS` (tool/tab catalogue, ~line 492), `WIDGET_CATALOGUE` (home widgets, ~line 3945).
-- **Persistence:** browser `localStorage` only — keys `archive-home-widgets` (home layout) and `archive-role`. No backend.
-- **Shared context:** `AppContext` provides `role`, `changeRole`, `resetOnboarding`, `openTabs`, `closeTab`, `userName`, `theme`, `toggleTheme`.
+## The signature rules (do not break these)
 
-## Non-obvious rules & gotchas
+1. **TWO brand elements, both required.**
+   - **Stroke highlight**: `-webkit-text-stroke: 0.16em var(--color-accent)` with `paint-order: stroke fill` on one word inside the display-serif H1. See `design-system/specs/components/highlight.md`.
+   - **Liquid-glass photo treatment**: every photo in the product is rendered through the 5-layer + SVG-filter recipe in `design-system/specs/foundations/photo-style.md`. Implementation in `design-system/specs/components/photo-bubble.md`.
+   Both elements use the acid `--color-accent` — the stroke uses it directly; PhotoBubble uses it for the selected ring + ✓ badge. These are the ONLY valid uses of accent.
+2. **Display serif is for the hero H1 only.** Every other piece of type — card titles, widget previews, stat numerals, avatar initials, nav, buttons, body, captions — uses Inter (`--font-family-ui`).
+3. **Body default is 13px** (`--font-size-body`).
+4. **One page background.** `--color-bg` (`#ECEDEF`) everywhere, with the dotted radial pattern.
+5. **One dark.** `--color-text` (`#404040`) is used for text, avatars, and filled buttons. No second darker shade; no pure black.
+6. **One hero size.** `--font-size-h1` (80px) for every page hero.
+7. **Photos use PhotoBubble. Placeholders use Bubble.** When a real photo is available, render it through the liquid-glass treatment (PhotoBubble). When a photo *isn't* available, use a flat gray Bubble. Never use a raw `<img>` clipped to a circle without the treatment.
 
-1. **The app is light-only. Do not reintroduce dark mode.** `theme` is hardcoded to `"light"` and `toggleTheme()` is an intentional no-op.
-2. **The brand signature is restraint — two elements only.** (a) One acid-stroked word inside the display-serif hero H1 (`-webkit-text-stroke: 0.16em var(--color-accent)` + `paint-order: stroke fill`); (b) the liquid-glass PhotoBubble treatment for real photos. The accent `#E8FE67` is used **nowhere else**.
-3. **Type discipline:** Libre Caslon Display serif is for the hero H1 *only*. Everything else is Inter. Body default is 13px. One hero size: 80px.
-4. **One background** (`#ECEDEF` with the dotted radial pattern), **one dark** (`#404040` — never pure black).
-5. **Photos vs placeholders:** real photos render through `PhotoBubble` (5-layer liquid-glass + the document-level SVG filter `#liquidGlass`). Missing photos use a flat gray `Bubble`. Never a raw `<img>` clipped to a circle.
-6. **No spec = stop and propose one.** Modals, toasts, dropdowns, sidebar nav, tables, widget picker have no spec yet. Don't freelance them; propose the design first.
-7. `.claude/worktrees/` may contain leftover isolated-agent worktrees — old snapshot copies of the repo, not the working tree. Don't edit files there.
+## Required document-level setup
 
-## Run / preview
+The liquid-glass photo treatment depends on an SVG filter defined once at the document root. Without it, all photos render flat. Already wired in `app/layout.tsx` just inside `<body>`:
+
+```html
+<svg style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }} aria-hidden="true">
+  <defs>
+    <filter id="liquidGlass" x="-20%" y="-20%" width="140%" height="140%" colorInterpolationFilters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018 0.022" numOctaves="3" seed="42" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </defs>
+</svg>
+```
+
+## Token rules
+
+1. **Only use tokens from `design-system/tokens.css`.** No hex codes, no `px`, no inline `rgb()`.
+2. **Reference Layer 2 aliases, not Layer 1 primitives.** `var(--color-text)`, not `var(--ds-ink)`.
+3. **If a needed value doesn't exist, propose a new token.** Don't hardcode.
+4. **Don't combine tokens additively.** Propose a new step if the scale is missing one.
+5. **Semantic colors are deliberately soft.** Muted earth tones, not vibrant. Don't replace.
+
+## Component rules
+
+- Before building a component, read its spec.
+- Specs exist for: Highlight, Avatar, Pill, Card, Search input, Button, Bubble, PhotoBubble.
+- No specs yet for: modal, toast, dropdown, sidebar nav, table, widget picker. If you need one of these, **stop and propose a spec** before building.
+- Every component handles the states named in its spec. Never remove focus rings.
+
+## What you're optimizing for
+
+The product reads as editorial and serious because of *what isn't there* — no gradients, no vibrant chrome, no extra fonts in chrome, no extra accents. The one display-serif hero with one acid-stroked word is where the brand speaks loud. Every time you add a value, you erode that contrast.
+
+## App stack
+
+Next.js 14 + TypeScript + App Router. Run with:
 
 ```bash
-node .claude/serve.js          # static server on http://localhost:4178
+npm run dev    # http://localhost:3000
 ```
 
-No build, test, or lint step — it is a static prototype.
-
-## File structure
-
+Tokens load order in `app/layout.tsx`:
+```tsx
+import "../design-system/tokens.css";  // FIRST — tokens must load before any other styles
+import "./globals.css";
 ```
-archive-wireframe.html      # THE prototype (single-file React app)
-.claude/
-  serve.js                  # tiny Node static server, port 4178
-  launch.json               # "spheres" launch config
-  worktrees/                # leftover isolated-agent worktrees (not the live tree)
-color/ elements/ typo/ timeline/   # design-reference imagery
-```
+
+Fonts (Libre Caslon Display + Inter) are loaded via `next/font/google` and exposed as CSS variable overrides for `--font-family-display` and `--font-family-ui`.
+
+## Component rules
+
+- Before building a component, read its spec in `design-system/specs/components/`.
+- Existing components: `app/components/Highlight.tsx`, `app/components/PhotoBubble.tsx`.
+- PhotoBubble CSS classes (`.photo-bubble`, `.photo-bubble-glass`, etc.) live in `app/globals.css`.
+
+## When to extend the system
+
+You'll hit moments where a needed value doesn't exist — a modal, a tooltip, a dropdown. The rule:
+
+- **Don't hardcode.** Even once.
+- **Propose a token addition** to `design-system/tokens.css` first, document it in `design-system/specs/tokens/token-reference.md`, then use it.
+- **Propose a spec** for new components in `design-system/specs/components/`. Same 8-section structure as existing specs.
 
 ## Working agreement
 
-- Keep the prototype self-contained and build-free (CDN React + Babel, single file). Don't introduce a bundler or split it up unless asked.
-- No hex codes or raw px values in new code — use the `:root` custom properties already defined in the inline `<style>`.
-- Write real, descriptive commit messages.
+Before writing or modifying any UI code:
+
+1. Read `design-system/CLAUDE.md` and the relevant spec in `design-system/specs/`.
+2. Use only tokens from `design-system/tokens.css` — no hex codes, no raw `px`, no inline `rgb()`.
+3. Run the token audit before committing. **Zero errors required.**
+
+```bash
+node scripts/token-audit.js          # must exit 0 before commit
+node scripts/token-audit.js --strict # warnings also fail (optional, stricter gate)
+```
+
+The audit scans all `.css`, `.tsx/.ts`, and `.html` files for hardcoded visual values. It skips `node_modules/`, `.next/`, `design-system/tokens.css` (Layer 1 intentionally has raw values), and `:root {}` blocks in HTML files (the wireframe's own token layer).

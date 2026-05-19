@@ -29,6 +29,100 @@
     --ok-bg: #E1E8DC; --ok-fg: #3a6a3a;
     --bad-bg: #F4DDDD; --bad-fg: #7a5050;
     --sp-a: #C8C0D8; --sp-b: #B4C8B8; --sp-c: #D0C0B8; --sp-d: #B8C4D4; --sp-e: #D4C0D0;
+    /* ── Typography scale ── */
+    --font-size-body: 13px;
+    --font-size-input: 22px;
+    --font-weight-regular: 400;
+    --line-height-base: 1.4;
+    --letter-spacing-hero: -0.03em;
+
+    /* ── Grid pattern ── */
+    --grid-dot-size: 1px;
+    --grid-bg-size: 28px 28px;
+
+    /* ── Z-index scale ── */
+    --z-0: 0;
+    --z-2: 2;
+    --z-3: 3;
+    --z-4: 4;
+    --z-overlay: 999;
+
+    /* ── Radius ── */
+    --radius-full: 50%;
+    --radius-input: 18px;
+
+    /* ── Spacing ── */
+    --space-lg: 16px;
+    --space-xl: 20px;
+    --space-7: 28px;
+
+    /* ── Motion ── */
+    --duration-fast: 0.12s;
+    --duration-base: 0.22s;
+    --duration-slow: 0.3s;
+    --duration-screen: 0.6s;
+    --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-in-out: cubic-bezier(0.83, 0, 0.17, 1);
+    --ease-out: ease;
+
+    /* ── Photo treatment (mirrors design-system/tokens.css) ── */
+    --photo-tint: rgba(20, 20, 40, 0.12);
+    --photo-rim-shadow:
+      inset 0 0 0 1.5px rgba(255, 255, 255, 0.25),
+      inset -6px -6px 18px rgba(0, 0, 0, 0.55),
+      inset 4px 4px 12px rgba(255, 255, 255, 0.18),
+      0 8px 32px rgba(0, 0, 0, 0.22),
+      0 2px 8px rgba(0, 0, 0, 0.14);
+    --photo-iris-gradient: conic-gradient(
+      from 200deg,
+      rgba(120, 80, 220, 0.28) 0deg,
+      rgba(60, 160, 255, 0.22) 60deg,
+      rgba(80, 220, 180, 0.18) 100deg,
+      rgba(240, 220, 60, 0.14) 140deg,
+      rgba(255, 100, 80, 0.20) 200deg,
+      rgba(200, 60, 220, 0.25) 260deg,
+      rgba(120, 80, 220, 0.28) 360deg
+    );
+    --photo-spec-gradient: radial-gradient(
+      ellipse at 40% 35%,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.22) 45%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    --photo-depth-gradient: radial-gradient(
+      ellipse at 60% 80%,
+      rgba(0, 0, 0, 0.38) 0%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    --photo-filter: url(#liquid-glass);
+    --photo-hover-scale: 1.06;
+    --photo-press-scale: 0.95;
+    --photo-transition: transform var(--duration-slow) var(--ease-spring);
+
+    /* ── Sphere treatment ── */
+    --sphere-shadow:
+      inset -5px -5px 12px rgba(0, 0, 0, 0.20),
+      inset 4px 4px 10px rgba(255, 255, 255, 0.60);
+    --sphere-spec-gradient: radial-gradient(circle, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 100%);
+    --sphere-depth-gradient: radial-gradient(circle, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0) 100%);
+
+    /* ── Liquid glass overlay layers ── */
+    --glass-spec-gradient: radial-gradient(ellipse at 38% 32%, rgba(255,255,255,0.68) 0%, rgba(255,255,255,0.20) 50%, rgba(255,255,255,0) 100%);
+    --glass-depth-gradient: radial-gradient(ellipse at 55% 85%, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0) 100%);
+    --glass-rim: inset 0 0 0 1px rgba(255,255,255,0.35);
+    --glass-fallback: radial-gradient(circle at 35% 30%, #D4D0E0 0%, #9080A8 100%);
+
+    /* ── Sphere selected-state glow ── */
+    --sphere-selected-glow: rgba(232,254,103,0.20);
+    --sphere-selected-glow-0: rgba(232,254,103,0);
+
+    /* ── Shadows ── */
+    --shadow-name-field: 0 10px 40px rgba(0,0,0,0.05);
+
+    /* ── Placeholder / CTA text ── */
+    --placeholder: #9AA0A6;
+
     color-scheme: light;
   }
   /* dark theme removed — app is light-only */
@@ -37,20 +131,20 @@
   body {
     font-family: 'Inter', system-ui, sans-serif;
     background-color: var(--bg);
-    background-image: radial-gradient(circle, var(--grid-dot) 1px, transparent 1px);
-    background-size: 28px 28px;
+    background-image: radial-gradient(circle, var(--grid-dot) var(--grid-dot-size), transparent var(--grid-dot-size));
+    background-size: var(--grid-bg-size);
     background-attachment: fixed;
     color: var(--ink);
-    font-size: 13px;
-    line-height: 1.4;
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-base);
     -webkit-font-smoothing: antialiased;
     min-width: 1280px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color var(--duration-slow) var(--ease-out), color var(--duration-slow) var(--ease-out);
   }
   button { font-family: inherit; cursor: pointer; border: none; background: none; }
   input { font-family: inherit; outline: none; }
   a { color: inherit; text-decoration: none; cursor: pointer; }
-  ::placeholder { color: #999; }
+  ::placeholder { color: var(--placeholder); }
 
   @keyframes chipIdleFloat {
     0%, 100% { transform: translateY(0px); }
@@ -66,21 +160,20 @@
     to { stroke-dashoffset: 0; }
   }
   @keyframes screenIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(18px) scale(0.99); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
   }
   @keyframes heroIn {
-    from { opacity: 0; transform: translateY(14px); filter: blur(5px); }
-    to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
   @keyframes tileIn {
-    from { opacity: 0; transform: translateY(16px) scale(0.97); }
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }
   @keyframes widgetAddIn {
-    0%   { opacity: 0; transform: scale(0.55); filter: blur(6px); }
-    55%  { opacity: 1; filter: blur(0); }
-    72%  { transform: scale(1.06); }
+    0%   { opacity: 0; transform: scale(0.5); }
+    60%  { opacity: 1; transform: scale(1.04); }
     100% { opacity: 1; transform: scale(1); }
   }
   @keyframes fadeIn {
@@ -88,47 +181,75 @@
     to   { opacity: 1; }
   }
   @keyframes popIn {
-    0%   { opacity: 0; transform: scale(0.8); }
-    60%  { opacity: 1; transform: scale(1.04); }
+    0%   { opacity: 0; transform: scale(0.75); }
+    65%  { opacity: 1; transform: scale(1.06); }
     100% { opacity: 1; transform: scale(1); }
   }
-  .lift-hover { transition: transform 0.22s cubic-bezier(0.22,1,0.36,1), box-shadow 0.22s ease; }
-  .lift-hover:hover { transform: translateY(-3px); }
-  .press-fx { transition: transform 0.12s ease; }
-  .press-fx:active { transform: scale(0.94); }
+  @keyframes bubbleIn {
+    0%   { opacity: 0; transform: scale(0); }
+    65%  { opacity: 1; transform: scale(1.08); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .lift-hover {
+    transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s ease;
+  }
+  .lift-hover:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
+  .press-fx { transition: transform 0.12s cubic-bezier(0.34,1.56,0.64,1); }
+  .press-fx:active { transform: scale(0.93); }
 
-  /* Sphere system */
-  .sphere {
-    border-radius: 50%;
+  /* Liquid glass photo circle */
+  .photo-liquid {
+    border-radius: var(--radius-full);
     position: relative;
     overflow: hidden;
-    box-shadow:
-      inset -5px -5px 12px rgba(0,0,0,0.20),
-      inset 4px 4px 10px rgba(255,255,255,0.60);
-    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+    display: inline-block;
+    filter: url(#liquid-glass);
+    transition: transform var(--duration-slow) var(--ease-spring);
   }
-  .sphere::before {
-    content: '';
-    position: absolute; top: 7%; left: 10%;
-    width: 40%; height: 40%;
-    background: radial-gradient(circle, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 100%);
-    border-radius: 50%; pointer-events: none; z-index: 2;
+  .photo-liquid:hover  { transform: scale(var(--photo-hover-scale)); }
+  .photo-liquid:active { transform: scale(var(--photo-press-scale)); }
+
+  .photo-liquid img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center top;
+    display: block; border-radius: var(--radius-full);
+    pointer-events: none;
   }
-  .sphere::after {
-    content: '';
-    position: absolute; bottom: 4%; right: 6%;
-    width: 58%; height: 58%;
-    background: radial-gradient(circle, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0) 100%);
-    border-radius: 50%; pointer-events: none; z-index: 2;
+
+  .photo-liquid-spec {
+    position: absolute; top: 5%; left: 8%;
+    width: 48%; height: 42%;
+    background: var(--glass-spec-gradient);
+    border-radius: var(--radius-full);
+    transform: rotate(-18deg);
+    pointer-events: none; z-index: var(--z-2);
   }
-  .sphere:hover { transform: scale(1.06); }
+
+  .photo-liquid-rim {
+    position: absolute; inset: 0;
+    border-radius: var(--radius-full);
+    box-shadow: var(--glass-rim);
+    pointer-events: none; z-index: var(--z-3);
+  }
+
+  .photo-liquid-depth {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 50%;
+    background: var(--glass-depth-gradient);
+    border-radius: 0 0 var(--radius-full) var(--radius-full);
+    pointer-events: none; z-index: var(--z-2);
+  }
+
+  .photo-liquid-selected { box-shadow: 0 0 0 3px var(--accent); }
+  .photo-liquid-strong   { filter: url(#liquid-glass-strong); }
+  .photo-liquid-subtle   { filter: url(#liquid-glass-subtle); }
 
   /* Ghost atmospheric type */
   .ghost {
     font-family: 'Libre Caslon Display', Georgia, serif;
     position: absolute; pointer-events: none; user-select: none;
     color: var(--ink); opacity: 0.04; line-height: 1;
-    z-index: 0; white-space: nowrap; letter-spacing: -0.03em;
+    z-index: var(--z-0); white-space: nowrap; letter-spacing: var(--letter-spacing-hero);
   }
 
   /* Sphere animations */
@@ -177,14 +298,8 @@
     50%       { transform: translateY(-10px); }
   }
 
-  /* Selected sphere pulse */
-  @keyframes sphereSelectedPulse {
-    0%, 100% { box-shadow: inset -5px -5px 12px rgba(0,0,0,0.20), inset 4px 4px 10px rgba(255,255,255,0.60), 0 0 0 0 rgba(232,254,103,0); }
-    50%       { box-shadow: inset -5px -5px 12px rgba(0,0,0,0.20), inset 4px 4px 10px rgba(255,255,255,0.60), 0 0 0 8px rgba(232,254,103,0.20); }
-  }
-
-  .s-btn {
-    transition: opacity 0.12s ease, transform 0.12s ease;
+.s-btn {
+    transition: opacity var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
     cursor: pointer;
   }
   .s-btn:hover  { opacity: 0.82; }
@@ -238,26 +353,20 @@
 
   /* Sign-in name field — plain white, rounded, no stroke */
   .name-field {
-    background: #FFFFFF;
+    background: var(--surface);
     border: none;
     outline: none;
-    border-radius: 18px;
-    padding: 20px 28px;
+    border-radius: var(--radius-input);
+    padding: var(--space-xl) var(--space-7);
     width: 440px;
-    font-size: 22px;
+    font-size: var(--font-size-input);
     font-family: 'Inter', sans-serif;
     color: var(--ink);
     text-align: center;
     caret-color: var(--ink);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    box-shadow: var(--shadow-name-field);
   }
   .name-field::placeholder { color: transparent; }
-  :root[data-theme="dark"] .name-field {
-    background: #F2F2F4;
-    color: #141414;
-    caret-color: #141414;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.30);
-  }
 
   /* Typewriter call-to-action overlay */
   @keyframes ctaLetterIn {
@@ -267,7 +376,7 @@
   .cta-letter {
     display: inline-block;
     white-space: pre;
-    color: #9AA0A6;
+    color: var(--placeholder);
     animation: ctaLetterIn 0.42s ease backwards;
   }
 
@@ -283,30 +392,30 @@
   /* Floating role words */
   .role-word {
     font-family: 'Libre Caslon Display', Georgia, serif;
-    font-weight: 400;
+    font-weight: var(--font-weight-regular);
     color: var(--ink);
     cursor: pointer;
     line-height: 1;
     letter-spacing: -1px;
     -webkit-text-stroke-width: 5px;
-    -webkit-text-stroke-color: #FFFFFF;
+    -webkit-text-stroke-color: var(--surface);
     paint-order: stroke fill;
     -webkit-text-stroke-linejoin: round;
     text-shadow: none;
     transition:
-      transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
-      -webkit-text-stroke-color 0.25s ease,
-      opacity 0.3s ease;
+      transform var(--duration-slow) var(--ease-spring),
+      -webkit-text-stroke-color var(--duration-base) var(--ease-out),
+      opacity var(--duration-slow) var(--ease-out);
     user-select: none;
   }
   .role-word:hover {
     transform: scale(1.05);
-    -webkit-text-stroke-color: #E8FE67;
+    -webkit-text-stroke-color: var(--accent);
   }
   .role-word.is-picked {
     transform: scale(1.22);
     -webkit-text-stroke-width: 5px;
-    -webkit-text-stroke-color: #E8FE67;
+    -webkit-text-stroke-color: var(--accent);
     text-shadow: none;
   }
 
@@ -314,20 +423,20 @@
   .circle-reveal {
     position: fixed;
     inset: 0;
-    z-index: 999;
+    z-index: var(--z-overlay);
     pointer-events: none;
     background: var(--bg);
-    background-image: radial-gradient(circle, var(--grid-dot) 1px, transparent 1px);
-    background-size: 28px 28px;
-    transition: clip-path 0.62s cubic-bezier(0.83,0,0.17,1);
+    background-image: radial-gradient(circle, var(--grid-dot) var(--grid-dot-size), transparent var(--grid-dot-size));
+    background-size: var(--grid-bg-size);
+    transition: clip-path var(--duration-screen) var(--ease-in-out);
   }
 
   /* Bubble content (sits above sphere overlays) */
   .bubble-content {
     position: relative;
-    z-index: 4;
+    z-index: var(--z-4);
     text-align: center;
-    padding: 16px;
+    padding: var(--space-lg);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -336,125 +445,42 @@
     height: 100%;
   }
 
-  /* Iridescent sphere bubble effect */
-  .photo-bubble {
-    border-radius: 50%;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    box-shadow:
-      inset 0 0 0 1.5px rgba(255,255,255,0.25),
-      inset -6px -6px 18px rgba(0,0,0,0.55),
-      inset 4px 4px 12px rgba(255,255,255,0.18),
-      0 8px 32px rgba(0,0,0,0.22),
-      0 2px 8px rgba(0,0,0,0.14);
-  }
-  .photo-bubble:hover  { transform: scale(1.06); }
-  .photo-bubble:active { transform: scale(0.95); }
-
-  .photo-bubble-spec {
-    position: absolute;
-    top: 5%; left: 8%;
-    width: 44%; height: 38%;
-    background: radial-gradient(
-      ellipse at 40% 35%,
-      rgba(255,255,255,0.72) 0%,
-      rgba(255,255,255,0.22) 45%,
-      rgba(255,255,255,0) 100%
-    );
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 4;
-    transform: rotate(-15deg);
-  }
-
-  .photo-bubble-iris {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 3;
-    background: conic-gradient(
-      from 200deg,
-      rgba(120,80,220,0.28) 0deg,
-      rgba(60,160,255,0.22) 60deg,
-      rgba(80,220,180,0.18) 100deg,
-      rgba(240,220,60,0.14) 140deg,
-      rgba(255,100,80,0.20) 200deg,
-      rgba(200,60,220,0.25) 260deg,
-      rgba(120,80,220,0.28) 360deg
-    );
-    mix-blend-mode: screen;
-  }
-
-  .photo-bubble-depth {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 50%;
-    background: radial-gradient(
-      ellipse at 60% 80%,
-      rgba(0,0,0,0.38) 0%,
-      rgba(0,0,0,0) 100%
-    );
-    border-radius: 0 0 50% 50%;
-    pointer-events: none;
-    z-index: 3;
-  }
-
-  .photo-bubble-glass {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: rgba(20,20,40,0.12);
-    pointer-events: none;
-    z-index: 2;
+  @keyframes roleWordIn {
+    from {
+      opacity: 0;
+      transform: translateY(18px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
 
 </style>
 </head>
 <body>
-<!-- Liquid glass distortion filter -->
-<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+<!-- Liquid glass lens filters — referenced by .photo-liquid CSS classes -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none" aria-hidden="true">
   <defs>
-    <filter id="liquidGlass" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
-      <feTurbulence
-        type="fractalNoise"
-        baseFrequency="0.018 0.022"
-        numOctaves="3"
-        seed="42"
-        result="noise"
-      />
-      <feDisplacementMap
-        in="SourceGraphic"
-        in2="noise"
-        scale="8"
-        xChannelSelector="R"
-        yChannelSelector="G"
-        result="displaced"
-      />
-      <feGaussianBlur in="displaced" stdDeviation="0.4" result="blurred" />
+    <!-- Standard lens — team photo circles -->
+    <filter id="liquid-glass" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.016" numOctaves="3" seed="42" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="14" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+      <feGaussianBlur in="displaced" stdDeviation="0.5" result="blurred" />
       <feComposite in="blurred" in2="SourceGraphic" operator="atop" />
     </filter>
-
-    <filter id="liquidGlassStrong" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
-      <feTurbulence
-        type="fractalNoise"
-        baseFrequency="0.022 0.028"
-        numOctaves="4"
-        seed="7"
-        result="noise"
-      />
-      <feDisplacementMap
-        in="SourceGraphic"
-        in2="noise"
-        scale="14"
-        xChannelSelector="R"
-        yChannelSelector="G"
-        result="displaced"
-      />
-      <feGaussianBlur in="displaced" stdDeviation="0.6" result="blurred" />
+    <!-- Strong lens — large memory constellation circles -->
+    <filter id="liquid-glass-strong" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.010 0.014" numOctaves="4" seed="7" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="20" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+      <feGaussianBlur in="displaced" stdDeviation="0.7" result="blurred" />
       <feComposite in="blurred" in2="SourceGraphic" operator="atop" />
+    </filter>
+    <!-- Subtle lens — tiny constellation circles -->
+    <filter id="liquid-glass-subtle" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018 0.022" numOctaves="2" seed="13" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="7" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+      <feComposite in="displaced" in2="SourceGraphic" operator="atop" />
     </filter>
   </defs>
 </svg>
@@ -798,7 +824,7 @@ function Shell({ active, go, children, fullBleed }) {
     <div style={{ minHeight: "100vh", color: "var(--ink)", position: "relative", overflow: "hidden" }}>
       <UniversalTopBar activeScreen={active} go={go} />
       {fullBleed ? (
-        <div key={active} style={{ animation: "screenIn 0.4s cubic-bezier(0.22,1,0.36,1) backwards" }}>
+        <div key={active} style={{ animation: active === "memory" ? "fadeIn 0.25s ease both" : "screenIn 0.4s cubic-bezier(0.22,1,0.36,1) backwards" }}>
           {children}
         </div>
       ) : (
@@ -1027,7 +1053,6 @@ function ScreenLibrary({ go }) {
             </div>
           </div>
           <StatNum value="847" label="Assets in Library" delay={0.2} />
-          <Ghost word="LOGOS" size={220} style={{ bottom: -60, right: -30 }} />
         </div>
 
         {/* All brand elements — one convenient grid */}
@@ -1228,61 +1253,42 @@ const TEAM_PHOTOS = [
   { url: "https://raw.githubusercontent.com/gpiliugina/team-photo/main/team%20photo%206.webp", name: "Team Member 6", role: "Ops" },
 ];
 
-function PhotoBubble({ src, size = 92, selected, onClick, style }) {
+function PhotoLiquid({ src, size = 92, selected, onClick, style, variant }) {
+  const filterClass =
+    variant === "strong" ? "photo-liquid photo-liquid-strong" :
+    variant === "subtle" ? "photo-liquid photo-liquid-subtle" :
+    "photo-liquid";
   return (
     <div
+      className={`${filterClass}${selected ? " photo-liquid-selected" : ""}`}
       onClick={onClick}
       style={{
-        position: "relative",
         width: size, height: size,
-        flexShrink: 0,
         cursor: onClick ? "pointer" : "default",
+        flexShrink: 0,
         ...style,
       }}
     >
-      {/* Clipped sphere — circular photo + glass layers */}
-      <div
-        className="photo-bubble"
-        style={{
-          width: "100%", height: "100%",
-          boxShadow: selected
-            ? `inset 0 0 0 1.5px rgba(255,255,255,0.25), inset -6px -6px 18px rgba(0,0,0,0.55), inset 4px 4px 12px rgba(255,255,255,0.18), 0 0 0 3px var(--accent), 0 8px 32px rgba(0,0,0,0.22)`
-            : undefined,
+      <img
+        src={src}
+        alt=""
+        onError={e => {
+          e.currentTarget.style.display = "none";
+          e.currentTarget.parentElement.style.background = "var(--glass-fallback)";
         }}
-      >
-        <img
-          src={src}
-          style={{
-            width: "100%", height: "100%",
-            objectFit: "cover",
-            objectPosition: "center top",
-            display: "block",
-            borderRadius: "50%",
-            pointerEvents: "none",
-          }}
-          onError={e => {
-            e.currentTarget.style.display = "none";
-            e.currentTarget.parentElement.style.background =
-              "radial-gradient(circle at 35% 32%, rgba(255,255,255,0.5) 0%, #9080A8 100%)";
-          }}
-        />
-        <div className="photo-bubble-glass" />
-        <div className="photo-bubble-iris" />
-        <div className="photo-bubble-depth" />
-        <div className="photo-bubble-spec" />
-      </div>
-
-      {/* Selected ✓ — sits in the OUTER (un-clipped) wrapper so it is never cut */}
+      />
+      <div className="photo-liquid-spec" />
+      <div className="photo-liquid-depth" />
+      <div className="photo-liquid-rim" />
       {selected && (
         <div style={{
-          position: "absolute", top: -3, right: -3,
-          width: 22, height: 22, borderRadius: "50%",
+          position: "absolute", top: 4, right: 4,
+          width: 20, height: 20, borderRadius: "50%",
           background: "var(--accent)", color: "var(--ink)",
-          fontSize: 12, fontWeight: 700,
+          fontSize: 11, fontWeight: 700,
           display: "flex", alignItems: "center", justifyContent: "center",
           border: "2px solid var(--surface)",
-          zIndex: 10,
-          pointerEvents: "none",
+          zIndex: 5, pointerEvents: "none",
         }}>✓</div>
       )}
     </div>
@@ -1365,12 +1371,34 @@ function ScreenFiles({ go }) {
                 alignItems: "center", gap: 10,
                 animation: `sphereIn 0.5s cubic-bezier(0.34,1.56,0.64,1) ${idx * 0.07}s backwards`,
               }}>
-                <PhotoBubble
-                  src={photo.url}
-                  size={110}
-                  selected={selected.has(idx)}
+                <div
                   onClick={() => toggle(idx)}
-                />
+                  style={{
+                    position: "relative", width: 110, height: 110,
+                    flexShrink: 0, cursor: "pointer",
+                  }}
+                >
+                  <div style={{
+                    width: 110, height: 110,
+                    borderRadius: "50%", overflow: "hidden",
+                    boxShadow: selected.has(idx) ? "0 0 0 3px var(--accent)" : "none",
+                    transition: "box-shadow 0.18s ease",
+                  }}>
+                    <img src={photo.url} alt={photo.name}
+                      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }} />
+                  </div>
+                  {selected.has(idx) && (
+                    <div style={{
+                      position: "absolute", top: 4, right: 4,
+                      width: 22, height: 22, borderRadius: "50%",
+                      background: "var(--accent)", color: "var(--ink)",
+                      fontSize: 11, fontWeight: 700,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      border: "2.5px solid var(--surface)",
+                      zIndex: 5, pointerEvents: "none",
+                    }}>✓</div>
+                  )}
+                </div>
                 <div style={{
                   fontSize: 13, fontWeight: 500,
                   color: "var(--ink)", textAlign: "center",
@@ -1424,7 +1452,6 @@ function ScreenFiles({ go }) {
             </div>
           </div>
         </Card>
-        <Ghost word="TEAM" size={260} style={{ bottom: -50, left: -20 }} />
       </div>
 
       {selected.size > 0 && (
@@ -1608,7 +1635,6 @@ function ScreenCreator({ go }) {
             }}>Check any file against brand V3.2</div>
           </div>
           <StatNum value="94%" label="Last score" delay={0.15} />
-          <Ghost word="CHECK" size={260} style={{ bottom: -60, right: -30 }} />
         </div>
 
         {/* Checker */}
@@ -2362,7 +2388,6 @@ function ScreenOnboarding({ go }) {
   return (
     <Shell active="onboarding" go={go} fullBleed>
       <div style={{ padding: "100px 52px 64px", minHeight: "100vh", position: "relative" }}>
-      <Ghost word="LEARN" size={240} style={{ top: 60, right: -30 }} />
       <PageHero title="Onboarding" subtitle="2 of 5 modules complete" />
       <div style={{ display: "flex", gap: 28, width: "100%", position: "relative" }}>
         {/* Slim module rail */}
@@ -2388,9 +2413,11 @@ function ScreenOnboarding({ go }) {
                 fontWeight: s === "active" ? 600 : 400,
               }}>
                 {s === "done" ? (
-                  <span className="sphere" style={{
+                  <span style={{
                     width: 16, height: 16, flexShrink: 0,
+                    borderRadius: "50%",
                     background: sphereBg("b"), opacity: 0.6,
+                    display: "inline-block",
                   }} />
                 ) : (
                   <span style={{
@@ -2741,6 +2768,110 @@ const PHOTO_GRADIENTS = [
   "radial-gradient(circle at 35% 55%, #D0C8B0, #8A8068)",
 ];
 
+const ARCHIVE_PHOTOS = [
+  "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1561489396-888724a1543d?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1558008258-3256797b43f3?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1515169067868-5387ec356754?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1531058020387-3be344556be6?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1622675363311-3e1904dc1885?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1568992688065-536aad8a12f6?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1681949103006-70066fb25dfe?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1560439514-4e9645039924?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1561489396-888724a1543d?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1558008258-3256797b43f3?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1515169067868-5387ec356754?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1531058020387-3be344556be6?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1622675363311-3e1904dc1885?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1568992688065-536aad8a12f6?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1681949103006-70066fb25dfe?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=400&h=400&fit=crop&sat=-20",
+  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1560439514-4e9645039924?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?w=400&h=400&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1561489396-888724a1543d?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1558008258-3256797b43f3?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1515169067868-5387ec356754?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1531058020387-3be344556be6?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1622675363311-3e1904dc1885?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1568992688065-536aad8a12f6?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1681949103006-70066fb25dfe?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=400&h=400&fit=crop&crop=center",
+];
+function archivePhoto(idx) { return ARCHIVE_PHOTOS[((idx % ARCHIVE_PHOTOS.length) + ARCHIVE_PHOTOS.length) % ARCHIVE_PHOTOS.length]; }
+
 const MEMORY_EVENTS = [
   { name: "FIRST HIRES",    mon: "JAN", year: 2022, count: 4,  L: 1, M: 2,  S: 1  },
   { name: "SERIES A",       mon: "MAR", year: 2022, count: 8,  L: 1, M: 4,  S: 3  },
@@ -2814,45 +2945,182 @@ const MEMORY_CANVAS_W =
 const MEMORY_YEARS = [2022, 2023, 2024, 2025, 2026];
 
 function PhotoCircle({ id, size, cx, cy, gradIdx, selected, onPhotoEvent }) {
-  const [hover, setHover] = useState(false);
-  const variants = ["a","b","c","d","e"];
   return (
     <div
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
       onClick={(e) => { e.stopPropagation(); onPhotoEvent(id); }}
-      className="sphere"
       style={{
         position: "absolute",
-        left: cx - size / 2, top: cy - size / 2,
-        width: size, height: size,
-        background: sphereBg(variants[gradIdx % 5]),
-        border: selected ? "2px solid var(--ink)" : "none",
-        animation: selected ? "sphereSelectedPulse 2s ease-in-out infinite" : "none",
+        left: cx - size / 2,
+        top: cy - size / 2,
+        width: size,
+        height: size,
+        borderRadius: "50%",
+        overflow: "hidden",
+        flexShrink: 0,
         cursor: "pointer",
-        transition: "transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
-        transform: (selected || hover) ? "scale(1.08)" : "scale(1)",
-        zIndex: (selected || hover) ? 10 : 1,
+        background: "var(--ph-3)",
+        zIndex: selected ? 10 : 1,
+        boxShadow: selected ? `0 0 0 3px var(--accent)` : "none",
       }}
     >
-      {selected && (
-        <span style={{
-          position: "absolute", top: "50%", left: "50%",
-          transform: "translate(-50%, -50%)",
-          color: "rgba(20,20,20,0.7)",
-          fontSize: Math.max(9, Math.min(13, size * 0.28)),
-          fontWeight: 700, zIndex: 3,
-        }}>✓</span>
-      )}
-      {selected && (
-        <div style={{
-          position: "absolute", top: 0, right: 0,
-          width: 7, height: 7, borderRadius: "50%",
-          background: "var(--accent)",
-          border: "1.5px solid var(--surface)",
-          zIndex: 4, animation: "dotPop 0.3s ease backwards",
-        }} />
-      )}
+      <img
+        src={archivePhoto(gradIdx)}
+        alt=""
+        style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
+      />
+    </div>
+  );
+}
+
+function PhotoPreviewModal({ previewPhoto, selected, onClose, onToggleSelect, MEMORY_EVENTS, gradIdx }) {
+  const [naturalSize, setNaturalSize] = useState(null);
+  const src = archivePhoto(gradIdx);
+  const ev = MEMORY_EVENTS[parseInt(previewPhoto.split("_")[0], 10)];
+  const phIdx = parseInt(previewPhoto.split("_")[1], 10);
+  const isSel = selected.has(previewPhoto);
+
+  function handleLoad(e) {
+    setNaturalSize({ w: e.target.naturalWidth, h: e.target.naturalHeight });
+  }
+
+  // Compute display size from natural dimensions constrained to available space
+  const PAD = 64;
+  const TOP_BAR = 56;
+  const BOTTOM_BAR = 100;
+  const maxW = (typeof window !== "undefined" ? window.innerWidth : 1280) - PAD * 2;
+  const maxH = (typeof window !== "undefined" ? window.innerHeight : 900) - TOP_BAR - BOTTOM_BAR - PAD * 2;
+
+  let displayW, displayH;
+  if (naturalSize) {
+    const ratio = naturalSize.w / naturalSize.h;
+    displayW = naturalSize.w;
+    displayH = naturalSize.h;
+    if (displayW > maxW) { displayW = maxW; displayH = displayW / ratio; }
+    if (displayH > maxH) { displayH = maxH; displayW = displayH * ratio; }
+    displayW = Math.round(displayW);
+    displayH = Math.round(displayH);
+  } else {
+    displayW = Math.min(480, maxW);
+    displayH = Math.min(600, maxH);
+  }
+
+  useEffect(() => {
+    function onKey(e) { if (e.key === "Escape") onClose(); }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  return (
+    <div
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      style={{
+        position: "fixed", inset: 0, zIndex: 200,
+        background: "rgba(20,19,24,0.92)",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
+        display: "flex", flexDirection: "column",
+      }}
+    >
+      {/* Top bar */}
+      <div style={{
+        height: TOP_BAR, flexShrink: 0,
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "0 24px", color: "white",
+        borderBottom: "1px solid rgba(255,255,255,0.06)",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{ fontSize: 11, letterSpacing: 1.2, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", fontFamily: MONO }}>Photo Archive</span>
+          <span style={{ color: "rgba(255,255,255,0.25)" }}>·</span>
+          <span style={{ fontSize: 13, fontWeight: 600 }}>{ev.name}</span>
+          <span style={{ color: "rgba(255,255,255,0.3)" }}>·</span>
+          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", fontFamily: MONO, letterSpacing: 0.6 }}>{ev.mon} {ev.year}</span>
+        </div>
+        <button
+          onClick={onClose}
+          style={{
+            color: "white", fontSize: 16, background: "transparent", cursor: "pointer",
+            width: 32, height: 32, borderRadius: 16,
+            border: "1px solid rgba(255,255,255,0.15)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+        >✕</button>
+      </div>
+
+      {/* Photo stage */}
+      <div
+        onClick={onClose}
+        style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: PAD, cursor: "pointer" }}
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            width: displayW, height: displayH,
+            borderRadius: 10,
+            boxShadow: "0 24px 80px rgba(0,0,0,0.6)",
+            border: isSel ? "3px solid white" : "1px solid rgba(255,255,255,0.1)",
+            overflow: "hidden",
+            position: "relative",
+            cursor: "default",
+            flexShrink: 0,
+          }}
+        >
+          <img
+            src={src}
+            alt={ev.name}
+            onLoad={handleLoad}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          />
+          {isSel && (
+            <div style={{
+              position: "absolute", top: 16, left: 16,
+              width: 28, height: 28, borderRadius: 14,
+              background: "white", color: "#1E1C23",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 13, fontWeight: 700,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+            }}>✓</div>
+          )}
+          {naturalSize && (
+            <div style={{
+              position: "absolute", bottom: 14, right: 16,
+              fontSize: 10, fontFamily: MONO,
+              color: "rgba(255,255,255,0.55)", letterSpacing: 0.8,
+              textTransform: "uppercase",
+            }}>{naturalSize.w}×{naturalSize.h}</div>
+          )}
+        </div>
+      </div>
+
+      {/* Bottom action bar */}
+      <div style={{
+        flexShrink: 0, padding: "18px 24px 24px", color: "white",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 18,
+      }}>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ fontSize: 14, fontWeight: 600, color: "white", letterSpacing: -0.2 }}>{ev.name}</div>
+          <div style={{ fontSize: 10, fontFamily: MONO, letterSpacing: 0.6, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>
+            PHOTO {String(phIdx + 1).padStart(2, "0")} OF {String(ev.count).padStart(2, "0")} · {ev.mon} {ev.year}
+          </div>
+        </div>
+        <div style={{ width: 1, height: 36, background: "rgba(255,255,255,0.15)" }} />
+        <button
+          onClick={() => onToggleSelect(previewPhoto)}
+          style={{
+            padding: "10px 18px", borderRadius: 20,
+            border: isSel ? "1px solid white" : "1px solid rgba(255,255,255,0.3)",
+            background: isSel ? "white" : "transparent",
+            color: isSel ? "#1E1C23" : "white",
+            fontSize: 13, fontWeight: 500, cursor: "pointer", letterSpacing: 0.2,
+          }}
+        >{isSel ? "✓ Selected for download" : "+ Add to download"}</button>
+        <button style={{
+          padding: "10px 20px", borderRadius: 20,
+          background: SURFACE, color: "#1E1C23",
+          border: "none", fontSize: 13, fontWeight: 600,
+          cursor: "pointer", letterSpacing: 0.2,
+        }}>↓ Download now</button>
+      </div>
     </div>
   );
 }
@@ -3248,31 +3516,30 @@ function ScreenMemory({ go }) {
                   const [evIdxStr, photoIdxStr] = id.split("_");
                   const evIdx = parseInt(evIdxStr, 10);
                   const phIdx = parseInt(photoIdxStr, 10);
-                  const variant = ["a","b","c","d","e"][(evIdx * 3 + phIdx) % 5];
+                  const gradIdx = (evIdx * 3 + phIdx) % PHOTO_GRADIENTS.length;
                   return (
                     <div
                       key={id}
                       onClick={() => toggleSelect(id)}
                       title="Click to remove"
-                      className="sphere"
-                      style={{
-                        position: "relative",
-                        width: 26, height: 26,
-                        background: sphereBg(variant),
-                        border: "1.5px solid var(--surface)",
-                        cursor: "pointer",
-                      }}
+                      style={{ position: "relative", width: 28, height: 28, flexShrink: 0, cursor: "pointer" }}
                     >
-                      <span style={{
-                        position: "absolute",
-                        top: -4, right: -4,
-                        width: 14, height: 14, borderRadius: 7,
+                      <div style={{
+                        width: 28, height: 28, borderRadius: "50%",
+                        overflow: "hidden", border: "1.5px solid var(--surface)",
+                        background: "var(--ph-3)",
+                      }}>
+                        <img src={archivePhoto(gradIdx)} alt=""
+                          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }} />
+                      </div>
+                      <div style={{
+                        position: "absolute", top: -3, right: -3,
+                        width: 13, height: 13, borderRadius: "50%",
                         background: "var(--accent)", color: "var(--ink)",
-                        fontSize: 8, fontWeight: 700,
+                        fontSize: 7, fontWeight: 700,
                         display: "flex", alignItems: "center", justifyContent: "center",
-                        border: "1.5px solid var(--surface)",
-                        lineHeight: 1, zIndex: 4,
-                      }}>✓</span>
+                        border: "1.5px solid var(--surface)", zIndex: 4, pointerEvents: "none",
+                      }}>✓</div>
                     </div>
                   );
                 })}
@@ -3749,194 +4016,203 @@ function DotsCanvas() {
   );
 }
 
+const ROLE_OPTIONS = [
+  { key: "designer",  label: "designer" },
+  { key: "marketer",  label: "marketer" },
+  { key: "sales",     label: "sales" },
+  { key: "hr",        label: "hr manager" },
+];
+const LOGIN_CTA = "type your name";
+
 function ScreenRole({ onChoose, onSkip }) {
-  const { theme, setUserName } = useContext(AppContext);
+  const { setUserName } = useContext(AppContext);
   const [localName, setLocalName] = useState("");
+  const [hoveredRole, setHoveredRole] = useState(null);
+  const [selectedRole, setSelectedRole] = useState(null);
   const [typed, setTyped] = useState(0);
-  const [nameError, setNameError] = useState(false);
-  const [picked, setPicked] = useState(null); // { key, x, y, r, expand }
-  const inputRef = useRef(null);
 
-  const CTA = "type your name";
+  const isEmpty = localName === "";
 
-  // Typewriter for the call-to-action (only while the field is empty)
+  // Typewriter: animate letters in while field is empty; skip to end when user types
   useEffect(() => {
-    if (localName) { setTyped(CTA.length); return; }
+    if (!isEmpty) { setTyped(LOGIN_CTA.length); return; }
     setTyped(0);
     let i = 0;
-    const id = setInterval(() => {
-      i++;
-      setTyped(i);
-      if (i >= CTA.length) clearInterval(id);
-    }, 75);
+    const id = setInterval(() => { i++; setTyped(i); if (i >= LOGIN_CTA.length) clearInterval(id); }, 60);
     return () => clearInterval(id);
-  }, [localName === ""]);
+  }, [isEmpty]);
 
-  function commitName() {
-    const n = localName.trim();
-    if (n) setUserName(n);
-    return n;
+  const nameEntered = localName.trim().length > 0;
+
+  function handleChoose(key) {
+    if (localName.trim()) setUserName(localName.trim());
+    setSelectedRole(key);
+    onChoose(key);
   }
-
-  function flagRequired() {
-    setNameError(true);
-    if (inputRef.current) inputRef.current.focus();
-    setTimeout(() => setNameError(false), 560);
-  }
-
-  function pickRole(e, key) {
-    if (picked) return;
-    if (!localName.trim()) { flagRequired(); return; }
-    commitName();
-    const x = e.clientX, y = e.clientY;
-    const r = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
-    ) + 40;
-    setPicked({ key, x, y, r, expand: false });
-    setTimeout(() => setPicked(p => (p ? { ...p, expand: true } : p)), 30);
-    setTimeout(() => onChoose(key), 660);
-  }
-
-  function handleSkip() {
-    commitName();
-    onSkip();
-  }
-
-  const roles = [
-    { key: "designer", label: "designer",   size: 100, floatAnim: "bubbleFloat1", dur: "9s",  delay: "0s"   },
-    { key: "marketer", label: "marketer",   size: 94,  floatAnim: "bubbleFloat2", dur: "11s", delay: "0.1s" },
-    { key: "sales",    label: "sales",      size: 112, floatAnim: "bubbleFloat3", dur: "8s",  delay: "0.2s" },
-    { key: "hr",       label: "hr manager", size: 84,  floatAnim: "bubbleFloat4", dur: "10s", delay: "0.3s" },
-  ];
-
-  const wordHalo = theme === "dark"
-    ? "0 2px 18px rgba(0,0,0,0.55), 0 0 2px rgba(0,0,0,0.6)"
-    : "0 2px 14px rgba(255,255,255,0.65), 0 0 2px rgba(255,255,255,0.7)";
 
   return (
     <div style={{
-      minHeight: "100vh", width: "100%",
-      position: "relative", overflow: "hidden",
-      display: "flex", flexDirection: "column",
-      alignItems: "center", justifyContent: "space-between",
-      padding: "60px 24px 40px",
-      boxSizing: "border-box",
+      minHeight: "100vh",
+      width: "100%",
+      position: "relative",
+      overflow: "hidden",
       background: "#9aa3ad",
     }}>
 
-      {/* Animated dot field */}
+      {/* ── DOTS CANVAS — behind everything ── */}
       <DotsCanvas />
 
-      {/* Wordmark — top of page */}
+      {/* ── WORDMARK — top-left, small ── */}
       <div style={{
-        position: "relative", zIndex: 1,
+        position: "absolute",
+        top: 28, left: 36,
+        zIndex: 2,
         fontFamily: "'Libre Caslon Display', Georgia, serif",
-        fontSize: 96, fontWeight: 400,
-        color: "rgba(26,31,38,0.88)",
-        letterSpacing: -3, lineHeight: 1,
-        animation: "wordmarkIn 0.9s cubic-bezier(0.22,1,0.36,1) backwards",
-        textAlign: "center",
-        textShadow: wordHalo,
-      }}>brand HQ</div>
-
-      {/* Middle group: name field + space + label + roles */}
-      <div style={{
-        position: "relative", zIndex: 1,
-        display: "flex", flexDirection: "column", alignItems: "center",
-        flex: 1, justifyContent: "center", width: "100%",
+        fontSize: 22,
+        fontWeight: 400,
+        color: "rgba(26,31,38,0.75)",
+        letterSpacing: -0.3,
+        lineHeight: 1,
+        userSelect: "none",
       }}>
-        {/* Name field (required) */}
+        Brand HQ
+      </div>
+
+      {/* ── CENTRE CONTENT ── */}
+      <div style={{
+        position: "absolute",
+        inset: 0,
+        zIndex: 2,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}>
+
+        {/* Name input — styled like home screen search card */}
         <div style={{
           position: "relative",
-          animation: nameError ? "nameShake 0.55s ease" : "inputReveal 0.7s ease 0.2s backwards",
+          marginBottom: nameEntered ? 64 : 0,
+          transition: "margin-bottom 0.5s cubic-bezier(0.22,1,0.36,1)",
         }}>
           <input
-            ref={inputRef}
-            className="name-field"
             type="text"
             value={localName}
             onChange={e => setLocalName(e.target.value)}
             autoFocus
+            style={{
+              width: 440,
+              padding: "14px 20px",
+              borderRadius: 14,
+              border: "1px solid rgba(0,0,0,0.10)",
+              background: "rgba(255,255,255,0.96)",
+              fontSize: 17,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 400,
+              color: "rgba(26,31,38,0.88)",
+              textAlign: "center",
+              outline: "none",
+              boxShadow: "0 4px 24px rgba(0,0,0,0.10)",
+              caretColor: "var(--ink)",
+              transition: "border-color var(--duration-fast)",
+            }}
+            onFocus={e => e.currentTarget.style.borderColor = "rgba(26,31,38,0.35)"}
+            onBlur={e => e.currentTarget.style.borderColor = "rgba(0,0,0,0.10)"}
           />
-          {/* Typewriter CTA overlay — light weight, shows only while empty */}
-          {!localName && (
+          {/* Animated "type your name" CTA — visible only when field is empty */}
+          {isEmpty && (
             <div style={{
               position: "absolute", inset: 0,
               display: "flex", alignItems: "center", justifyContent: "center",
-              pointerEvents: "none", fontSize: 22, fontWeight: 300,
-              fontFamily: "'Inter', sans-serif", letterSpacing: 0.2,
+              pointerEvents: "none",
             }}>
-              {CTA.split("").slice(0, typed).map((ch, i) => (
-                <span key={i} className="cta-letter" style={{ fontWeight: 300 }}>{ch}</span>
+              {LOGIN_CTA.split("").slice(0, typed).map((ch, i) => (
+                <span
+                  key={i}
+                  className="cta-letter"
+                  style={{ animationDelay: `${i * 0.035}s` }}
+                >{ch === " " ? " " : ch}</span>
               ))}
             </div>
           )}
         </div>
 
-        {/* Space between field and label, then label */}
+        {/* Role words — appear when name is typed */}
         <div style={{
-          marginTop: 90,
-          fontSize: 17,
-          fontFamily: "'Inter', sans-serif", fontWeight: 800,
-          letterSpacing: 0, textTransform: "none",
-          color: nameError ? "#C0635F" : "rgba(26,31,38,0.45)",
-          transition: "color 0.2s ease",
-          textShadow: wordHalo,
-        }}>{nameError ? "enter your name first" : "choose your role"}</div>
-
-        {/* Floating role words — bigger, lowercase */}
-        <div style={{
-          display: "flex", alignItems: "center", justifyContent: "center",
-          gap: 64, flexWrap: "wrap", maxWidth: 1200,
-          marginTop: 40,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 48,
+          flexWrap: "nowrap",
+          opacity: nameEntered ? 1 : 0,
+          transform: nameEntered ? "translateY(0)" : "translateY(20px)",
+          filter: nameEntered ? "blur(0px)" : "blur(8px)",
+          transition: "opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1), filter 0.6s ease",
+          pointerEvents: nameEntered ? "auto" : "none",
         }}>
-          {roles.map((r) => {
-            const isPicked = picked && picked.key === r.key;
+          {ROLE_OPTIONS.map((r, i) => {
+            const isHovered = hoveredRole === r.key;
+            const isSelected = selectedRole === r.key;
+            const isActive = isHovered || isSelected;
+
             return (
               <span
                 key={r.key}
-                className={"role-word" + (isPicked ? " is-picked" : "")}
-                onClick={(e) => pickRole(e, r.key)}
+                onMouseEnter={() => setHoveredRole(r.key)}
+                onMouseLeave={() => setHoveredRole(null)}
+                onClick={() => handleChoose(r.key)}
                 style={{
-                  fontSize: r.size,
-                  color: "#404040",
-                  animation: `liquidBubbleIn 0.8s cubic-bezier(0.34,1.56,0.64,1) ${r.delay} both, ${r.floatAnim} ${r.dur} ease-in-out ${r.delay} infinite`,
-                  opacity: picked && !isPicked ? 0.25 : 1,
-                  textShadow: "none",
+                  fontFamily: "'Libre Caslon Display', Georgia, serif",
+                  fontSize: 56,
+                  fontWeight: 400,
+                  lineHeight: 1.1,
+                  letterSpacing: -1,
+                  cursor: "pointer",
+                  userSelect: "none",
+                  display: "inline-block",
+                  color: "var(--ink)",
+                  WebkitTextStroke: isActive ? `8px var(--accent)` : "6px rgba(255,255,255,0.70)",
+                  paintOrder: "stroke fill",
+                  animation: nameEntered
+                    ? `roleWordIn 0.5s var(--ease-spring) ${i * 0.08}s both`
+                    : "none",
+                  transform: isActive ? "scale(1.04)" : "scale(1)",
+                  transition: `transform 0.2s var(--ease-spring)`,
                 }}
-              >{r.label}</span>
+              >
+                {r.label}
+              </span>
             );
           })}
         </div>
       </div>
 
-      {/* Skip — very bottom */}
+      {/* ── SKIP — bottom centre, only once name is typed ── */}
       <button
-        onClick={handleSkip}
+        onClick={onSkip}
         style={{
-          position: "relative", zIndex: 1,
-          background: "none", border: "none", cursor: "pointer",
-          fontSize: 13, fontWeight: 400,
-          color: "rgba(26,31,38,0.38)",
-          fontFamily: "'Inter', sans-serif", letterSpacing: 0.2, padding: "8px 16px",
-          transition: "color 0.15s",
-          textShadow: "0 1px 4px rgba(255,255,255,0.6)",
+          position: "absolute",
+          bottom: 28,
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 2,
+          background: "none",
+          border: "none",
+          cursor: nameEntered ? "pointer" : "default",
+          fontSize: 12,
+          fontFamily: "'Inter', sans-serif",
+          letterSpacing: "0.08em",
+          color: "rgba(26,31,38,0.35)",
+          opacity: nameEntered ? 1 : 0,
+          pointerEvents: nameEntered ? "auto" : "none",
+          transition: `opacity 0.5s var(--ease-smooth), color var(--duration-fast)`,
         }}
-        onMouseEnter={e => e.currentTarget.style.color = "rgba(26,31,38,0.65)"}
-        onMouseLeave={e => e.currentTarget.style.color = "rgba(26,31,38,0.38)"}
-      >skip for now</button>
+        onMouseEnter={e => { if (nameEntered) e.currentTarget.style.opacity = "0.7"; }}
+        onMouseLeave={e => { e.currentTarget.style.opacity = nameEntered ? "1" : "0"; }}
+      >
+        skip for now
+      </button>
 
-      {/* Circle-mask reveal transition */}
-      {picked && (
-        <div
-          className="circle-reveal"
-          style={{
-            clipPath: `circle(${picked.expand ? picked.r : 0}px at ${picked.x}px ${picked.y}px)`,
-            WebkitClipPath: `circle(${picked.expand ? picked.r : 0}px at ${picked.x}px ${picked.y}px)`,
-          }}
-        />
-      )}
     </div>
   );
 }
@@ -3979,121 +4255,42 @@ const WIDGET_CATALOGUE = {
         width: "100%",
         height: "100%",
         minHeight: 160,
-        overflow: "visible",
+        overflow: "hidden",
       }}>
         {[
-          { idx: 0, size: 130, left: 52,  top: -15, z: 3 },
-          { idx: 1, size: 88,  left: -8,  top: 10,  z: 2 },
-          { idx: 2, size: 72,  left: 20,  top: 55,  z: 4 },
-          { idx: 3, size: 56,  left: 62,  top: 62,  z: 2 },
-          { idx: 4, size: 44,  left: 36,  top: 5,   z: 1 },
-          { idx: 5, size: 38,  left: 78,  top: 28,  z: 1 },
-        ].map(({ idx, size, left, top, z }) => {
-          const photo = TEAM_PHOTOS[idx];
-          if (!photo) return null;
-          return (
-            <div key={idx} style={{
+          { idx: 0, size: 110, left: "5%",  top: "10%" },
+          { idx: 1, size: 75,  left: "38%", top: "5%"  },
+          { idx: 2, size: 140, left: "55%", top: "0%"  },
+          { idx: 3, size: 85,  left: "8%",  top: "55%" },
+          { idx: 4, size: 65,  left: "42%", top: "52%" },
+          { idx: 5, size: 90,  left: "68%", top: "50%" },
+        ].map(({ idx, size, left, top }) => (
+          <div
+            key={idx}
+            style={{
               position: "absolute",
-              left: `${left}%`,
-              top: `${top}%`,
+              left,
+              top,
               width: size,
               height: size,
               borderRadius: "50%",
               overflow: "hidden",
-              zIndex: z,
               flexShrink: 0,
-              boxShadow: [
-                "0 8px 24px rgba(0,0,0,0.22)",
-                "0 2px 6px rgba(0,0,0,0.14)",
-                "0 0 0 1px rgba(255,255,255,0.30)",
-                "inset 3px 3px 8px rgba(255,255,255,0.35)",
-                "inset -4px -4px 12px rgba(0,0,0,0.45)",
-              ].join(", "),
-              transition: "transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
             }}
-            onMouseEnter={e => e.currentTarget.style.transform = "scale(1.06)"}
-            onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
-            >
-              <img
-                src={photo.url}
-                alt={photo.name}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  objectPosition: "center top",
-                  display: "block",
-                  pointerEvents: "none",
-                }}
-                onError={e => {
-                  e.currentTarget.style.display = "none";
-                  e.currentTarget.parentElement.style.background =
-                    ["radial-gradient(circle at 35% 30%, rgba(255,255,255,0.6) 0%, #9080A8 100%)",
-                     "radial-gradient(circle at 35% 30%, rgba(255,255,255,0.6) 0%, #7A9888 100%)",
-                     "radial-gradient(circle at 35% 30%, rgba(255,255,255,0.6) 0%, #A08878 100%)",
-                     "radial-gradient(circle at 35% 30%, rgba(255,255,255,0.6) 0%, #7888A0 100%)",
-                     "radial-gradient(circle at 35% 30%, rgba(255,255,255,0.6) 0%, #9878A0 100%)",
-                     "radial-gradient(circle at 35% 30%, rgba(255,255,255,0.6) 0%, #7A9888 100%)"][idx];
-                }}
-              />
-
-              <div style={{
-                position: "absolute", inset: 0,
-                borderRadius: "50%",
-                background: "rgba(10,15,30,0.15)",
-                pointerEvents: "none",
-                zIndex: 2,
-              }} />
-
-              <div style={{
-                position: "absolute", inset: 0,
-                borderRadius: "50%",
-                background: `conic-gradient(
-                  from 190deg,
-                  rgba(100,60,200,0.32) 0deg,
-                  rgba(40,140,255,0.26) 55deg,
-                  rgba(60,210,170,0.20) 95deg,
-                  rgba(220,200,50,0.16) 135deg,
-                  rgba(255,80,60,0.22) 190deg,
-                  rgba(180,40,210,0.28) 250deg,
-                  rgba(100,60,200,0.32) 360deg
-                )`,
-                mixBlendMode: "screen",
-                pointerEvents: "none",
-                zIndex: 3,
-              }} />
-
-              <div style={{
-                position: "absolute",
-                bottom: 0, left: 0, right: 0,
-                height: "52%",
-                borderRadius: "0 0 50% 50%",
-                background: "radial-gradient(ellipse at 55% 85%, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0) 100%)",
-                pointerEvents: "none",
-                zIndex: 4,
-              }} />
-
-              <div style={{
-                position: "absolute",
-                top: "5%", left: "8%",
-                width: "46%", height: "40%",
-                background: "radial-gradient(ellipse at 38% 32%, rgba(255,255,255,0.70) 0%, rgba(255,255,255,0.22) 45%, rgba(255,255,255,0) 100%)",
-                borderRadius: "50%",
-                transform: "rotate(-18deg)",
-                pointerEvents: "none",
-                zIndex: 5,
-              }} />
-
-              <div style={{
-                position: "absolute", inset: 0,
-                borderRadius: "50%",
-                boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.22)",
-                pointerEvents: "none",
-                zIndex: 6,
-              }} />
-            </div>
-          );
-        })}
+          >
+            <img
+              src={TEAM_PHOTOS[idx].url}
+              alt=""
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center top",
+                display: "block",
+              }}
+            />
+          </div>
+        ))}
       </div>
     ),
   },
@@ -4101,21 +4298,39 @@ const WIDGET_CATALOGUE = {
     title: "Photo Archive",
     to: "memory",
     working: true,
-    render: () => (
-      <div style={{ flex: 1, position: "relative" }}>
-        {["a","c","b","e","d","a","c","b"].map((v, i) => (
-          <div key={i} className="sphere" style={{
-            position: "absolute",
-            width: [34,22,28,18,40,16,24,20][i],
-            height: [34,22,28,18,40,16,24,20][i],
-            background: sphereBg(v),
-            left: ["6%","34%","58%","80%","20%","70%","46%","88%"][i],
-            top: ["12%","52%","18%","60%","68%","8%","78%","36%"][i],
-            animation: `sphereIn 0.5s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.05}s backwards`,
-          }} />
-        ))}
-      </div>
-    ),
+    render: () => {
+      const circles = [
+        { idx: 0, size: 120, left: "48%", top: "-5%"  },
+        { idx: 1, size: 85,  left: "5%",  top: "15%"  },
+        { idx: 2, size: 70,  left: "28%", top: "45%"  },
+        { idx: 3, size: 55,  left: "60%", top: "55%"  },
+        { idx: 4, size: 45,  left: "18%", top: "65%"  },
+        { idx: 5, size: 40,  left: "75%", top: "20%"  },
+      ];
+      return (
+        <div style={{ position: "relative", width: "100%", height: "100%", minHeight: 160 }}>
+          {circles.map(({ idx, size, left, top }) => (
+            <div
+              key={idx}
+              style={{
+                position: "absolute", left, top,
+                width: size, height: size,
+                borderRadius: "50%",
+                overflow: "hidden",
+                flexShrink: 0,
+              }}
+            >
+              <img
+                src={archivePhoto(idx)}
+                alt=""
+                onError={e => { e.currentTarget.style.display = "none"; e.currentTarget.parentElement.style.background = "var(--ph-1)"; }}
+                style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
+              />
+            </div>
+          ))}
+        </div>
+      );
+    },
   },
   "signature": {
     title: "Email Signature",
@@ -4467,8 +4682,8 @@ function HomeWidgetTile({ widgetKey, widget, go, index = 0, justAdded, isDragged
         marginBottom: 14,
       }}>
         <div style={{
-          fontFamily: HOME_SERIF, fontSize: 20, fontWeight: 400, color: "var(--ink)",
-          letterSpacing: -0.3, lineHeight: 1,
+          fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 500, color: "var(--ink)",
+          letterSpacing: 0, lineHeight: 1,
         }}>{widget.title}</div>
         {!widget.working && (
           <span style={{
@@ -4680,7 +4895,7 @@ function createPackEngine(opts) {
     }
     const rate = opts.spawnRate();
     for (let i = 0; i < rate; i++) {
-      if (growing.length > 80) break;
+      if (growing.length > 0) break;
       trySpawn();
     }
   }
@@ -4707,18 +4922,14 @@ function packHex(h) {
 
 function BubblePicker({ availableWidgets, onAdd, onClose }) {
   const { theme } = useContext(AppContext);
-  const canvasRef = useRef(null);
-  const engineRef = useRef(null);
-  const rafRef = useRef(null);
-  const circleWidgetMapRef = useRef({});
-  const assignedWidgetsRef = useRef(new Set());
   const [closing, setClosing] = useState(false);
+  const [circles, setCircles] = useState([]);
+  const [hovered, setHovered] = useState(-1);
   const widgets = availableWidgets || [];
 
-  const BG   = theme === "dark" ? "#1C1C1E" : "#ECEDEF";
-  const INK  = theme === "dark" ? "rgba(240,237,232,0.85)" : "rgba(20,20,20,0.80)";
-  const STROKE = theme === "dark" ? "rgba(255,255,255,0.18)" : "rgba(20,20,20,0.22)";
-  const FILL_HOVER = theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(20,20,20,0.04)";
+  const BG     = theme === "dark" ? "#1C1C1E" : "#ECEDEF";
+  const INK    = theme === "dark" ? "rgba(240,237,232,0.88)" : "rgba(20,20,20,0.88)";
+  const STROKE = theme === "dark" ? "rgba(255,255,255,0.14)" : "rgba(20,20,20,0.18)";
 
   function handleClose() {
     setClosing(true);
@@ -4726,166 +4937,105 @@ function BubblePicker({ availableWidgets, onAdd, onClose }) {
   }
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
-    const W = window.innerWidth;
-    const H = window.innerHeight;
-    canvas.width  = Math.floor(W * dpr);
-    canvas.height = Math.floor(H * dpr);
-    canvas.style.width  = W + "px";
-    canvas.style.height = H + "px";
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    const engine = createPackEngine({
-      maxRadius: () => 260,
-      minRadius: () => 52,
-      growSpeed: () => 1.7,
-      spawnRate: () => 2,
-    });
-    engineRef.current = engine;
-    engine.resize(W, H);
-
-    let lastT = performance.now();
-    let hoveredIdx = -1;
-
-    function onMouseMove(e) {
-      const rect = canvas.getBoundingClientRect();
-      const mx = e.clientX - rect.left;
-      const my = e.clientY - rect.top;
-      const circles = engine.getCircles();
-      hoveredIdx = -1;
-      for (let i = 0; i < circles.length; i++) {
-        const c = circles[i];
-        if (!circleWidgetMapRef.current[i]) continue;
-        const dx = c.x - mx, dy = c.y - my;
-        if (Math.sqrt(dx*dx + dy*dy) < c.r) {
-          hoveredIdx = i;
-          break;
-        }
-      }
-      canvas.style.cursor = hoveredIdx >= 0 ? "pointer" : "default";
-    }
-
-    function onClick(e) {
-      if (hoveredIdx >= 0 && circleWidgetMapRef.current[hoveredIdx]) {
-        const key = circleWidgetMapRef.current[hoveredIdx];
-        onAdd(key);
-        onClose();
-        return;
-      }
-      const rect = canvas.getBoundingClientRect();
-      const mx = e.clientX - rect.left;
-      const my = e.clientY - rect.top;
-      const circles = engine.getCircles();
-      let hitAny = false;
-      for (const c of circles) {
-        const dx = c.x - mx, dy = c.y - my;
-        if (Math.sqrt(dx*dx + dy*dy) < c.r) { hitAny = true; break; }
-      }
-      if (!hitAny) handleClose();
-    }
-
-    canvas.addEventListener("mousemove", onMouseMove);
-    canvas.addEventListener("click", onClick);
-
     function onKey(e) { if (e.key === "Escape") handleClose(); }
     window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
-    function loop(now) {
-      rafRef.current = requestAnimationFrame(loop);
-      const dt = Math.min(0.05, (now - lastT) / 1000);
-      lastT = now;
-
-      engine.step(dt);
-
-      const circles = engine.getCircles();
-
-      const unassigned = widgets.filter(k => !assignedWidgetsRef.current.has(k));
-      for (let i = 0; i < circles.length && unassigned.length > 0; i++) {
-        const c = circles[i];
-        if (c.settled && c.r > 56 && !circleWidgetMapRef.current[i]) {
-          const key = unassigned.shift();
-          circleWidgetMapRef.current[i] = key;
-          assignedWidgetsRef.current.add(key);
-        }
-      }
-
-      ctx.fillStyle = BG;
-      ctx.fillRect(0, 0, W, H);
-
-      const t = now;
-
-      for (let i = 0; i < circles.length; i++) {
-        const c = circles[i];
-        const wKey = circleWidgetMapRef.current[i];
-        const w = c.settled
-          ? Math.sin(t * 0.0012 + c.phase) * 0.35 * Math.min(2.5, c.r * 0.06)
-          : 0;
-        const dx = Math.cos(t * 0.0007 + c.phase * 1.7) * 0.25 * 0.4;
-        const dy = Math.sin(t * 0.0009 + c.phase * 0.9) * 0.25 * 0.4;
-        const rr = Math.max(0.5, c.r + w);
-        const cx = c.x + dx;
-        const cy = c.y + dy;
-
-        ctx.beginPath();
-        ctx.arc(cx, cy, rr, 0, Math.PI * 2);
-
-        // All circles share one uniform outline style — no fill, no shadow
-        ctx.strokeStyle = theme === "dark"
-          ? "rgba(255,255,255,0.10)"
-          : "rgba(20,20,20,0.12)";
-        ctx.lineWidth = 1.0;
-        ctx.stroke();
-
-        if (wKey && c.r > 46 && WIDGET_CATALOGUE[wKey]) {
-          const label = WIDGET_CATALOGUE[wKey].title || wKey;
-          const fontSize = c.r > 170 ? 26 : c.r > 120 ? 21 : c.r > 88 ? 17 : 14;
-          ctx.font = `500 ${fontSize}px 'Libre Caslon Display', Georgia, serif`;
-          ctx.fillStyle = theme === "dark" ? "rgba(240,237,232,0.92)" : "rgba(20,20,20,0.90)";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-
-          const maxW = rr * 1.4;
-          const words = label.split(" ");
-          if (words.length > 1 && ctx.measureText(label).width > maxW) {
-            const mid = Math.ceil(words.length / 2);
-            const line1 = words.slice(0, mid).join(" ");
-            const line2 = words.slice(mid).join(" ");
-            ctx.fillText(line1, cx, cy - fontSize * 0.6);
-            ctx.fillText(line2, cx, cy + fontSize * 0.6);
-          } else {
-            ctx.fillText(label, cx, cy);
-          }
-        }
-      }
-    }
-
-    rafRef.current = requestAnimationFrame(loop);
-
-    return () => {
-      cancelAnimationFrame(rafRef.current);
-      canvas.removeEventListener("mousemove", onMouseMove);
-      canvas.removeEventListener("click", onClick);
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [theme]);
+  useEffect(() => {
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    const engine = createPackEngine({
+      maxRadius: () => Math.min(260, Math.min(W, H) * 0.28),
+      minRadius: () => 56,
+      growSpeed: () => 8,
+      spawnRate: () => 1,
+    });
+    engine.resize(W, H);
+    // Run synchronously to stable layout — no RAF dependency
+    for (let i = 0; i < 6000; i++) engine.step(1 / 60);
+    const raw = engine.getCircles().filter(c => c.settled && c.r >= 56);
+    // Sort largest-first so big circles get widgets assigned
+    raw.sort((a, b) => b.r - a.r);
+    const mapped = widgets.slice(0, raw.length).map((key, i) => ({
+      key,
+      x: raw[i].x,
+      y: raw[i].y,
+      r: raw[i].r,
+    }));
+    setCircles(mapped);
+  }, [widgets.join(",")]);
 
   return (
-    <div style={{
-      position: "fixed", inset: 0, zIndex: 500,
-      opacity: closing ? 0 : 1,
-      transition: "opacity 0.3s ease",
-    }}>
-      <canvas ref={canvasRef} style={{
-        position: "absolute", inset: 0,
-        display: "block", width: "100%", height: "100%",
-      }} />
+    <div
+      onClick={handleClose}
+      style={{
+        position: "fixed", inset: 0, zIndex: 500,
+        background: BG,
+        opacity: closing ? 0 : 1,
+        transition: "opacity 0.3s ease",
+      }}
+    >
+      {circles.map((c, i) => {
+        const label = WIDGET_CATALOGUE[c.key]?.title || c.key;
+        const fontSize = c.r > 170 ? 28 : c.r > 120 ? 22 : c.r > 88 ? 18 : 14;
+        const words = label.split(" ");
+        const isHov = hovered === i;
+        return (
+          <div
+            key={c.key}
+            onClick={e => { e.stopPropagation(); onAdd(c.key); onClose(); }}
+            onMouseEnter={() => setHovered(i)}
+            onMouseLeave={() => setHovered(-1)}
+            style={{
+              position: "absolute",
+              left: c.x - c.r,
+              top: c.y - c.r,
+              width: c.r * 2,
+              height: c.r * 2,
+              borderRadius: "50%",
+              border: `1px solid ${STROKE}`,
+              background: "transparent",
+              boxShadow: isHov ? "inset 0 0 60px 18px rgba(232,254,103,0.22)" : "none",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              animation: `bubbleIn 0.5s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.055}s both`,
+              transform: isHov ? "scale(1.05)" : "scale(1)",
+              transition: "transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease",
+            }}
+          >
+            {words.length > 1 ? (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, pointerEvents: "none" }}>
+                {words.map((w, wi) => (
+                  <span key={wi} style={{
+                    fontFamily: "'Libre Caslon Display', Georgia, serif",
+                    fontSize,
+                    fontWeight: 400,
+                    color: INK,
+                    lineHeight: 1.15,
+                    textAlign: "center",
+                    display: "block",
+                  }}>{w}</span>
+                ))}
+              </div>
+            ) : (
+              <span style={{
+                fontFamily: "'Libre Caslon Display', Georgia, serif",
+                fontSize,
+                fontWeight: 400,
+                color: INK,
+                pointerEvents: "none",
+              }}>{label}</span>
+            )}
+          </div>
+        );
+      })}
 
       <button
-        onClick={handleClose}
+        onClick={e => { e.stopPropagation(); handleClose(); }}
         style={{
           position: "absolute", top: 24, right: 24,
           width: 40, height: 40, borderRadius: "50%",
@@ -5045,7 +5195,6 @@ function ScreenHome({ role, go }) {
         maxWidth: CONTENT_MAX, margin: "0 auto",
         position: "relative",
       }}>
-        <Ghost word="HOME" size={260} style={{ bottom: -50, left: -20, zIndex: 0 }} />
         {/* Headline */}
         <h1 style={{
           fontFamily: HOME_SERIF, fontWeight: 400,

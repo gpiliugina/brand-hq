@@ -1,0 +1,299 @@
+/* ============================================================
+   Archive — Design Tokens
+
+   Signature:
+     • Libre Caslon Display ONLY on the hero H1 (one word stroked in acid)
+     • Inter everywhere else — body, buttons, cards, widget previews, stats
+     • One dark, one bg, one accent, one hero size
+   ============================================================ */
+
+/* ============================================================
+   LAYER 1 — PRIMITIVES
+   The only place raw hex codes and px values live.
+   ============================================================ */
+:root {
+  /* ---- Neutrals ----
+     One dark for text/avatars/filled buttons. One mid muted.
+     Shades of bg above that. */
+  --ds-bg:         #ECEDEF;   /* main page background */
+  --ds-surface:    #FFFFFF;   /* cards, panels */
+  --ds-faint:      #F5F5F6;   /* recessed/inset zones */
+  --ds-border:     #E2E2E2;   /* hairlines on white surfaces */
+  --ds-ink:        #404040;   /* THE dark — text, avatars, filled buttons */
+  --ds-muted:      #888888;   /* secondary text */
+
+  /* ---- Placeholder ramp ---- */
+  --ds-ph-1:       #FAFAFA;
+  --ds-ph-2:       #F2F2F2;
+  --ds-ph-3:       #E8E8E8;   /* flat-bubble fill */
+  --ds-ph-4:       #D4D4D4;
+
+  /* ---- Lines & dots (rgba blacks) ---- */
+  --ds-line:       rgb(0 0 0 / 0.06);   /* tile borders */
+  --ds-grid-dot:   rgb(0 0 0 / 0.07);   /* page pattern */
+
+  /* ---- Accent (the brand stroke) ----
+     One value. Used only by the Highlight component. */
+  --ds-accent:     #E8FE67;
+
+  /* ---- Semantic (soft) ---- */
+  --ds-ok-bg:      #E1E8DC;
+  --ds-ok-fg:      #3A6A3A;
+  --ds-bad-bg:     #F4DDDD;
+  --ds-bad-fg:     #7A5050;
+
+  /* ---- Spacing (4px base) ---- */
+  --ds-space-1:    4px;
+  --ds-space-2:    8px;
+  --ds-space-3:    12px;
+  --ds-space-5:    16px;
+  --ds-space-6:    20px;
+  --ds-space-8:    24px;
+  --ds-space-10:   32px;
+  --ds-space-12:   40px;
+  --ds-space-16:   64px;
+
+  /* ---- Typography sizes ---- */
+  --ds-font-10:    0.625rem;   /* uppercase eyebrow */
+  --ds-font-11:    0.6875rem;  /* tiny meta */
+  --ds-font-12:    0.75rem;    /* caption */
+  --ds-font-13:    0.8125rem;  /* base UI body */
+  --ds-font-14:    0.875rem;   /* slightly emphasised body */
+  --ds-font-18:    1.125rem;   /* card title (Inter, semibold) */
+  --ds-font-28:    1.75rem;    /* stat numeral inside cards (Inter) */
+  --ds-font-80:    5rem;       /* THE hero H1 (display serif) */
+
+  /* ---- Weights ---- */
+  --ds-weight-300: 300;
+  --ds-weight-400: 400;
+  --ds-weight-500: 500;
+  --ds-weight-600: 600;
+
+  /* ---- Radius ---- */
+  --ds-radius-14:   14px;      /* tiles, cards */
+  --ds-radius-full: 9999px;    /* pills, circles */
+
+  /* ---- Shadow ----
+     One subtle drop. Used only when something genuinely floats. */
+  --ds-shadow-card:
+    0 1px 2px 0 rgb(0 0 0 / 0.04),
+    0 4px 12px -2px rgb(0 0 0 / 0.06);
+
+  /* ---- Motion ---- */
+  --ds-duration-fast:    120ms;
+  --ds-duration-base:    220ms;
+  --ds-duration-screen:  600ms;
+  --ds-ease-smooth:      cubic-bezier(0.22, 1, 0.36, 1);
+  --ds-ease-spring:      cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ---- Border widths ---- */
+  --ds-border-1:   1px;
+  --ds-border-15:  1.5px;
+
+  /* ---- Accent text-stroke (the brand highlight) ----
+     em-relative so it scales with text size. */
+  --ds-stroke-accent: 0.16em;
+
+  /* ---- Additional spacing step ---- */
+  --ds-space-7:   28px;    /* 7 × 4px — used for grid background-size */
+
+  /* ---- Grid pattern ---- */
+  --ds-grid-dot-size: 1px; /* dot diameter in the radial-gradient pattern */
+
+  /* ---- Extended weights ---- */
+  --ds-weight-700: 700;    /* bold — badge labels */
+
+  /* ---- Extended border widths ---- */
+  --ds-border-2:   2px;    /* thick border — selected badge outline */
+
+  /* ---- Photo badge ---- */
+  --ds-photo-badge-size:   22px;  /* ✓ badge diameter */
+  --ds-photo-badge-offset: -3px;  /* negative inset from the bubble edge */
+
+  /* ---- Z-index scale ---- */
+  --ds-z-0:   0;
+  --ds-z-1:   1;
+  --ds-z-2:   2;
+  --ds-z-3:   3;
+  --ds-z-4:   4;
+  --ds-z-10:  10;
+  --ds-z-999: 999;
+
+  /* ---- Photo — WebGL shader constants ----
+     These are injected into the GLSL shader source at component mount time
+     via getComputedStyle(). GLSL cannot read CSS vars at runtime.
+     All values must be valid GLSL floats (use decimal point). */
+  --ds-photo-power-exponent:     2.0;      /* 2.0 = perfect circle mask */
+  --ds-photo-lens-multiplier:    5000.0;   /* fisheye strength */
+  --ds-photo-mask-multiplier-1:  10000.0;  /* outer mask boundary */
+  --ds-photo-mask-multiplier-2:  9500.0;   /* rim highlight band */
+  --ds-photo-mask-multiplier-3:  11000.0;  /* bottom shadow band */
+  --ds-photo-mask-strength-1:    8.0;      /* outer edge softness */
+  --ds-photo-mask-strength-2:    16.0;     /* rim highlight intensity */
+  --ds-photo-mask-strength-3:    2.0;      /* bottom shadow softness */
+  --ds-photo-sample-range:       4.0;      /* blur: 4.0 → 9×9 = 81 samples */
+  --ds-photo-lighting-intensity: 0.3;      /* rim brightness */
+}
+
+/* ============================================================
+   LAYER 2 — ALIASES
+   Components reference these. Never reach past them to Layer 1.
+   ============================================================ */
+:root {
+  /* ---- Color: text ---- */
+  --color-text:          var(--ds-ink,     #404040);
+  --color-text-muted:    var(--ds-muted,   #888888);
+  --color-text-inverse:  var(--ds-surface, #FFFFFF);
+  --color-text-danger:   var(--ds-bad-fg,  #7A5050);
+  --color-text-success:  var(--ds-ok-fg,   #3A6A3A);
+
+  /* ---- Color: surfaces ---- */
+  --color-bg:            var(--ds-bg,      #ECEDEF);
+  --color-surface:       var(--ds-surface, #FFFFFF);
+  --color-surface-faint: var(--ds-faint,   #F5F5F6);
+
+  /* ---- Color: borders & lines ---- */
+  --color-border:        var(--ds-border, #E2E2E2);
+  --color-line:          var(--ds-line);
+  --color-grid-dot:      var(--ds-grid-dot);
+
+  /* ---- Color: filled chrome (avatars, primary buttons) ---- */
+  --color-fill-strong:      var(--ds-ink,     #404040);
+  --color-fill-strong-text: var(--ds-surface, #FFFFFF);
+
+  /* ---- Color: bubble (flat gray placeholder) ----
+     Used as content stand-in where no real photo/asset is available. */
+  --color-bubble:        var(--ds-ph-3, #E8E8E8);
+
+  /* ---- Color: accent (the brand stroke) ---- */
+  --color-accent:        var(--ds-accent, #E8FE67);
+
+  /* ---- Color: status ---- */
+  --color-status-ok-bg:  var(--ds-ok-bg,  #E1E8DC);
+  --color-status-ok-fg:  var(--ds-ok-fg,  #3A6A3A);
+  --color-status-bad-bg: var(--ds-bad-bg, #F4DDDD);
+  --color-status-bad-fg: var(--ds-bad-fg, #7A5050);
+
+  /* ---- Color: placeholder ramp ---- */
+  --color-ph-1: var(--ds-ph-1, #FAFAFA);
+  --color-ph-2: var(--ds-ph-2, #F2F2F2);
+  --color-ph-3: var(--ds-ph-3, #E8E8E8);
+  --color-ph-4: var(--ds-ph-4, #D4D4D4);
+
+  /* ---- Spacing (semantic) ---- */
+  --space-xs:   var(--ds-space-1,  4px);
+  --space-sm:   var(--ds-space-2,  8px);
+  --space-md:   var(--ds-space-3,  12px);
+  --space-lg:   var(--ds-space-5,  16px);
+  --space-xl:   var(--ds-space-6,  20px);
+  --space-2xl:  var(--ds-space-8,  24px);
+  --space-3xl:  var(--ds-space-10, 32px);
+  --space-4xl:  var(--ds-space-12, 40px);
+  --space-5xl:  var(--ds-space-16, 64px);
+
+  /* ---- Typography ----
+     ONLY the hero H1 uses display serif. Everything else uses Inter. */
+  --font-family-display: "Libre Caslon Display", Georgia, serif;
+  --font-family-ui:      "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-family-mono:    "SF Mono", "JetBrains Mono", "Menlo", "Consolas", monospace;
+
+  --font-size-eyebrow:    var(--ds-font-10, 0.625rem);
+  --font-size-meta:       var(--ds-font-11, 0.6875rem);
+  --font-size-caption:    var(--ds-font-12, 0.75rem);
+  --font-size-body:       var(--ds-font-13, 0.8125rem);   /* DEFAULT body */
+  --font-size-body-lg:    var(--ds-font-14, 0.875rem);
+  --font-size-card-title: var(--ds-font-18, 1.125rem);    /* Inter, semibold */
+  --font-size-stat:       var(--ds-font-28, 1.75rem);     /* Inter, medium */
+  --font-size-h1:         var(--ds-font-80, 5rem);        /* THE hero — display serif */
+
+  --font-weight-light:    var(--ds-weight-300, 300);
+  --font-weight-regular:  var(--ds-weight-400, 400);
+  --font-weight-medium:   var(--ds-weight-500, 500);
+  --font-weight-semibold: var(--ds-weight-600, 600);
+
+  --line-height-hero:  0.92;   /* hero H1 only */
+  --line-height-tight: 1.25;
+  --line-height-base:  1.4;
+
+  --letter-spacing-hero:    -0.0313em;
+  --letter-spacing-eyebrow: 0.14em;
+
+  /* ---- Radius ---- */
+  --radius-md:   var(--ds-radius-14,   14px);
+  --radius-pill: var(--ds-radius-full, 9999px);
+
+  /* ---- Elevation ---- */
+  --shadow-card: var(--ds-shadow-card);
+
+  /* ---- Motion ---- */
+  --duration-fast:   var(--ds-duration-fast,   120ms);
+  --duration-base:   var(--ds-duration-base,   220ms);
+  --duration-screen: var(--ds-duration-screen, 600ms);
+  --ease-smooth:     var(--ds-ease-smooth);
+  --ease-spring:     var(--ds-ease-spring);
+
+  /* ---- Border widths ---- */
+  --border-width:        var(--ds-border-1,  1px);
+  --border-width-strong: var(--ds-border-15, 1.5px);
+
+  /* ---- The brand highlight stroke ---- */
+  --stroke-accent: var(--ds-stroke-accent, 0.16em);
+
+  /* ============================================================
+     PHOTO STYLE — WebGL liquid-glass bead (the second brand element)
+     The shader renders genuine light refraction on the GPU.
+     See specs/foundations/photo-style.md
+     ============================================================ */
+
+  /* Shader constants — read by PhotoBubble via getComputedStyle() at mount.
+     Must remain valid GLSL floats. Changing a value needs a component remount. */
+  --photo-power-exponent:    var(--ds-photo-power-exponent,    2.0);
+  --photo-lens-multiplier:   var(--ds-photo-lens-multiplier,   5000.0);
+  --photo-mask-multiplier-1: var(--ds-photo-mask-multiplier-1, 10000.0);
+  --photo-mask-multiplier-2: var(--ds-photo-mask-multiplier-2, 9500.0);
+  --photo-mask-multiplier-3: var(--ds-photo-mask-multiplier-3, 11000.0);
+  --photo-mask-strength-1:   var(--ds-photo-mask-strength-1,   8.0);
+  --photo-mask-strength-2:   var(--ds-photo-mask-strength-2,   16.0);
+  --photo-mask-strength-3:   var(--ds-photo-mask-strength-3,   2.0);
+  --photo-sample-range:      var(--ds-photo-sample-range,      4.0);
+  --photo-lighting-intensity: var(--ds-photo-lighting-intensity, 0.3);
+
+  /* Loading state — shown while image loads or when WebGL unavailable */
+  --photo-loading-bg: var(--color-bubble);
+
+  /* Selection state */
+  --photo-selected-ring: var(--color-accent);
+
+  /* Motion */
+  --photo-hover-scale: 1.06;
+  --photo-press-scale: 0.95;
+  --photo-transition: transform var(--duration-base) var(--ease-spring);
+
+  /* ---- Spacing — extended step ---- */
+  --space-7: var(--ds-space-7, 28px);
+
+  /* ---- Grid pattern ---- */
+  --grid-dot-size: var(--ds-grid-dot-size, 1px);
+
+  /* ---- Typography — bold weight ---- */
+  --font-weight-bold: var(--ds-weight-700, 700);
+
+  /* ---- Border — extended widths ---- */
+  --border-width-badge: var(--ds-border-2, 2px);
+
+  /* ---- Photo badge ---- */
+  --photo-badge-size:   var(--ds-photo-badge-size,   22px);
+  --photo-badge-offset: var(--ds-photo-badge-offset, -3px);
+
+  /* ---- Z-index scale ---- */
+  --z-0:       var(--ds-z-0,   0);
+  --z-1:       var(--ds-z-1,   1);
+  --z-2:       var(--ds-z-2,   2);
+  --z-3:       var(--ds-z-3,   3);
+  --z-4:       var(--ds-z-4,   4);
+  --z-10:      var(--ds-z-10,  10);
+  --z-overlay: var(--ds-z-999, 999);
+
+  /* ---- Photo badge ---- */
+  --photo-z-badge: var(--ds-z-10, 10);
+}
