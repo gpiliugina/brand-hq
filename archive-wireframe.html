@@ -618,8 +618,8 @@ function UniversalTopBar({ activeScreen, go }) {
         }}>
           {openToolObjs.length === 0 ? (
             <span style={{
-              padding: "0 14px", fontSize: 14, color: "var(--muted)",
-              fontFamily: HOME_SERIF, letterSpacing: -0.3,
+              padding: "0 14px", fontSize: 13, color: "var(--muted)",
+              fontFamily: "'Inter', sans-serif",
             }}>No tools open</span>
           ) : (
             <div style={{ display: "flex", alignItems: "center", overflowX: "auto", maxWidth: "54vw" }}>
@@ -645,15 +645,7 @@ function UniversalTopBar({ activeScreen, go }) {
                         fontWeight: on ? 600 : 400, padding: 0, whiteSpace: "nowrap",
                       }}
                     >
-                      <span style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-                        <span>{t.label}</span>
-                        {on && (
-                          <span style={{
-                            display: "block", width: 4, height: 4, borderRadius: 2,
-                            background: "var(--accent)", animation: "dotPop 0.3s ease backwards",
-                          }} />
-                        )}
-                      </span>
+                      {t.label}
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); closeTab(t.key); }}
@@ -2961,6 +2953,7 @@ function PhotoCircle({ id, size, cx, cy, gradIdx, selected, onPhotoEvent }) {
         background: "var(--ph-3)",
         zIndex: selected ? 10 : 1,
         boxShadow: selected ? `0 0 0 3px var(--accent)` : "none",
+        transition: "left 0.35s cubic-bezier(0.22,1,0.36,1), top 0.35s cubic-bezier(0.22,1,0.36,1)",
       }}
     >
       <img
@@ -3130,6 +3123,7 @@ function ScreenMemory({ go }) {
   const [zoom, setZoom] = useState(0.6);
   const [activeYear, setActiveYear] = useState(2022);
   const [previewPhoto, setPreviewPhoto] = useState(null);
+  const [search, setSearch] = useState("");
 
   const scrollRef = useRef(null);
   const zoomRef = useRef(0.6);
@@ -3215,6 +3209,13 @@ function ScreenMemory({ go }) {
     return () => el.removeEventListener("wheel", handler);
   }, []);
 
+  // Scroll to show TODAY on first open (scroll to max = TODAY at right edge)
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollLeft = el.scrollWidth - el.clientWidth;
+  }, []);
+
   const yearMarkers = MEMORY_YEARS.map(y => {
     const evs = MEMORY_CLUSTERS.filter(c => c.year === y);
     const cxFirst = evs[0].cx;
@@ -3256,40 +3257,118 @@ function ScreenMemory({ go }) {
     []
   );
 
+  // Grid positions for each cluster — used when zoomed in
+  const gridLayoutByCluster = useMemo(
+    () => MEMORY_CLUSTERS.map(c => {
+      const sizes = memorySizes(c.L, c.M, c.S);
+      const n = sizes.length;
+      const cols = Math.ceil(Math.sqrt(n));
+      const rows = Math.ceil(n / cols);
+      const cell = 70; // fixed cell size (px) for grid
+      return sizes.map((sz, i) => ({
+        sz,
+        x: ((i % cols) - (cols - 1) / 2) * cell,
+        y: (Math.floor(i / cols) - (rows - 1) / 2) * cell,
+      }));
+    }),
+    []
+  );
+
+  // Search filter — null means "show all"
+  const filteredClusterIndices = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return null;
+    const matched = new Set(
+      MEMORY_CLUSTERS.filter(c =>
+        c.name.toLowerCase().includes(q) ||
+        String(c.year).includes(q) ||
+        c.mon.toLowerCase().includes(q) ||
+        (c.mon + " " + c.year).toLowerCase().includes(q) ||
+        (String(c.year) + " " + c.mon).toLowerCase().includes(q)
+      ).map(c => c.idx)
+    );
+    return matched;
+  }, [search]);
+
+  // Grid/constellation interpolation — 0 at zoom ≤ 1.3, 1 at zoom ≥ 1.8
+  const GRID_START = 1.3, GRID_FULL = 1.8;
+  const rawT = Math.max(0, Math.min(1, (zoom - GRID_START) / (GRID_FULL - GRID_START)));
+  const gridT = rawT * rawT * (3 - 2 * rawT); // smoothstep
+
   return (
     <Shell active="memory" go={go} fullBleed>
       <div style={{ display: "flex", flexDirection: "column", height: "100vh", paddingTop: 84, position: "relative" }}>
 
-
-        {/* INNER TOP BAR — heading + subtitle + TODAY only */}
+        {/* INNER TOP BAR — heading + subtitle + search + TODAY */}
         <div style={{
           flexShrink: 0,
-          padding: "20px 24px 18px",
+          padding: "20px 24px 16px",
           borderBottom: "1px solid rgba(0,0,0,0.06)",
           background: HOME_BG,
-          display: "flex", alignItems: "flex-start", justifyContent: "space-between",
         }}>
-          <div>
-            <div style={{
-              fontFamily: HOME_SERIF, fontSize: 64, fontWeight: 400,
-              color: "var(--ink)", letterSpacing: -2, lineHeight: 0.9,
-            }}>Photo <Highlight>Archive</Highlight>.</div>
-            <div style={{
-              marginTop: 8, fontSize: 11, color: "#7A7885",
-              fontFamily: MONO, letterSpacing: 0.6,
-            }}>
-              TOTAL 2,418 PHOTOS · SPANS 2022–2026
+          {/* Row 1: title + TODAY */}
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+            <div>
+              <div style={{
+                fontFamily: HOME_SERIF, fontSize: 64, fontWeight: 400,
+                color: "var(--ink)", letterSpacing: -2, lineHeight: 0.9,
+              }}>Photo <Highlight>Archive</Highlight>.</div>
+              <div style={{
+                marginTop: 8, fontSize: 11, color: "#7A7885",
+                fontFamily: MONO, letterSpacing: 0.6,
+              }}>
+                TOTAL 2,418 PHOTOS · SPANS 2022–2026
+                {filteredClusterIndices !== null && (
+                  <span style={{ marginLeft: 12, color: "var(--accent)", background: "rgba(0,0,0,0.08)", borderRadius: 4, padding: "1px 6px" }}>
+                    {filteredClusterIndices.size} EVENTS MATCH
+                  </span>
+                )}
+              </div>
+            </div>
+            <div style={{ position: "relative", paddingLeft: 18, paddingTop: 6 }}>
+              <span style={{
+                fontSize: 10, color: "#1E1C23", fontFamily: MONO,
+                letterSpacing: 1, fontWeight: 600,
+              }}>TODAY</span>
+              <div style={{
+                position: "absolute", left: 6, top: -10, bottom: -16,
+                width: 1, background: "#6B6B6B",
+              }} />
             </div>
           </div>
-          <div style={{ position: "relative", paddingLeft: 18, paddingTop: 6 }}>
+          {/* Row 2: search bar */}
+          <div style={{ marginTop: 14, position: "relative", maxWidth: 480 }}>
             <span style={{
-              fontSize: 10, color: "#1E1C23", fontFamily: MONO,
-              letterSpacing: 1, fontWeight: 600,
-            }}>TODAY</span>
-            <div style={{
-              position: "absolute", left: 6, top: -10, bottom: -16,
-              width: 1, background: "#6B6B6B",
-            }} />
+              position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)",
+              fontSize: 14, color: "var(--muted)", pointerEvents: "none", lineHeight: 1,
+            }}>⌕</span>
+            <input
+              type="text"
+              placeholder="Search events, people, dates, locations…"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{
+                width: "100%", height: 36,
+                border: "1px solid var(--border)", borderRadius: 18,
+                padding: "0 36px 0 32px",
+                fontSize: 13, fontFamily: "'Inter', sans-serif",
+                background: "var(--faint)", color: "var(--ink)",
+                outline: "none", boxSizing: "border-box",
+                transition: "border-color 0.15s ease",
+              }}
+              onFocus={e => e.target.style.borderColor = "var(--ink)"}
+              onBlur={e => e.target.style.borderColor = "var(--border)"}
+            />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                style={{
+                  position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
+                  background: "none", border: "none", cursor: "pointer",
+                  color: "var(--muted)", fontSize: 13, lineHeight: 1, padding: 2,
+                }}
+              >✕</button>
+            )}
           </div>
         </div>
 
@@ -3307,7 +3386,7 @@ function ScreenMemory({ go }) {
             {/* Outer wrapper: provides scroll bounds at scaled dimensions */}
             <div style={{
               position: "relative",
-              width: (MEMORY_CANVAS_W - MEMORY_PAD_END + 24) * zoom,
+              width: `${(MEMORY_CANVAS_W - 40) * zoom + 32}px`,
               height: "100%",
               minHeight: MEMORY_TIMELINE_H,
             }}>
@@ -3355,6 +3434,9 @@ function ScreenMemory({ go }) {
                 {MEMORY_CLUSTERS.map((c, idx) => {
                   const positions = layoutByCluster[idx];
                   const labelTop = MEMORY_AXIS_Y + c.height / 2 + 18;
+                  const isFiltered = filteredClusterIndices !== null && !filteredClusterIndices.has(c.idx);
+                  const clusterOpacity = isFiltered ? 0.1 : 1;
+                  const GRID_PHOTO_SIZE = 52; // uniform size at full grid
                   return (
                     <Fragment key={idx}>
                       <div style={{
@@ -3365,6 +3447,7 @@ function ScreenMemory({ go }) {
                         height: c.height + 18,
                         background: "var(--line)",
                         pointerEvents: "none",
+                        opacity: clusterOpacity, transition: "opacity 0.25s ease",
                       }} />
                       <div style={{
                         position: "absolute",
@@ -3372,19 +3455,24 @@ function ScreenMemory({ go }) {
                         top: MEMORY_AXIS_Y - 2,
                         width: 4, height: 4, borderRadius: 2,
                         background: "rgba(0,0,0,0.2)",
+                        opacity: clusterOpacity, transition: "opacity 0.25s ease",
                       }} />
                       {positions.map((p, i) => {
                         const id = `${idx}_${i}`;
+                        const gp = gridLayoutByCluster[idx][i];
+                        const px = p.x + (gp.x - p.x) * gridT;
+                        const py = p.y + (gp.y - p.y) * gridT;
+                        const sz = p.sz + (GRID_PHOTO_SIZE - p.sz) * gridT;
                         return (
                           <PhotoCircle
                             key={i}
                             id={id}
-                            size={p.sz}
-                            cx={c.cx + p.x}
-                            cy={MEMORY_AXIS_Y + p.y}
+                            size={sz}
+                            cx={c.cx + px}
+                            cy={MEMORY_AXIS_Y + py}
                             gradIdx={(idx * 3 + i) % PHOTO_GRADIENTS.length}
                             selected={selected.has(id)}
-                            onPhotoEvent={onPhotoEvent}
+                            onPhotoEvent={isFiltered ? () => {} : onPhotoEvent}
                           />
                         );
                       })}
@@ -3394,6 +3482,7 @@ function ScreenMemory({ go }) {
                         top: labelTop,
                         width: 160, textAlign: "center",
                         pointerEvents: "none",
+                        opacity: clusterOpacity, transition: "opacity 0.25s ease",
                       }}>
                         <div style={{
                           fontSize: 10, fontFamily: MONO,
@@ -3621,7 +3710,7 @@ function ScreenMemory({ go }) {
                     aspectRatio: "4 / 5",
                     maxHeight: "78vh",
                     borderRadius: 10,
-                    background: "var(--ph-3)",
+                    background: PHOTO_GRADIENTS[gradIdx],
                     boxShadow: "0 24px 80px rgba(0,0,0,0.6)",
                     border: isSel ? "3px solid white" : "1px solid rgba(255,255,255,0.1)",
                     position: "relative",
@@ -3630,20 +3719,26 @@ function ScreenMemory({ go }) {
                   }}
                 >
                   <img
-                    src={archivePhoto(gradIdx)}
-                    alt={ev.name}
-                    style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
+                    src={archivePhoto(gradIdx).replace('w=400&h=400', 'w=800&h=1000')}
+                    alt=""
+                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
                   />
                   {isSel && (
                     <div style={{
                       position: "absolute", top: 16, left: 16,
                       width: 28, height: 28, borderRadius: 14,
-                      background: "white", color: "#1E1C23",
+                      background: SURFACE, color: "#1E1C23",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       fontSize: 13, fontWeight: 700,
                       boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
                     }}>✓</div>
                   )}
+                  <div style={{
+                    position: "absolute", bottom: 14, right: 16,
+                    fontSize: 10, fontFamily: MONO,
+                    color: "rgba(255,255,255,0.55)", letterSpacing: 0.8,
+                    textTransform: "uppercase",
+                  }}>4 : 5 · 3024×3780</div>
                 </div>
               </div>
 
