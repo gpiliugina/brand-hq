@@ -1,0 +1,40 @@
+<svg width="331" height="258" viewBox="0 0 331 258" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_549_264)">
+<rect width="331" height="258" fill="white"/>
+<path d="M39 93C39 87.4772 43.4772 83 49 83H335C340.523 83 345 87.4772 345 93V227C345 232.523 340.523 237 335 237H49C43.4772 237 39 232.523 39 227V93Z" fill="#ECEDEF"/>
+<path d="M151 143C145.477 143 141 138.523 141 133L141 125C141 119.477 145.477 115 151 115L260 115C265.523 115 270 119.477 270 125L270 133C270 138.523 265.523 143 260 143L151 143Z" fill="white"/>
+<path d="M151 177C145.477 177 141 172.523 141 167L141 159C141 153.477 145.477 149 151 149L312 149C317.523 149 322 153.477 322 159L322 167C322 172.523 317.523 177 312 177L151 177Z" fill="white"/>
+<g filter="url(#filter0_i_549_264)">
+<circle cx="88.5" cy="144.5" r="32.5" fill="white"/>
+</g>
+<foreignObject x="-67" y="-51" width="300" height="300"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(12px);clip-path:url(#bgblur_1_549_264_clip_path);height:100%;width:100%"></div></foreignObject><g opacity="0.6" filter="url(#filter1_g_549_264)" data-figma-bg-blur-radius="24" style="mix-blend-mode:hue">
+<circle cx="83" cy="99" r="50" fill="#ECEFEC" fill-opacity="0.98"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_i_549_264" x="56" y="112" width="72" height="75" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feMorphology radius="1" operator="dilate" in="SourceAlpha" result="effect1_innerShadow_549_264"/>
+<feOffset dx="7" dy="10"/>
+<feGaussianBlur stdDeviation="11"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.909804 0 0 0 0 0.996078 0 0 0 0 0.403922 0 0 0 0.8 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_549_264"/>
+</filter>
+<filter id="filter1_g_549_264" x="-67" y="-51" width="300" height="300" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feTurbulence type="fractalNoise" baseFrequency="0.99900001287460327 0.99900001287460327" numOctaves="3" seed="4441" />
+<feDisplacementMap in="shape" scale="200" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%" />
+<feMerge result="effect1_texture_549_264">
+<feMergeNode in="displacedImage"/>
+</feMerge>
+</filter>
+<clipPath id="bgblur_1_549_264_clip_path" transform="translate(67 51)"><circle cx="83" cy="99" r="50"/>
+</clipPath><clipPath id="clip0_549_264">
+<rect width="331" height="258" fill="white"/>
+</clipPath>
+</defs>
+</svg>

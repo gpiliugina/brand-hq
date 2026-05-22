@@ -1,0 +1,41 @@
+<svg width="331" height="258" viewBox="0 0 331 258" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_522_68)">
+<rect width="331" height="258" fill="white"/>
+<circle cx="242.5" cy="155.5" r="48.5" fill="#ECEDEF"/>
+<circle cx="306.5" cy="155.5" r="43.5" fill="#ECEDEF"/>
+<circle cx="-0.5" cy="155.5" r="25.5" fill="#ECEDEF"/>
+<circle cx="62.5" cy="155.5" r="43.5" fill="#ECEDEF"/>
+<g filter="url(#filter0_i_522_68)">
+<circle cx="151" cy="155" r="79" fill="white"/>
+</g>
+<foreignObject x="-53" y="-53" width="318" height="318"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(12px);clip-path:url(#bgblur_1_522_68_clip_path);height:100%;width:100%"></div></foreignObject><g opacity="0.6" filter="url(#filter1_g_522_68)" data-figma-bg-blur-radius="24" style="mix-blend-mode:hue">
+<circle cx="106" cy="106" r="59" fill="#ECEFEC" fill-opacity="0.98"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_i_522_68" x="72" y="76" width="165" height="168" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feMorphology radius="1" operator="dilate" in="SourceAlpha" result="effect1_innerShadow_522_68"/>
+<feOffset dx="7" dy="10"/>
+<feGaussianBlur stdDeviation="11"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.909804 0 0 0 0 0.996078 0 0 0 0 0.403922 0 0 0 0.8 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_522_68"/>
+</filter>
+<filter id="filter1_g_522_68" x="-53" y="-53" width="318" height="318" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feTurbulence type="fractalNoise" baseFrequency="0.99900001287460327 0.99900001287460327" numOctaves="3" seed="4441" />
+<feDisplacementMap in="shape" scale="200" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%" />
+<feMerge result="effect1_texture_522_68">
+<feMergeNode in="displacedImage"/>
+</feMerge>
+</filter>
+<clipPath id="bgblur_1_522_68_clip_path" transform="translate(53 53)"><circle cx="106" cy="106" r="59"/>
+</clipPath><clipPath id="clip0_522_68">
+<rect width="331" height="258" fill="white"/>
+</clipPath>
+</defs>
+</svg>

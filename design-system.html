@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Archive — Design System</title>
+<meta name="viewport" content="width=1280" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* ── Core palette ── */
+    --bg:      #ECEDEF;
+    --surface: #FFFFFF;
+    --ink:     #2F3A45;
+    --solid:   #141414;
+    --muted:   #99A3AD;
+    --border:  #DDE2E7;
+    --faint:   #F5F5F6;
+    --accent:  #E8FE67;
+
+    /* ── Accent variants ── */
+    --accent-bubble:  rgba(232, 254, 103, 0.82);
+    --accent-glow:    rgba(232, 254, 103, 0.18);
+    --accent-subtle:  rgba(232, 254, 103, 0.08);
+
+    /* ── Placeholder scale ── */
+    --ph-1: #FAFAFA;
+    --ph-2: #F2F2F2;
+    --ph-3: #E8E8E8;
+    --ph-4: #D4D4D4;
+
+    /* ── Semantic ── */
+    --ok-bg:  #E1E8DC;  --ok-fg:  #3a6a3a;
+    --bad-bg: #F4DDDD;  --bad-fg: #7a5050;
+
+    /* ── Grey scale (cool-grey, same hue family as --muted) ── */
+    --sp-a: #EEF0F3;
+    --sp-b: #D8DCE1;
+    --sp-c: #B8BEC5;
+    --sp-d: #99A3AD;
+    --sp-e: #6B7680;
+
+    /* ── Tile/line utilities ── */
+    --tile-border: rgba(0, 0, 0, 0.06);
+    --line:        rgba(0, 0, 0, 0.06);
+    --grid-dot:    rgba(0, 0, 0, 0.07);
+    --placeholder: #9AA0A6;
+
+    /* ── Typography ── */
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-ui:      'Inter', system-ui, sans-serif;
+    --font-mono:    'SF Mono', 'JetBrains Mono', 'Menlo', 'Consolas', monospace;
+
+    --text-body:    13px;
+    --text-caption: 11px;
+    --text-small:   10px;
+    --text-label:   10px;
+    --text-h1:      88px;
+    --text-h2:      24px;
+    --text-h3:      18px;
+    --text-stat:    72px;
+
+    --weight-regular: 400;
+    --weight-medium:  500;
+    --weight-semibold:600;
+
+    --lh-base:  1.4;
+    --ls-hero:  -0.03em;
+    --ls-label: 0.08em;
+    --ls-badge: 0.8px;
+
+    /* ── Spacing ── */
+    --space-2:  2px;
+    --space-4:  4px;
+    --space-6:  6px;
+    --space-8:  8px;
+    --space-10: 10px;
+    --space-12: 12px;
+    --space-14: 14px;
+    --space-16: 16px;
+    --space-20: 20px;
+    --space-24: 24px;
+    --space-28: 28px;
+    --space-32: 32px;
+    --space-40: 40px;
+    --space-48: 48px;
+    --space-64: 64px;
+
+    /* ── Radius ── */
+    --radius-2:   2px;
+    --radius-4:   4px;
+    --radius-6:   6px;
+    --radius-8:   8px;
+    --radius-10:  10px;
+    --radius-12:  12px;
+    --radius-14:  14px;
+    --radius-16:  16px;
+    --radius-full: 50%;
+
+    /* ── Shadows ── */
+    --shadow-card:   0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-input:  0 4px 24px rgba(0,0,0,0.10);
+    --shadow-search: 0 2px 12px rgba(0,0,0,0.06);
+    --shadow-drop:   0 8px 24px rgba(0,0,0,0.06);
+    --shadow-lift:   0 8px 24px rgba(0,0,0,0.10);
+    --shadow-name:   0 10px 40px rgba(0,0,0,0.05);
+
+    /* ── Motion ── */
+    --dur-fast:   0.12s;
+    --dur-base:   0.22s;
+    --dur-slow:   0.30s;
+    --dur-screen: 0.60s;
+    --ease-smooth:  cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-in-out:  cubic-bezier(0.83, 0, 0.17, 1);
+    --ease-out:     ease;
+
+    /* ── Grid background ── */
+    --grid-dot-size: 1px;
+    --grid-bg-size:  28px 28px;
+
+    /* ── Z-index scale ── */
+    --z-0:       0;
+    --z-2:       2;
+    --z-3:       3;
+    --z-4:       4;
+    --z-overlay: 999;
+
+    /* ── Semantic sizing ── */
+    --font-size-input: 22px;   /* large onboarding name field */
+    --radius-input:    18px;   /* onboarding name field — between radius-16 and full */
+
+    /* ── Photo treatment ── */
+    --photo-hover-scale: 1.06;
+    --photo-press-scale: 0.95;
+    --photo-transition:  transform var(--dur-slow) var(--ease-spring);
+
+    /* ── Sphere treatment ── */
+    --sphere-shadow:
+      inset -5px -5px 12px rgba(0, 0, 0, 0.20),
+      inset  4px  4px 10px rgba(255, 255, 255, 0.60);
+    --sphere-spec-gradient:  radial-gradient(circle, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 100%);
+    --sphere-depth-gradient: radial-gradient(circle, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0) 100%);
+    --glass-fallback:        var(--sp-c);
+    --sphere-selected-glow:  rgba(232,254,103,0.20);
+    --sphere-selected-glow-0: rgba(232,254,103,0);
+
+    /* ── Placeholder / CTA text ── */
+    --placeholder: #9AA0A6;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-ui);
+    font-size: var(--text-body);
+    line-height: var(--lh-base);
+    color: var(--ink);
+    background-color: var(--bg);
+    background-image: radial-gradient(circle, var(--grid-dot) var(--grid-dot-size), transparent var(--grid-dot-size));
+    background-size: var(--grid-bg-size);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    min-width: 1280px;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+
+  /* ── Page layout ── */
+  .page-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 48px 120px;
+  }
+
+  /* ── Section spacing ── */
+  .section { margin-top: 80px; }
+  .section:first-of-type { margin-top: 0; }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  .section-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 80px 0;
+  }
+
+  /* ── Token grid ── */
+  .token-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .token-grid-5 {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+  .token-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .token-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .token-swatch {
+    width: 100%;
+    height: 60px;
+    border-radius: 8px;
+  }
+
+  .token-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink);
+    font-family: var(--font-mono);
+  }
+
+  .token-value {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+
+  /* ── Component showcase cards ── */
+  .showcase {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+  }
+
+  .showcase-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .showcase-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .showcase-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ── Spec table ── */
+  .spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .spec-table th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 12px 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .spec-table td {
+    padding: 10px 12px 10px 0;
+    border-bottom: 1px solid var(--faint);
+    color: var(--ink);
+    vertical-align: top;
+  }
+  .spec-table td:first-child { font-weight: 500; }
+  .spec-table code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--faint);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  /* ── Animation demos ── */
+  .anim-demo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px; height: 48px;
+    background: var(--ph-3);
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  @keyframes demo-smooth   { from { transform: translateY(16px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+  @keyframes demo-spring   { 0%{transform:scale(0.6);opacity:0} 60%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
+  @keyframes demo-fade     { from { opacity:0; } to { opacity:1; } }
+  @keyframes demo-slide-x  { from { transform: translateX(-16px); opacity:0; } to { transform: translateX(0); opacity:1; } }
+  @keyframes demo-in-out   { from { opacity:0; transform:scale(0.94); } to { opacity:1; transform:scale(1); } }
+  @keyframes demo-pop      { 0%{transform:scale(0.7);opacity:0} 65%{transform:scale(1.06)} 100%{transform:scale(1);opacity:1} }
+
+  .play-smooth  { animation: demo-smooth  var(--dur-base)   var(--ease-smooth)  both; }
+  .play-spring  { animation: demo-spring  var(--dur-slow)   var(--ease-spring)  both; }
+  .play-fade    { animation: demo-fade    var(--dur-base)   var(--ease-out)     both; }
+  .play-slide   { animation: demo-slide-x var(--dur-base)   var(--ease-smooth)  both; }
+  .play-in-out  { animation: demo-in-out  var(--dur-screen) var(--ease-in-out)  both; }
+  .play-pop     { animation: demo-pop     var(--dur-slow)   var(--ease-spring)  both; }
+
+  /* ── Live component styles (matching app exactly) ── */
+
+  /* Buttons */
+  .btn-dark {
+    background: var(--ink); color: var(--surface);
+    padding: 10px 22px; border-radius: 22px;
+    font-size: 13px; font-weight: 500; letter-spacing: 0.3px;
+    border: none; cursor: pointer; font-family: var(--font-ui);
+    transition: opacity 0.12s ease, transform 0.12s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .btn-dark:hover  { opacity: 0.82; }
+  .btn-dark:active { transform: scale(0.94); }
+
+  .btn-outline {
+    background: transparent; color: var(--ink);
+    padding: 9px 22px; border-radius: 22px;
+    font-size: 13px; font-weight: 500; letter-spacing: 0.3px;
+    border: 1px solid var(--border); cursor: pointer; font-family: var(--font-ui);
+    transition: border-color 0.15s ease, transform 0.12s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .btn-outline:hover  { border-color: var(--ink); }
+  .btn-outline:active { transform: scale(0.94); }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 4px 10px; border-radius: 10px;
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.8px; text-transform: uppercase;
+    font-family: var(--font-ui);
+  }
+  .badge-dark     { background: var(--ink);     color: var(--surface); }
+  .badge-ok       { background: var(--ok-bg);   color: var(--ok-fg);   }
+  .badge-bad      { background: var(--bad-bg);  color: var(--bad-fg);  }
+  .badge-outline  { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .badge-dashed   { background: transparent; color: var(--muted); border: 1px dashed var(--border); }
+
+  /* Input */
+  .input-field {
+    border-radius: 14px;
+    border: 1px solid rgba(26,31,38,0.35);
+    background: rgba(255,255,255,0.96);
+    font-size: var(--text-body); font-family: var(--font-ui);
+    font-weight: 400; color: rgba(26,31,38,0.88);
+    outline: none;
+    box-shadow: none;
+    caret-color: var(--ink);
+    transition: border-color 0.12s;
+    padding: 10px 16px;
+    width: 100%;
+  }
+  .input-field::placeholder { color: var(--placeholder); }
+
+  /* Card */
+  .ds-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ds-card-thick {
+    border: 2px solid var(--ink);
+  }
+  .ds-card-dashed {
+    border: 1px dashed var(--border);
+  }
+
+  /* Avatar */
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--ink); color: var(--surface);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600; font-family: var(--font-ui);
+    flex-shrink: 0;
+  }
+
+  /* Stat number */
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 72px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  /* Highlight stroke */
+  .highlight-word {
+    font-family: var(--font-display);
+    -webkit-text-stroke: 0.16em var(--accent);
+    paint-order: stroke fill;
+    color: var(--ink);
+  }
+
+  /* Mono label */
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.4px;
+  }
+
+  /* Radius demo boxes */
+  .radius-demo {
+    width: 56px; height: 56px;
+    background: var(--ph-3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: var(--muted); font-family: var(--font-mono);
+  }
+
+  /* Shadow demo */
+  .shadow-demo {
+    width: 100%; height: 64px;
+    background: var(--surface);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: var(--muted); font-family: var(--font-mono);
+  }
+
+  /* Page header */
+  .page-header {
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 64px;
+  }
+
+  .page-header-eyebrow {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .page-header-title {
+    font-family: var(--font-display);
+    font-size: 88px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+
+  .page-header-sub {
+    margin-top: 20px;
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 400;
+    line-height: 1.5;
+    max-width: 520px;
+  }
+
+  /* Two-col layout for section + content */
+  .two-col {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .two-col-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    padding-top: 4px;
+  }
+
+  .two-col-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- ── PAGE HEADER ─────────────────────────────────────────── -->
+  <header class="page-header">
+    <p class="page-header-eyebrow">Archive · Brand HQ</p>
+    <h1 class="page-header-title">Design<br><span class="highlight-word">System</span></h1>
+    <p class="page-header-sub">A complete reference of every token, component, and visual decision in the Archive app. All values extracted directly from the live codebase — nothing invented.</p>
+  </header>
+
+
+  <!-- ── COLOUR ──────────────────────────────────────────────── -->
+  <section class="section">
+    <p class="section-label">01 — Colour</p>
+
+    <div class="two-col" style="margin-bottom:40px">
+      <div>
+        <p class="two-col-label">Core palette</p>
+        <p class="two-col-desc">Six foundational colours. Every UI element is built from these six aliases only.</p>
+      </div>
+      <div class="token-grid-4" style="grid-template-columns: repeat(3, 1fr)">
+        <div class="token-item">
+          <div class="token-swatch" style="background:#ECEDEF; border:1px solid var(--border)"></div>
+          <div class="token-name">--bg</div>
+          <div class="token-value">#ECEDEF</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#FFFFFF; border:1px solid var(--border)"></div>
+          <div class="token-name">--surface</div>
+          <div class="token-value">#FFFFFF</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#2F3A45"></div>
+          <div class="token-name">--ink</div>
+          <div class="token-value">#2F3A45</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#141414"></div>
+          <div class="token-name">--solid</div>
+          <div class="token-value">#141414</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#99A3AD"></div>
+          <div class="token-name">--muted</div>
+          <div class="token-value">#99A3AD</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#DDE2E7; border:1px solid rgba(0,0,0,0.08)"></div>
+          <div class="token-name">--border</div>
+          <div class="token-value">#DDE2E7</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#F5F5F6; border:1px solid var(--border)"></div>
+          <div class="token-name">--faint</div>
+          <div class="token-value">#F5F5F6</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:40px">
+      <div>
+        <p class="two-col-label">Accent</p>
+        <p class="two-col-desc">The single brand colour. Primary uses: hero stroke highlight and selected-state rings. Also used as accent fill in widget preview graphics only (progress ring arc, email signature divider line, brand checker indicator dots). Never as a general background or decorative colour.</p>
+      </div>
+      <div class="token-grid" style="grid-template-columns: repeat(4, 1fr)">
+        <div class="token-item">
+          <div class="token-swatch" style="background:#E8FE67; border:1px solid rgba(0,0,0,0.06)"></div>
+          <div class="token-name">--accent</div>
+          <div class="token-value">#E8FE67</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:rgba(232,254,103,0.82); border:1px solid rgba(0,0,0,0.06)"></div>
+          <div class="token-name">--accent-bubble</div>
+          <div class="token-value">rgba(232,254,103,0.82)</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:rgba(232,254,103,0.18); border:1px solid rgba(0,0,0,0.06)"></div>
+          <div class="token-name">--accent-glow</div>
+          <div class="token-value">rgba(232,254,103,0.18)</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:rgba(232,254,103,0.08); border:1px solid rgba(0,0,0,0.06)"></div>
+          <div class="token-name">--accent-subtle</div>
+          <div class="token-value">rgba(232,254,103,0.08)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:40px">
+      <div>
+        <p class="two-col-label">Placeholder scale</p>
+        <p class="two-col-desc">Four neutral greys for structural placeholders, widget previews, and skeleton states.</p>
+      </div>
+      <div class="token-grid" style="grid-template-columns: repeat(4, 1fr)">
+        <div class="token-item">
+          <div class="token-swatch" style="background:#FAFAFA; border:1px solid var(--border)"></div>
+          <div class="token-name">--ph-1</div>
+          <div class="token-value">#FAFAFA</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#F2F2F2; border:1px solid var(--border)"></div>
+          <div class="token-name">--ph-2</div>
+          <div class="token-value">#F2F2F2</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#E8E8E8; border:1px solid var(--border)"></div>
+          <div class="token-name">--ph-3</div>
+          <div class="token-value">#E8E8E8</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#D4D4D4; border:1px solid var(--border)"></div>
+          <div class="token-name">--ph-4</div>
+          <div class="token-value">#D4D4D4</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:40px">
+      <div>
+        <p class="two-col-label">Grey scale</p>
+        <p class="two-col-desc">Five cool-grey steps in the same hue family as <code style="font-family:var(--font-mono);font-size:10px;background:var(--faint);padding:2px 5px;border-radius:3px">--muted</code>. Used for sphere fills, structural placeholders, and photo circle backgrounds. Lightest → darkest.</p>
+      </div>
+      <div class="token-grid" style="grid-template-columns: repeat(5, 1fr)">
+        <div class="token-item">
+          <div class="token-swatch" style="background:#EEF0F3; border:1px solid var(--border)"></div>
+          <div class="token-name">--sp-a</div>
+          <div class="token-value">#EEF0F3</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#D8DCE1; border:1px solid var(--border)"></div>
+          <div class="token-name">--sp-b</div>
+          <div class="token-value">#D8DCE1</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#B8BEC5"></div>
+          <div class="token-name">--sp-c</div>
+          <div class="token-value">#B8BEC5</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#99A3AD"></div>
+          <div class="token-name">--sp-d</div>
+          <div class="token-value">#99A3AD</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#6B7680"></div>
+          <div class="token-name">--sp-e</div>
+          <div class="token-value">#6B7680</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <p class="two-col-label">Semantic</p>
+        <p class="two-col-desc">Status colours for feedback states. Deliberately muted — earth tones, not traffic-light primaries.</p>
+      </div>
+      <div class="token-grid" style="grid-template-columns: repeat(4, 1fr)">
+        <div class="token-item">
+          <div class="token-swatch" style="background:#E1E8DC"></div>
+          <div class="token-name">--ok-bg</div>
+          <div class="token-value">#E1E8DC</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#3a6a3a"></div>
+          <div class="token-name">--ok-fg</div>
+          <div class="token-value">#3a6a3a</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#F4DDDD"></div>
+          <div class="token-name">--bad-bg</div>
+          <div class="token-value">#F4DDDD</div>
+        </div>
+        <div class="token-item">
+          <div class="token-swatch" style="background:#7a5050"></div>
+          <div class="token-name">--bad-fg</div>
+          <div class="token-value">#7a5050</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+
+  <!-- ── TYPOGRAPHY ───────────────────────────────────────────── -->
+  <section class="section">
+    <p class="section-label">02 — Typography</p>
+
+    <div class="two-col" style="margin-bottom: 48px">
+      <div>
+        <p class="two-col-label">Typefaces</p>
+        <p class="two-col-desc">Two fonts only. Display serif is for the hero H1 exclusively. Inter handles everything else — every label, body, caption, number.</p>
+      </div>
+      <div class="showcase-col" style="gap: 20px">
+        <div class="showcase">
+          <p class="showcase-label">Instrument Serif — hero only</p>
+          <div style="font-family:'Instrument Serif',Georgia,serif; font-size:62px; font-weight:400; line-height:0.95; letter-spacing:-0.03em; color:var(--ink)">
+            Archive
+          </div>
+          <div style="margin-top:12px; font-size:11px; color:var(--muted); font-family:var(--font-mono)">
+            88px (102px in ScreenLibrary) / 400 / -0.03em / used only in PageHero H1
+          </div>
+        </div>
+        <div class="showcase">
+          <p class="showcase-label">Inter — all other type</p>
+          <div style="display:flex; flex-direction:column; gap:10px">
+            <div style="font-size:24px; font-weight:700; color:var(--ink)">Card title / Screen heading</div>
+            <div style="font-size:18px; font-weight:500; color:var(--ink)">Widget title / Section header</div>
+            <div style="font-size:15px; font-weight:400; color:var(--ink)">Input text / Hero subtitle</div>
+            <div style="font-size:13px; font-weight:400; color:var(--ink)">Body — default size across the entire app</div>
+            <div style="font-size:11px; font-weight:400; color:var(--muted)">Caption / pill text / secondary labels</div>
+            <div style="font-size:10px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted)">SECTION LABEL</div>
+          </div>
+        </div>
+        <div class="showcase">
+          <p class="showcase-label">SF Mono / Menlo — data & code</p>
+          <div style="font-family:'SF Mono',Menlo,Consolas,monospace; font-size:12px; color:var(--muted); line-height:1.8">
+            +1 (415) 555 · 0148<br>
+            PNG · JPG · MP4 · GIF<br>
+            100% · 4096×4096 · 3.8 MB
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <p class="two-col-label">Type scale</p>
+        <p class="two-col-desc">Every size used in the app. Nothing outside this scale exists in the codebase.</p>
+      </div>
+      <div class="showcase">
+        <table class="spec-table" style="width:100%">
+          <thead>
+            <tr>
+              <th>Token</th>
+              <th>Size</th>
+              <th>Weight</th>
+              <th>Usage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>--text-h1</code></td><td>88px</td><td>400</td><td>Page hero — Instrument Serif only. ScreenLibrary uses 102px override.</td></tr>
+            <tr><td><code>--text-stat</code></td><td>72px</td><td>400</td><td>Stat numerals — Instrument Serif</td></tr>
+            <tr><td><code>--text-h2</code></td><td>24px</td><td>700</td><td>Card / section headings</td></tr>
+            <tr><td><code>--text-h3</code></td><td>18px</td><td>500</td><td>Widget titles / sub-headings</td></tr>
+            <tr><td><code>--text-body</code></td><td>13px</td><td>400</td><td>Default body and inputs — every screen, every card, every field</td></tr>
+            <tr><td><code>--text-caption</code></td><td>11px</td><td>400–500</td><td>Pill text, captions, secondary labels</td></tr>
+            <tr><td><code>--text-small</code></td><td>10px</td><td>500–600</td><td>Section labels (uppercase + tracking)</td></tr>
+            <tr><td>—</td><td>9–10px</td><td>500</td><td>Badges (informational only, uppercase)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+
+  <!-- ── SPACING ───────────────────────────────────────────────── -->
+  <section class="section">
+    <p class="section-label">03 — Spacing</p>
+
+    <div class="two-col">
+      <div>
+        <p class="two-col-label">Spacing scale</p>
+        <p class="two-col-desc">Base-2 steps from 2px to 64px. The scale is used consistently for padding, gaps, and margins across all components.</p>
+      </div>
+      <div class="showcase">
+        <div style="display:flex; flex-direction:column; gap:8px">
+          <!-- Visual spacing ruler rows -->
+          <div style="font-size:10px; color:var(--muted); font-family:var(--font-mono); display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:12px; padding:6px 0; border-bottom:1px solid var(--faint)">
+            <span style="font-weight:600; color:var(--ink)">Token</span>
+            <span></span>
+            <span style="font-weight:600; color:var(--ink)">Value</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px">
+            <div style="display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:12px">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">--space-2</span>
+              <div style="height:8px; background:var(--ph-4); border-radius:2px; width:2px"></div>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink)">2px</span>
+            </div>
+            <div style="display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:12px">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">--space-4</span>
+              <div style="height:8px; background:var(--ph-4); border-radius:2px; width:4px"></div>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink)">4px</span>
+            </div>
+            <div style="display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:12px">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">--space-6</span>
+              <div style="height:8px; background:var(--ph-4); border-radius:2px; width:6px"></div>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink)">6px</span>
+            </div>
+            <div style="display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:12px">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">--space-8</span>
+              <div style="height:8px; background:var(--ph-4); border-radius:2px; width:8px"></div>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink)">8px</span>
+            </div>
+            <div style="display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:12px">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">--space-10</span>
+              <div style="height:8px; background:var(--ph-4); border-radius:2px; width:10px"></div>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink)">10px</span>
+            </div>
+            <div style="display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:12px">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">--space-12</span>
+              <div style="height:8px; background:var(--ph-3); border-radius:2px; width:12px"></div>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink)">12px</span>
+            </div>
+            <div style="display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:12px">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">--space-14</span>
+              <div style="height:8px; background:var(--ph-3); border-radius:2px; width:14px"></div>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink)">14px</span>
+            </div>
+            <div style="display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:12px">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">--space-16</span>
+              <div style="height:8px; background:var(--ph-3); border-radius:2px; width:16px"></div>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink)">16px</span>
+            </div>
+            <div style="display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:12px">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">--space-20</span>
+              <div style="height:8px; background:var(--ph-3); border-radius:2px; width:20px"></div>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink)">20px</span>
+            </div>
+            <div style="display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:12px">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">--space-24</span>
+              <div style="height:8px; background:var(--ph-3); border-radius:2px; width:24px"></div>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink)">24px</span>
+            </div>
+            <div style="display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:12px">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">--space-28</span>
+              <div style="height:8px; background:var(--ph-3); border-radius:2px; width:28px"></div>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink)">28px</span>
+            </div>
+            <div style="display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:12px">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">--space-32</span>
+              <div style="height:8px; background:var(--ph-4); border-radius:2px; width:32px"></div>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink)">32px</span>
+            </div>
+            <div style="display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:12px">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">--space-40</span>
+              <div style="height:8px; background:var(--ph-4); border-radius:2px; width:40px"></div>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink)">40px</span>
+            </div>
+            <div style="display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:12px">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">--space-48</span>
+              <div style="height:8px; background:var(--ph-4); border-radius:2px; width:48px"></div>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink)">48px</span>
+            </div>
+            <div style="display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:12px">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">--space-64</span>
+              <div style="height:8px; background:var(--ph-4); border-radius:2px; width:64px"></div>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink)">64px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+
+  <!-- ── RADIUS ────────────────────────────────────────────────── -->
+  <section class="section">
+    <p class="section-label">04 — Border Radius</p>
+
+    <div class="two-col">
+      <div>
+        <p class="two-col-label">Radius scale</p>
+        <p class="two-col-desc">Every radius value used in the codebase, from 2px sharp edges to full circles.</p>
+      </div>
+      <div class="showcase">
+        <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+            <div class="radius-demo" style="border-radius:2px; width:56px; height:56px"></div>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">2px</span>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:9px; color:var(--ph-4)">dividers</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+            <div class="radius-demo" style="border-radius:4px; width:56px; height:56px"></div>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">4px</span>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:9px; color:var(--ph-4)">kbd · icon</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+            <div class="radius-demo" style="border-radius:6px; width:56px; height:56px"></div>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">6px</span>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:9px; color:var(--ph-4)">swatch</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+            <div class="radius-demo" style="border-radius:8px; width:56px; height:56px"></div>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">8px</span>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:9px; color:var(--ph-4)">icon tile</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+            <div class="radius-demo" style="border-radius:10px; width:56px; height:56px"></div>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">10px</span>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:9px; color:var(--ph-4)">badge</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+            <div class="radius-demo" style="border-radius:12px; width:56px; height:56px"></div>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">12px</span>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:9px; color:var(--ph-4)">panel</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+            <div class="radius-demo" style="border-radius:14px; width:56px; height:56px"></div>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">14px</span>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:9px; color:var(--ph-4)">card · pill · input</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+            <div class="radius-demo" style="border-radius:16px; width:56px; height:56px"></div>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">16px</span>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:9px; color:var(--ph-4)">bottom sheet</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+            <div class="radius-demo" style="border-radius:22px; width:56px; height:56px"></div>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">22px</span>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:9px; color:var(--ph-4)">button</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+            <div class="radius-demo" style="border-radius:50%; width:56px; height:56px"></div>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:10px; color:var(--muted)">50%</span>
+            <span class="token-value" style="font-family:var(--font-mono); font-size:9px; color:var(--ph-4)">avatar · circle</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+
+  <!-- ── SHADOWS ───────────────────────────────────────────────── -->
+  <section class="section">
+    <p class="section-label">05 — Shadows</p>
+
+    <div class="two-col">
+      <div>
+        <p class="two-col-label">Shadow scale</p>
+        <p class="two-col-desc">Shadows are very soft — low opacity, large blur. The system prefers restraint over depth theatre.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:14px; width:100%">
+        <div style="display:grid; grid-template-columns:140px 1fr; gap:16px; align-items:center">
+          <div>
+            <div style="font-family:var(--font-mono); font-size:11px; font-weight:600; color:var(--ink)">--shadow-card</div>
+            <div style="font-family:var(--font-mono); font-size:9px; color:var(--muted); margin-top:2px">cards · panels</div>
+          </div>
+          <div class="shadow-demo" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)">
+            <span style="font-family:var(--font-mono); font-size:9px; color:var(--muted)">0 1px 3px rgba(0,0,0,0.06)</span>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:140px 1fr; gap:16px; align-items:center">
+          <div>
+            <div style="font-family:var(--font-mono); font-size:11px; font-weight:600; color:var(--ink)">--shadow-search</div>
+            <div style="font-family:var(--font-mono); font-size:9px; color:var(--muted); margin-top:2px">search container</div>
+          </div>
+          <div class="shadow-demo" style="box-shadow: 0 2px 12px rgba(0,0,0,0.06)">
+            <span style="font-family:var(--font-mono); font-size:9px; color:var(--muted)">0 2px 12px rgba(0,0,0,0.06)</span>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:140px 1fr; gap:16px; align-items:center">
+          <div>
+            <div style="font-family:var(--font-mono); font-size:11px; font-weight:600; color:var(--ink)">--shadow-drop</div>
+            <div style="font-family:var(--font-mono); font-size:9px; color:var(--muted); margin-top:2px">dropdown</div>
+          </div>
+          <div class="shadow-demo" style="box-shadow: 0 8px 24px rgba(0,0,0,0.06)">
+            <span style="font-family:var(--font-mono); font-size:9px; color:var(--muted)">0 8px 24px rgba(0,0,0,0.06)</span>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:140px 1fr; gap:16px; align-items:center">
+          <div>
+            <div style="font-family:var(--font-mono); font-size:11px; font-weight:600; color:var(--ink); text-decoration:line-through; opacity:0.5">--shadow-input</div>
+            <div style="font-family:var(--font-mono); font-size:9px; color:var(--muted); margin-top:2px">unused — inputs now enforce box-shadow: none</div>
+          </div>
+          <div class="shadow-demo" style="box-shadow: 0 4px 24px rgba(0,0,0,0.10); opacity:0.4">
+            <span style="font-family:var(--font-mono); font-size:9px; color:var(--muted)">0 4px 24px rgba(0,0,0,0.10) · deprecated</span>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:140px 1fr; gap:16px; align-items:center">
+          <div>
+            <div style="font-family:var(--font-mono); font-size:11px; font-weight:600; color:var(--ink)">--shadow-lift</div>
+            <div style="font-family:var(--font-mono); font-size:9px; color:var(--muted); margin-top:2px">hover elevation</div>
+          </div>
+          <div class="shadow-demo" style="box-shadow: 0 8px 24px rgba(0,0,0,0.10)">
+            <span style="font-family:var(--font-mono); font-size:9px; color:var(--muted)">0 8px 24px rgba(0,0,0,0.10)</span>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:140px 1fr; gap:16px; align-items:center">
+          <div>
+            <div style="font-family:var(--font-mono); font-size:11px; font-weight:600; color:var(--ink)">--shadow-name</div>
+            <div style="font-family:var(--font-mono); font-size:9px; color:var(--muted); margin-top:2px">onboarding field</div>
+          </div>
+          <div class="shadow-demo" style="box-shadow: 0 10px 40px rgba(0,0,0,0.05)">
+            <span style="font-family:var(--font-mono); font-size:9px; color:var(--muted)">0 10px 40px rgba(0,0,0,0.05)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+
+  <!-- ── MOTION ────────────────────────────────────────────────── -->
+  <section class="section">
+    <p class="section-label">06 — Motion</p>
+
+    <div class="two-col" style="margin-bottom:40px">
+      <div>
+        <p class="two-col-label">Durations</p>
+        <p class="two-col-desc">Four steps. Fast for micro-interactions, screen for full-page transitions.</p>
+      </div>
+      <div class="showcase">
+        <table class="spec-table">
+          <thead><tr><th>Token</th><th>Value</th><th>Usage</th></tr></thead>
+          <tbody>
+            <tr><td><code>--dur-fast</code></td><td>0.12s</td><td>Hover states, border-colour transitions</td></tr>
+            <tr><td><code>--dur-base</code></td><td>0.22s</td><td>Most UI transitions — cards, pills, fade-slides</td></tr>
+            <tr><td><code>--dur-slow</code></td><td>0.30s</td><td>Photo hover scale, widget drag</td></tr>
+            <tr><td><code>--dur-screen</code></td><td>0.60s</td><td>Full-screen circle-reveal transitions</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:40px">
+      <div>
+        <p class="two-col-label">Easing curves</p>
+        <p class="two-col-desc">Four named curves. Spring is used for any interaction that needs physical bounce. Smooth is the default exit/enter easing.</p>
+      </div>
+      <div class="showcase">
+        <table class="spec-table">
+          <thead><tr><th>Token</th><th>Curve</th><th>Usage</th></tr></thead>
+          <tbody>
+            <tr><td><code>--ease-smooth</code></td><td>cubic-bezier(0.22, 1, 0.36, 1)</td><td>Page enters, tile reveals, panel slides</td></tr>
+            <tr><td><code>--ease-spring</code></td><td>cubic-bezier(0.34, 1.56, 0.64, 1)</td><td>Photo hover, widget add, bubble/sphere appear, press-fx</td></tr>
+            <tr><td><code>--ease-in-out</code></td><td>cubic-bezier(0.83, 0, 0.17, 1)</td><td>Circle-reveal screen transitions</td></tr>
+            <tr><td><code>--ease-out</code></td><td>ease</td><td>Button opacity, general fade</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <p class="two-col-label">Named animations</p>
+        <p class="two-col-desc">Named keyframe animations used throughout. Click each to replay.</p>
+      </div>
+      <div class="showcase">
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+            <div class="anim-demo" id="d-smooth" onclick="replay('d-smooth','play-smooth')" title="Click to replay">
+              <div class="play-smooth" style="width:20px;height:20px;background:var(--ink);border-radius:4px"></div>
+            </div>
+            <div style="font-size:10px; font-weight:600; color:var(--ink); font-family:var(--font-mono)">screenIn / heroIn</div>
+            <div style="font-size:9px; color:var(--muted); font-family:var(--font-mono)">0.22s ease-smooth</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+            <div class="anim-demo" id="d-spring" onclick="replay('d-spring','play-spring')" title="Click to replay">
+              <div class="play-spring" style="width:20px;height:20px;background:var(--ink);border-radius:50%"></div>
+            </div>
+            <div style="font-size:10px; font-weight:600; color:var(--ink); font-family:var(--font-mono)">sphereIn / popIn / widgetAddIn</div>
+            <div style="font-size:9px; color:var(--muted); font-family:var(--font-mono)">0.30s ease-spring</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+            <div class="anim-demo" id="d-fade" onclick="replay('d-fade','play-fade')" title="Click to replay">
+              <div class="play-fade" style="width:20px;height:20px;background:var(--ink);border-radius:4px"></div>
+            </div>
+            <div style="font-size:10px; font-weight:600; color:var(--ink); font-family:var(--font-mono)">fadeIn</div>
+            <div style="font-size:9px; color:var(--muted); font-family:var(--font-mono)">0.22s ease-out</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+            <div class="anim-demo" id="d-slide" onclick="replay('d-slide','play-slide')" title="Click to replay">
+              <div class="play-slide" style="width:24px;height:8px;background:var(--ink);border-radius:2px"></div>
+            </div>
+            <div style="font-size:10px; font-weight:600; color:var(--ink); font-family:var(--font-mono)">fadeSlide</div>
+            <div style="font-size:9px; color:var(--muted); font-family:var(--font-mono)">0.22s ease-smooth</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+            <div class="anim-demo" id="d-inout" onclick="replay('d-inout','play-in-out')" title="Click to replay">
+              <div class="play-in-out" style="width:20px;height:20px;background:var(--ink);border-radius:6px"></div>
+            </div>
+            <div style="font-size:10px; font-weight:600; color:var(--ink); font-family:var(--font-mono)">circle-reveal</div>
+            <div style="font-size:9px; color:var(--muted); font-family:var(--font-mono)">0.60s ease-in-out</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+            <div class="anim-demo" id="d-pop" onclick="replay('d-pop','play-pop')" title="Click to replay">
+              <div class="play-pop" style="width:20px;height:20px;background:var(--accent);border-radius:50%; outline:2px solid var(--ink)"></div>
+            </div>
+            <div style="font-size:10px; font-weight:600; color:var(--ink); font-family:var(--font-mono)">tileIn / bubbleIn</div>
+            <div style="font-size:9px; color:var(--muted); font-family:var(--font-mono)">0.30s ease-spring</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+
+  <!-- ── COMPONENTS ────────────────────────────────────────────── -->
+  <section class="section">
+    <p class="section-label">07 — Components</p>
+
+    <!-- Buttons -->
+    <div class="two-col" style="margin-bottom:40px">
+      <div>
+        <p class="two-col-label">Buttons</p>
+        <p class="two-col-desc">Two variants only. DarkButton for primary actions, OutlineButton for secondary. Both use the same 22px full-radius pill shape and press-fx scale on click.</p>
+      </div>
+      <div class="showcase">
+        <p class="showcase-label">Variants</p>
+        <div class="showcase-row" style="margin-bottom:24px">
+          <button class="btn-dark">↓ Download</button>
+          <button class="btn-outline">Save Draft</button>
+          <button class="btn-dark" style="opacity:0.5; cursor:default">Disabled</button>
+        </div>
+        <table class="spec-table">
+          <thead><tr><th>Property</th><th>DarkButton</th><th>OutlineButton</th></tr></thead>
+          <tbody>
+            <tr><td>background</td><td><code>var(--ink) #2F3A45</code></td><td><code>transparent</code></td></tr>
+            <tr><td>color</td><td><code>var(--surface) #FFF</code></td><td><code>var(--ink) #2F3A45</code></td></tr>
+            <tr><td>border</td><td>none</td><td><code>1px solid var(--border)</code></td></tr>
+            <tr><td>padding</td><td><code>10px 22px</code></td><td><code>9px 22px</code></td></tr>
+            <tr><td>border-radius</td><td>22px</td><td>22px</td></tr>
+            <tr><td>font-size</td><td>13px</td><td>13px</td></tr>
+            <tr><td>font-weight</td><td>500</td><td>500</td></tr>
+            <tr><td>letter-spacing</td><td>0.3px</td><td>0.3px</td></tr>
+            <tr><td>:hover</td><td>opacity 0.82</td><td>border-color → var(--ink)</td></tr>
+            <tr><td>:active</td><td>scale(0.94)</td><td>scale(0.94)</td></tr>
+            <tr><td>transition</td><td>opacity 0.12s, transform 0.12s spring</td><td>border-color 0.15s, transform 0.12s spring</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Badges -->
+    <div class="two-col" style="margin-bottom:40px">
+      <div>
+        <p class="two-col-label">Badges</p>
+        <p class="two-col-desc">Informational only — never interactive. Used for file formats, status indicators, and widget labels. Always uppercase with 0.8px letter spacing.</p>
+      </div>
+      <div class="showcase">
+        <p class="showcase-label">Filter row (badges as filter pills)</p>
+        <div class="showcase-row" style="margin-bottom:24px; align-items:center; gap:6px;">
+          <span style="font-size:11px; font-weight:500; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; font-family:var(--font-ui);">Format</span>
+          <span class="badge badge-dark">JPG</span>
+          <span class="badge badge-outline">PNG</span>
+          <span class="badge badge-outline">WebP</span>
+          <span class="badge badge-dashed">SVG</span>
+        </div>
+        <p class="showcase-label" style="margin-top:16px;">Variants</p>
+        <div class="showcase-row" style="margin-bottom:24px">
+          <span class="badge badge-dark">SVG</span>
+          <span class="badge badge-dark">PNG</span>
+          <span class="badge badge-dark">JPG</span>
+          <span class="badge badge-ok">Published</span>
+          <span class="badge badge-bad">Deprecated</span>
+          <span class="badge badge-outline">Draft</span>
+          <span class="badge badge-dashed">Optional</span>
+          <span style="font-size:10px; font-weight:500; letter-spacing:0.8px; text-transform:uppercase; color:var(--muted); font-family:var(--font-ui);">SOON</span>
+        </div>
+        <table class="spec-table">
+          <thead><tr><th>Property</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>padding</td><td><code>4px 10px</code></td></tr>
+            <tr><td>border-radius</td><td>10px</td></tr>
+            <tr><td>font-size</td><td>10px</td></tr>
+            <tr><td>font-weight</td><td>500</td></tr>
+            <tr><td>letter-spacing</td><td>0.8px</td></tr>
+            <tr><td>text-transform</td><td>uppercase</td></tr>
+            <tr><td>dark: bg / fg</td><td><code>var(--ink)</code> / <code>var(--surface)</code></td></tr>
+            <tr><td>ok: bg / fg</td><td><code>var(--ok-bg) #E1E8DC</code> / <code>var(--ok-fg) #3a6a3a</code></td></tr>
+            <tr><td>bad: bg / fg</td><td><code>var(--bad-bg) #F4DDDD</code> / <code>var(--bad-fg) #7a5050</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Inputs -->
+    <div class="two-col" style="margin-bottom:40px">
+      <div>
+        <p class="two-col-label">Text inputs</p>
+        <p class="two-col-desc">All inputs and textareas share one style. No focus ring, no border colour change on focus, no box-shadow. Exception: the ScreenMemory search field uses a lighter border (<code>rgba(26,31,38,0.10)</code>) plus <code>box-shadow: 0 2px 12px rgba(0,0,0,0.06)</code>. Placeholder colour is <code>#9AA0A6</code>.</p>
+      </div>
+      <div class="showcase">
+        <p class="showcase-label">Text input</p>
+        <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:24px">
+          <input class="input-field" placeholder="Type something…" />
+          <textarea class="input-field" rows="3" placeholder="Multi-line content…" style="resize:vertical"></textarea>
+        </div>
+        <table class="spec-table">
+          <thead><tr><th>Property</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>border-radius</td><td>14px</td></tr>
+            <tr><td>border</td><td><code>1px solid rgba(26,31,38,0.35)</code></td></tr>
+            <tr><td>background</td><td><code>rgba(255,255,255,0.96)</code></td></tr>
+            <tr><td>font-size</td><td>13px (<code>var(--text-body)</code> — merged from --text-input)</td></tr>
+            <tr><td>font-weight</td><td>400</td></tr>
+            <tr><td>color</td><td><code>rgba(26,31,38,0.88)</code></td></tr>
+            <tr><td>box-shadow</td><td>none (global override via <code>input, textarea { box-shadow: none !important }</code>)</td></tr>
+            <tr><td>caret-color</td><td><code>var(--ink)</code></td></tr>
+            <tr><td>transition</td><td>border-color 0.12s</td></tr>
+            <tr><td>:focus outline</td><td>none — no ring, no border change, no shadow</td></tr>
+            <tr><td>search variant border</td><td><code>rgba(26,31,38,0.10)</code> + <code>box-shadow: 0 2px 12px rgba(0,0,0,0.06)</code></td></tr>
+            <tr><td>placeholder</td><td><code>#9AA0A6</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="two-col" style="margin-bottom:40px">
+      <div>
+        <p class="two-col-label">Cards</p>
+        <p class="two-col-desc">The base container for all panel content. Three variants — default, thick border (selected state), and dashed (empty/placeholder state).</p>
+      </div>
+      <div class="showcase">
+        <p class="showcase-label">Variants</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:24px">
+          <div class="ds-card">
+            <div style="font-size:11px; font-weight:600; color:var(--ink)">Default</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:4px">1px solid var(--border)</div>
+          </div>
+          <div class="ds-card ds-card-thick">
+            <div style="font-size:11px; font-weight:600; color:var(--ink)">Selected</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:4px">2px solid var(--ink)</div>
+          </div>
+          <div class="ds-card ds-card-dashed">
+            <div style="font-size:11px; font-weight:600; color:var(--muted)">Empty</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:4px">1px dashed var(--border)</div>
+          </div>
+        </div>
+        <table class="spec-table">
+          <thead><tr><th>Property</th><th>Default</th><th>Thick</th><th>Dashed</th></tr></thead>
+          <tbody>
+            <tr><td>background</td><td colspan="3"><code>var(--surface) #FFFFFF</code></td></tr>
+            <tr><td>border-radius</td><td colspan="3">14px</td></tr>
+            <tr><td>padding</td><td colspan="3">16px</td></tr>
+            <tr><td>border</td><td><code>1px solid var(--border)</code></td><td><code>2px solid var(--ink)</code></td><td><code>1px dashed var(--border)</code></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:20px">
+          <p class="showcase-label">Logo card — selected state</p>
+          <table class="spec-table">
+            <thead><tr><th>Property</th><th>Unselected</th><th>Selected</th></tr></thead>
+            <tbody>
+              <tr><td>border</td><td><code>1px solid var(--border)</code></td><td><code>2px solid var(--accent)</code></td></tr>
+              <tr><td>padding</td><td>16px</td><td>15px (compensates for 2px border)</td></tr>
+              <tr><td>box-shadow</td><td>none</td><td><code>0 0 0 3px rgba(232,254,103,0.18)</code></td></tr>
+              <tr><td>cursor</td><td colspan="2">pointer — click to toggle selection</td></tr>
+              <tr><td>bulk action</td><td colspan="2">floating bar at bottom: "N SELECTED" + "↓ Download Selected"</td></tr>
+              <tr><td>deselect</td><td colspan="2">click anywhere outside a logo card</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Widget tiles -->
+    <div class="two-col" style="margin-bottom:40px">
+      <div>
+        <p class="two-col-label">Widget tiles</p>
+        <p class="two-col-desc">The home dashboard grid tiles. Hover lifts by 3px and shows an ink border — but only on working (non-SOON) tiles. SOON-badged tiles skip the hover border. Active state gets an acid-ring inset box-shadow. Dragged state becomes translucent.</p>
+      </div>
+      <div class="showcase">
+        <p class="showcase-label">States</p>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:24px">
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; height:120px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div style="font-size:13px; font-weight:500; color:var(--ink)">Default</div>
+            <div style="font-size:10px; color:var(--muted); font-family:var(--font-mono)">opacity 1.0</div>
+          </div>
+          <div style="background:var(--surface); border:1px solid var(--ink); border-radius:14px; padding:20px; height:120px; display:flex; flex-direction:column; justify-content:space-between; transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.10);">
+            <div style="font-size:13px; font-weight:500; color:var(--ink)">Hover</div>
+            <div style="font-size:10px; color:var(--muted); font-family:var(--font-mono)">translateY(-3px)</div>
+          </div>
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; height:120px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:inset 0 0 0 1.5px rgba(232,254,103,0.3);">
+            <div style="font-size:13px; font-weight:500; color:var(--ink)">Pressed</div>
+            <div style="font-size:10px; color:var(--muted); font-family:var(--font-mono)">inset acid ring</div>
+          </div>
+        </div>
+        <table class="spec-table">
+          <thead><tr><th>Property</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>background</td><td><code>var(--surface)</code></td></tr>
+            <tr><td>border</td><td><code>1px solid var(--border)</code></td></tr>
+            <tr><td>border-radius</td><td>14px</td></tr>
+            <tr><td>padding</td><td>20px</td></tr>
+            <tr><td>height</td><td>260px</td></tr>
+            <tr><td>:hover border</td><td><code>var(--ink)</code> — working tiles only</td></tr>
+            <tr><td>:hover border (SOON)</td><td>none — SOON badge tiles skip the hover border</td></tr>
+            <tr><td>:hover transform</td><td>translateY(-3px)</td></tr>
+            <tr><td>:active box-shadow</td><td><code>inset 0 0 0 1.5px rgba(232,254,103,0.3)</code></td></tr>
+            <tr><td>dragging opacity</td><td>0.35</td></tr>
+            <tr><td>soon opacity</td><td>0.62</td></tr>
+            <tr><td>transition</td><td>transform 0.2s ease, box-shadow 0.15s ease, opacity 0.15s, border-color 0.15s</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Avatars -->
+    <div class="two-col">
+      <div>
+        <p class="two-col-label">Avatars</p>
+        <p class="two-col-desc">Used for user initials in the top bar and profile panels. Single size: 40×40, full circle. Background is always <code>var(--ink)</code>.</p>
+      </div>
+      <div class="showcase">
+        <p class="showcase-label">Initials avatar</p>
+        <div class="showcase-row" style="margin-bottom:24px">
+          <div class="avatar">M</div>
+          <div class="avatar">A</div>
+          <div class="avatar">R</div>
+          <div class="avatar" style="font-size:11px">Maya</div>
+        </div>
+        <table class="spec-table">
+          <thead><tr><th>Property</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>width / height</td><td>40px × 40px</td></tr>
+            <tr><td>border-radius</td><td>50%</td></tr>
+            <tr><td>background</td><td><code>var(--ink) #2F3A45</code></td></tr>
+            <tr><td>color</td><td><code>var(--surface) #FFFFFF</code></td></tr>
+            <tr><td>font-size</td><td>14px</td></tr>
+            <tr><td>font-weight</td><td>600</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+
+  <!-- ── BRAND SIGNATURE ───────────────────────────────────────── -->
+  <section class="section">
+    <p class="section-label">08 — Brand Signature Rules</p>
+
+    <div class="showcase" style="margin-bottom:32px">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center">
+        <div>
+          <p class="showcase-label">Acid stroke highlight — the brand signature</p>
+          <div style="font-family:'Instrument Serif',Georgia,serif; font-size:88px; font-weight:400; line-height:0.9; letter-spacing:-0.03em; color:var(--ink)">
+            Design <span class="highlight-word">System</span>
+          </div>
+          <div style="margin-top:16px; font-size:12px; color:var(--muted); line-height:1.6">
+            One word in the hero H1 carries the brand stroke.<br>
+            <code style="font-family:var(--font-mono); font-size:11px; background:var(--faint); padding:2px 6px; border-radius:4px">-webkit-text-stroke: 0.16em var(--accent)</code><br>
+            <code style="font-family:var(--font-mono); font-size:11px; background:var(--faint); padding:2px 6px; border-radius:4px">paint-order: stroke fill</code>
+          </div>
+        </div>
+        <div>
+          <p class="showcase-label">Stat number — Instrument Serif</p>
+          <div style="display:flex; align-items:baseline; gap:8px">
+            <div class="stat-num">3.8</div>
+            <div style="font-size:13px; color:var(--muted); font-weight:500">MB · JPG</div>
+          </div>
+          <div style="margin-top:32px">
+            <p class="showcase-label">Background — dotted radial grid</p>
+            <div style="width:100%; height:80px; border-radius:10px; background-color:var(--bg); background-image:radial-gradient(circle,rgba(0,0,0,0.07) 1px, transparent 1px); background-size:28px 28px; border:1px solid var(--border)"></div>
+            <div style="margin-top:8px; font-size:11px; color:var(--muted)">
+              <code style="font-family:var(--font-mono); font-size:10px">#ECEDEF</code> base · 1px dots · 28×28px grid
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase">
+      <p class="showcase-label">Signature rules — never break these</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px">
+        <div style="display:flex; flex-direction:column; gap:10px">
+          <div style="display:flex; align-items:flex-start; gap:10px; padding:12px; background:var(--ok-bg); border-radius:10px">
+            <span style="color:var(--ok-fg); font-weight:700; flex-shrink:0">✓</span>
+            <span style="font-size:12px; color:var(--ink)">Display serif is <strong>only</strong> for the hero H1. Every other piece of type uses Inter.</span>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:10px; padding:12px; background:var(--ok-bg); border-radius:10px">
+            <span style="color:var(--ok-fg); font-weight:700; flex-shrink:0">✓</span>
+            <span style="font-size:12px; color:var(--ink)">Accent <code style="font-family:var(--font-mono); font-size:10px">#E8FE67</code> is used for the stroke highlight, selected-state rings, and widget preview accent fills (progress ring arc, email signature divider, brand checker dots).</span>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:10px; padding:12px; background:var(--ok-bg); border-radius:10px">
+            <span style="color:var(--ok-fg); font-weight:700; flex-shrink:0">✓</span>
+            <span style="font-size:12px; color:var(--ink)">Body default is 13px. One page background: <code style="font-family:var(--font-mono); font-size:10px">#ECEDEF</code> with the dotted radial pattern.</span>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:10px; padding:12px; background:var(--ok-bg); border-radius:10px">
+            <span style="color:var(--ok-fg); font-weight:700; flex-shrink:0">✓</span>
+            <span style="font-size:12px; color:var(--ink)">One dark: <code style="font-family:var(--font-mono); font-size:10px">var(--ink) #2F3A45</code> for text, avatars, and filled buttons. No second darker shade; no pure black.</span>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px">
+          <div style="display:flex; align-items:flex-start; gap:10px; padding:12px; background:var(--bad-bg); border-radius:10px">
+            <span style="color:var(--bad-fg); font-weight:700; flex-shrink:0">✗</span>
+            <span style="font-size:12px; color:var(--ink)">Never use the display serif anywhere other than the one H1 per page.</span>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:10px; padding:12px; background:var(--bad-bg); border-radius:10px">
+            <span style="color:var(--bad-fg); font-weight:700; flex-shrink:0">✗</span>
+            <span style="font-size:12px; color:var(--ink)">Never use the accent as a general background or decorative colour outside its defined uses. Accent fills are limited to specific widget preview graphic elements — not chrome, not buttons, not cards.</span>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:10px; padding:12px; background:var(--bad-bg); border-radius:10px">
+            <span style="color:var(--bad-fg); font-weight:700; flex-shrink:0">✗</span>
+            <span style="font-size:12px; color:var(--ink)">Never add gradients, vibrant chrome, or extra accent colours. The brand speaks through restraint.</span>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:10px; padding:12px; background:var(--bad-bg); border-radius:10px">
+            <span style="color:var(--bad-fg); font-weight:700; flex-shrink:0">✗</span>
+            <span style="font-size:12px; color:var(--ink)">Never use raw hex codes or inline px values. Only reference tokens defined in <code style="font-family:var(--font-mono); font-size:10px">:root</code>.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+
+  <!-- ── TOKEN REFERENCE ──────────────────────────────────────── -->
+  <section class="section">
+    <p class="section-label">09 — Full Token Reference</p>
+
+    <div class="showcase">
+      <table class="spec-table">
+        <thead>
+          <tr><th>Token</th><th>Raw value</th><th>Category</th><th>Usage</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>--bg</code></td><td>#ECEDEF</td><td>Colour</td><td>Page background — the only background colour</td></tr>
+          <tr><td><code>--surface</code></td><td>#FFFFFF</td><td>Colour</td><td>Cards, panels, inputs, dropdowns</td></tr>
+          <tr><td><code>--ink</code></td><td>#2F3A45</td><td>Colour</td><td>Primary text, avatar fill, DarkButton bg</td></tr>
+          <tr><td><code>--solid</code></td><td>#141414</td><td>Colour</td><td>Strongest filled elements — never for body text</td></tr>
+          <tr><td><code>--muted</code></td><td>#99A3AD</td><td>Colour</td><td>Secondary text, labels, placeholder fallback</td></tr>
+          <tr><td><code>--border</code></td><td>#DDE2E7</td><td>Colour</td><td>All borders and dividers</td></tr>
+          <tr><td><code>--faint</code></td><td>#F5F5F6</td><td>Colour</td><td>Hover tints, disabled backgrounds</td></tr>
+          <tr><td><code>--accent</code></td><td>#E8FE67</td><td>Colour · Brand</td><td>Hero stroke highlight, selected-state rings, widget preview accent fills (progress ring, signature divider, checker dots)</td></tr>
+          <tr><td><code>--accent-bubble</code></td><td>rgba(232,254,103,0.82)</td><td>Colour · Brand</td><td>Accent bubble variant</td></tr>
+          <tr><td><code>--accent-glow</code></td><td>rgba(232,254,103,0.18)</td><td>Colour · Brand</td><td>Glow behind selected spheres</td></tr>
+          <tr><td><code>--accent-subtle</code></td><td>rgba(232,254,103,0.08)</td><td>Colour · Brand</td><td>Very faint accent tint</td></tr>
+          <tr><td><code>--ph-1</code></td><td>#FAFAFA</td><td>Placeholder</td><td>Lightest neutral fill</td></tr>
+          <tr><td><code>--ph-2</code></td><td>#F2F2F2</td><td>Placeholder</td><td>Light neutral fill</td></tr>
+          <tr><td><code>--ph-3</code></td><td>#E8E8E8</td><td>Placeholder</td><td>Mid neutral fill — widget shapes</td></tr>
+          <tr><td><code>--ph-4</code></td><td>#D4D4D4</td><td>Placeholder</td><td>Dark neutral fill — widget shapes (contrast)</td></tr>
+          <tr><td><code>--sp-a</code></td><td>#EEF0F3</td><td>Grey scale</td><td>Photo circle / bubble fill — lightest cool grey</td></tr>
+          <tr><td><code>--sp-b</code></td><td>#D8DCE1</td><td>Grey scale</td><td>Photo circle / bubble fill — light cool grey</td></tr>
+          <tr><td><code>--sp-c</code></td><td>#B8BEC5</td><td>Grey scale</td><td>Photo circle / bubble fill — mid cool grey</td></tr>
+          <tr><td><code>--sp-d</code></td><td>#99A3AD</td><td>Grey scale</td><td>Photo circle / bubble fill — matches --muted</td></tr>
+          <tr><td><code>--sp-e</code></td><td>#6B7680</td><td>Grey scale</td><td>Photo circle / bubble fill — darkest cool grey</td></tr>
+          <tr><td><code>--ok-bg / --ok-fg</code></td><td>#E1E8DC / #3a6a3a</td><td>Semantic</td><td>Success / published states</td></tr>
+          <tr><td><code>--bad-bg / --bad-fg</code></td><td>#F4DDDD / #7a5050</td><td>Semantic</td><td>Error / deprecated states</td></tr>
+          <tr><td><code>--tile-border</code></td><td>rgba(0,0,0,0.06)</td><td>Colour · Utility</td><td>Widget tile and home tile borders</td></tr>
+          <tr><td><code>--line</code></td><td>rgba(0,0,0,0.06)</td><td>Colour · Utility</td><td>Subtle divider lines</td></tr>
+          <tr><td><code>--placeholder</code></td><td>#9AA0A6</td><td>Colour · Utility</td><td>Input placeholder text</td></tr>
+          <tr><td><code>--grid-dot</code></td><td>rgba(0,0,0,0.07)</td><td>Background</td><td>Dot in the radial background pattern</td></tr>
+          <tr><td><code>--grid-dot-size</code></td><td>1px</td><td>Background</td><td>Dot radius</td></tr>
+          <tr><td><code>--grid-bg-size</code></td><td>28px 28px</td><td>Background</td><td>Grid repeat size</td></tr>
+          <tr><td><code>--dur-fast</code></td><td>0.12s</td><td>Motion</td><td>Micro-interactions</td></tr>
+          <tr><td><code>--dur-base</code></td><td>0.22s</td><td>Motion</td><td>Default transition</td></tr>
+          <tr><td><code>--dur-slow</code></td><td>0.30s</td><td>Motion</td><td>Photo hover, drag</td></tr>
+          <tr><td><code>--dur-screen</code></td><td>0.60s</td><td>Motion</td><td>Full-screen transitions</td></tr>
+          <tr><td><code>--ease-smooth</code></td><td>cubic-bezier(0.22,1,0.36,1)</td><td>Motion</td><td>Page/tile enters</td></tr>
+          <tr><td><code>--ease-spring</code></td><td>cubic-bezier(0.34,1.56,0.64,1)</td><td>Motion</td><td>Bounce interactions</td></tr>
+          <tr><td><code>--ease-in-out</code></td><td>cubic-bezier(0.83,0,0.17,1)</td><td>Motion</td><td>Circle-reveal transitions</td></tr>
+          <tr><td><code>--ease-out</code></td><td>ease</td><td>Motion</td><td>Button hover/fade</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+
+  <!-- ── ATOMS ────────────────────────────────────────────────── -->
+  <section class="section">
+    <p class="section-label">10 — Atoms</p>
+
+    <div class="two-col">
+      <div>
+        <p class="two-col-label">Component primitives</p>
+        <p class="two-col-desc">The smallest indivisible UI units. Every molecule and pattern is built from exactly these. Token references are shown beneath each live component.</p>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+
+        <!-- Primary button -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:10px;">
+          <span style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--font-mono);">Primary Button</span>
+          <div style="display:flex; justify-content:center; align-items:center; padding:8px 0;">
+            <button class="btn-dark">↓ Download</button>
+          </div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted); line-height:1.9;">
+            bg <code>var(--ink)</code><br>
+            color <code>var(--surface)</code><br>
+            r 22px · 13px/500<br>
+            :hover opacity 0.82
+          </div>
+        </div>
+
+        <!-- Outline button -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:10px;">
+          <span style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--font-mono);">Outline Button</span>
+          <div style="display:flex; justify-content:center; align-items:center; padding:8px 0;">
+            <button class="btn-outline">Save Draft</button>
+          </div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted); line-height:1.9;">
+            bg transparent<br>
+            border <code>var(--border)</code><br>
+            :hover border <code>var(--ink)</code>
+          </div>
+        </div>
+
+        <!-- Disabled button -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:10px;">
+          <span style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--font-mono);">Disabled</span>
+          <div style="display:flex; justify-content:center; align-items:center; padding:8px 0;">
+            <button class="btn-dark" style="opacity:0.5; cursor:not-allowed;" disabled>Unavailable</button>
+          </div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted); line-height:1.9;">
+            same tokens as primary<br>
+            opacity 0.5<br>
+            cursor not-allowed
+          </div>
+        </div>
+
+        <!-- Filter badges (formerly Pills) -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:10px;">
+          <span style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--font-mono);">Filter Pills</span>
+          <div style="display:flex; justify-content:center; align-items:center; gap:6px; padding:8px 0; flex-wrap:wrap;">
+            <span class="badge badge-dark">All</span>
+            <span class="badge badge-outline">PNG</span>
+            <span class="badge badge-outline">JPG</span>
+          </div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted); line-height:1.9;">
+            active → <code>badge-dark</code><br>
+            inactive → <code>badge-outline</code><br>
+            10px · 500 · r10
+          </div>
+        </div>
+
+        <!-- Section label -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:10px;">
+          <span style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--font-mono);">Section Label</span>
+          <div style="display:flex; justify-content:flex-start; align-items:center; padding:8px 0;">
+            <span style="font-size:10px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted);">01 — Colour</span>
+          </div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted); line-height:1.9;">
+            10px · 600 · 0.14em<br>
+            color <code>var(--muted)</code><br>
+            uppercase
+          </div>
+        </div>
+
+        <!-- Badges -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:10px;">
+          <span style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--font-mono);">Badges</span>
+          <div style="display:flex; justify-content:center; align-items:center; gap:5px; padding:4px 0; flex-wrap:wrap;">
+            <span style="font-size:10px; font-weight:500; letter-spacing:0.8px; text-transform:uppercase; color:var(--muted); font-family:var(--font-ui);">SOON</span>
+            <span class="badge badge-ok">Live</span>
+            <span class="badge badge-bad">Deprecated</span>
+          </div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted); line-height:1.9;">
+            soon: plain text <code>var(--muted)</code><br>
+            ok: <code>var(--ok-bg/fg)</code><br>
+            10px · 500 · 0.8px uppercase
+          </div>
+        </div>
+
+        <!-- Count badge -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:10px;">
+          <span style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--font-mono);">Count Badge</span>
+          <div style="display:flex; justify-content:center; align-items:center; gap:8px; padding:8px 0;">
+            <div style="background:var(--ink); color:var(--surface); border-radius:9px; min-width:20px; padding:2px 7px; font-size:10px; font-weight:600; text-align:center; line-height:1.4;">12</div>
+            <div style="background:var(--ink); color:var(--surface); border-radius:9px; min-width:20px; padding:2px 7px; font-size:10px; font-weight:600; text-align:center; line-height:1.4;">3</div>
+            <div style="background:var(--ph-3); color:var(--muted); border-radius:9px; min-width:20px; padding:2px 7px; font-size:10px; font-weight:600; text-align:center; line-height:1.4;">0</div>
+          </div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted); line-height:1.9;">
+            bg <code>var(--ink)</code> · fg <code>var(--surface)</code><br>
+            empty: bg <code>var(--ph-3)</code><br>
+            r 9px · 10px/600
+          </div>
+        </div>
+
+        <!-- Text input -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:10px;">
+          <span style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--font-mono);">Text Input</span>
+          <div style="padding:4px 0;">
+            <input class="input-field" placeholder="Type something…" style="padding:9px 14px; width:100%; display:block;" />
+          </div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted); line-height:1.9;">
+            r 14px · 13px/400<br>
+            border rgba(26,31,38,0.35)<br>
+            box-shadow none
+          </div>
+        </div>
+
+        <!-- Avatar -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:10px;">
+          <span style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--font-mono);">Avatar</span>
+          <div style="display:flex; justify-content:center; align-items:center; gap:8px; padding:4px 0;">
+            <div class="avatar">M</div>
+            <div class="avatar">A</div>
+            <div class="avatar" style="background:var(--muted); font-size:11px;">?</div>
+          </div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted); line-height:1.9;">
+            40×40 · 50%<br>
+            bg <code>var(--ink)</code> · fg <code>var(--surface)</code><br>
+            14px/600
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:10px;">
+          <span style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--font-mono);">Divider</span>
+          <div style="display:flex; flex-direction:column; justify-content:center; gap:12px; padding:8px 0;">
+            <div style="height:1px; background:var(--border); width:100%;"></div>
+            <div style="height:1px; background:var(--line); width:100%;"></div>
+          </div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted); line-height:1.9;">
+            solid: <code>var(--border)</code><br>
+            subtle: <code>var(--line)</code><br>
+            height 1px
+          </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:10px;">
+          <span style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--font-mono);">Progress Bar</span>
+          <div style="display:flex; flex-direction:column; justify-content:center; gap:10px; padding:8px 0;">
+            <div style="height:6px; background:var(--ph-3); border-radius:3px; overflow:hidden;">
+              <div style="height:100%; width:40%; background:var(--accent); border-radius:3px;"></div>
+            </div>
+            <div style="height:4px; background:var(--ph-3); border-radius:2px; overflow:hidden;">
+              <div style="height:100%; width:72%; background:var(--ink); border-radius:2px;"></div>
+            </div>
+          </div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted); line-height:1.9;">
+            track <code>var(--ph-3)</code><br>
+            fill <code>var(--accent)</code> or <code>var(--ink)</code><br>
+            h 4–6px · r 3px
+          </div>
+        </div>
+
+        <!-- Colour swatch card -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:10px;">
+          <span style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--font-mono);">Colour Swatch</span>
+          <div style="padding:2px 0;">
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px;">
+              <div style="height:36px; border-radius:6px; background:var(--accent); border:1px solid rgba(0,0,0,0.06);"></div>
+              <div style="font-family:var(--font-mono); font-size:10px; font-weight:600; color:var(--ink);">--accent</div>
+              <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">#E8FE67</div>
+            </div>
+          </div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted); line-height:1.9;">
+            swatch h 60px · r 8px<br>
+            name 11px/600 mono<br>
+            value 10px <code>var(--muted)</code>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+
+  <!-- ── MOLECULES ────────────────────────────────────────────── -->
+  <section class="section">
+    <p class="section-label">11 — Molecules</p>
+
+    <!-- Widget card -->
+    <div class="two-col" style="margin-bottom:40px;">
+      <div>
+        <p class="two-col-label">Widget card</p>
+        <p class="two-col-desc">Home dashboard tile. Fixed height 260px, flex column. Working tiles gain an ink border on hover. SOON tiles retain default border. Overflow hidden on all except the Team Photos tile.</p>
+        <div style="margin-top:14px; display:flex; flex-direction:column; gap:4px;">
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">bg <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--surface)</code></div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">border <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--tile-border)</code> · r 14px</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">:hover border <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--ink)</code> (working only)</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">:hover translateY(-3px)</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">SOON opacity 0.62 · no hover border</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">transition 0.2s ease · 0.15s ease</div>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+        <div>
+          <div style="font-size:10px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; font-family:var(--font-mono);">Working — hover</div>
+          <div style="background:var(--surface); border:1px solid var(--ink); border-radius:14px; padding:20px; height:260px; display:flex; flex-direction:column; transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.10); overflow:hidden;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+              <span style="font-size:13px; font-weight:500; color:var(--ink);">Brand Library</span>
+              <span class="badge badge-dark" style="font-size:9px; padding:3px 7px;">SVG</span>
+            </div>
+            <div style="font-size:11px; color:var(--muted); margin-bottom:14px;">82 assets · 3 types</div>
+            <div style="flex:1; background:var(--ph-2); border-radius:8px; display:flex; align-items:flex-end; justify-content:flex-end; padding:14px; overflow:hidden;">
+              <div style="display:flex; gap:6px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--ink);"></div>
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);border:1px solid rgba(0,0,0,0.06);"></div>
+                <div style="width:28px;height:28px;border-radius:50%;background:transparent;border:2px solid var(--ph-4);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; font-family:var(--font-mono);">SOON — default</div>
+          <div style="background:var(--surface); border:1px solid var(--tile-border); border-radius:14px; padding:20px; height:260px; display:flex; flex-direction:column; opacity:0.62; overflow:hidden;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+              <span style="font-size:13px; font-weight:500; color:var(--ink);">Campaigns</span>
+              <span style="font-size:10px; font-weight:500; letter-spacing:0.8px; text-transform:uppercase; color:var(--muted); font-family:var(--font-ui);">SOON</span>
+            </div>
+            <div style="font-size:11px; color:var(--muted); margin-bottom:14px;">Campaign tracking</div>
+            <div style="flex:1; background:var(--ph-2); border-radius:8px; display:flex; flex-direction:column; align-items:flex-end; justify-content:flex-end; padding:14px; gap:8px;">
+              <div style="height:6px; width:100%; background:var(--ph-4); border-radius:4px;"></div>
+              <div style="height:6px; width:40%; background:var(--ph-4); border-radius:4px;"></div>
+              <div style="height:6px; width:70%; background:var(--ph-4); border-radius:4px;"></div>
+              <div style="height:6px; width:25%; background:var(--ph-4); border-radius:4px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Command palette -->
+    <div class="two-col" style="margin-bottom:40px;">
+      <div>
+        <p class="two-col-label">Command palette</p>
+        <p class="two-col-desc">Modal search overlay triggered by ⌘K. Centred on screen, width 520px. The ✦ prefix and ⌘K badge are always visible. Backdrop is rgba(0,0,0,0.18) with blur.</p>
+        <div style="margin-top:14px; display:flex; flex-direction:column; gap:4px;">
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">bg rgba(255,255,255,0.98)</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">border <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--border)</code> · r 18px</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">shadow 0 24px 64px rgba(0,0,0,0.14)</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">input: no border · transparent bg</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">active result bg <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--faint)</code></div>
+        </div>
+      </div>
+      <div>
+        <div style="background:rgba(255,255,255,0.98); border:1px solid var(--border); border-radius:18px; padding:18px 18px 12px; box-shadow:0 24px 64px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06);">
+          <div style="display:flex; align-items:center; gap:12px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+            <span style="font-size:16px; color:var(--muted); flex-shrink:0; line-height:1;">✦</span>
+            <span style="flex:1; font-size:15px; color:var(--muted); font-family:'Inter',sans-serif;">Search or ask anything…</span>
+            <div style="background:var(--faint); border:1px solid var(--border); border-radius:6px; padding:3px 8px; font-size:10px; font-weight:500; color:var(--muted); font-family:var(--font-mono); flex-shrink:0;">⌘K</div>
+          </div>
+          <div style="padding-top:10px; display:flex; flex-direction:column; gap:2px;">
+            <div style="display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; background:var(--faint);">
+              <span style="font-size:12px; color:var(--muted);">↗</span>
+              <span style="font-size:13px; color:var(--ink);">Brand Library</span>
+              <span style="margin-left:auto; font-size:10px; color:var(--muted);">Tool</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px;">
+              <span style="font-size:12px; color:var(--muted);">↗</span>
+              <span style="font-size:13px; color:var(--ink);">Photo Archive</span>
+              <span style="margin-left:auto; font-size:10px; color:var(--muted);">Tool</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px;">
+              <span style="font-size:12px; color:var(--muted);">↗</span>
+              <span style="font-size:13px; color:var(--ink);">Email Signature</span>
+              <span style="margin-left:auto; font-size:10px; color:var(--muted);">Tool</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation tab strip -->
+    <div class="two-col" style="margin-bottom:40px;">
+      <div>
+        <p class="two-col-label">Navigation tab strip</p>
+        <p class="two-col-desc">Merged pill-chain attached to the favicon sphere in the universal top bar. Open tools appear as tabs; the active screen is highlighted with a faint background. Tabs overlap by 10px.</p>
+        <div style="margin-top:14px; display:flex; flex-direction:column; gap:4px;">
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">container bg <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--surface)</code> · r 24px · h 48</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">active tab bg <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--faint)</code></div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">active label 13px/600 <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--ink)</code></div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">inactive label 13px/400 <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--muted)</code></div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">overlap margin-left -10px · z-index 2/1</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center;">
+        <div style="width:48px; height:48px; border-radius:50%; background:#080808; display:flex; align-items:center; justify-content:center; color:var(--accent); font-family:'Instrument Serif',Georgia,serif; font-size:18px; flex-shrink:0; position:relative; z-index:2; margin-right:-14px;">A</div>
+        <div style="display:flex; align-items:center; background:var(--surface); border:1px solid var(--border); border-radius:24px; height:48px; padding-left:20px; padding-right:10px;">
+          <div style="display:flex; align-items:center; gap:6px; height:36px; padding:0 6px 0 12px; border-radius:18px; background:var(--faint); border:1px solid var(--border); position:relative; z-index:2; flex-shrink:0;">
+            <span style="font-size:13px; font-family:'Inter',sans-serif; color:var(--ink); font-weight:600; white-space:nowrap;">Brand Library</span>
+            <div style="width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);">×</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px; height:36px; padding:0 6px 0 12px; border-radius:18px; margin-left:-10px; flex-shrink:0; position:relative; z-index:1;">
+            <span style="font-size:13px; font-family:'Inter',sans-serif; color:var(--muted); font-weight:400; white-space:nowrap;">Team Photos</span>
+            <div style="width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);">×</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px; height:36px; padding:0 6px 0 12px; border-radius:18px; margin-left:-10px; flex-shrink:0; position:relative; z-index:1;">
+            <span style="font-size:13px; font-family:'Inter',sans-serif; color:var(--muted); font-weight:400; white-space:nowrap;">Email Signature</span>
+            <div style="width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);">×</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating action bar -->
+    <div class="two-col" style="margin-bottom:40px;">
+      <div>
+        <p class="two-col-label">Floating action bar</p>
+        <p class="two-col-desc">Bottom-anchored sheet that appears when items are selected (files or logos). Slides in via sphereIn animation. Count on the left, actions on the right. Click outside cards to dismiss.</p>
+        <div style="margin-top:14px; display:flex; flex-direction:column; gap:4px;">
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">bg <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--surface)</code></div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">border-top <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--border)</code></div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">radius-top 16px · padding 14px 24px</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">z-index 80 · animation sphereIn 0.35s</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">count 11px/600 · letter-spacing 0.4px</div>
+        </div>
+      </div>
+      <div>
+        <div style="background:var(--surface); border:1px solid var(--border); border-top-left-radius:16px; border-top-right-radius:16px; padding:14px 24px; display:flex; align-items:center; gap:20px; box-shadow:0 -4px 24px rgba(0,0,0,0.06);">
+          <span style="font-size:11px; font-weight:600; letter-spacing:0.4px; color:var(--ink);">2 SELECTED</span>
+          <div style="flex:1;"></div>
+          <button class="btn-outline" style="font-size:11px; padding:6px 16px;">↑ Upload</button>
+          <button class="btn-dark" style="font-size:11px; padding:8px 18px;">↓ Download Selected</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photo circle with selection ring -->
+    <div class="two-col" style="margin-bottom:40px;">
+      <div>
+        <p class="two-col-label">Photo circle</p>
+        <p class="two-col-desc">Team photo circle. No filters, no inset shadows, no overlay treatments. Flat solid fill. Selected gets a 3px accent ring via box-shadow. Hover scales up.</p>
+        <div style="margin-top:14px; display:flex; flex-direction:column; gap:4px;">
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">shape 50% · flat solid fill</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">selected: box-shadow <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">0 0 0 3px var(--accent)</code></div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">:hover scale(1.06) · :active scale(0.95)</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">transition --dur-slow --ease-spring</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:40px; padding:16px 0;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+          <div style="width:80px; height:80px; border-radius:50%; background:var(--sp-c);"></div>
+          <span style="font-size:10px; color:var(--muted); font-family:var(--font-mono);">default</span>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+          <div style="width:80px; height:80px; border-radius:50%; background:var(--sp-d); box-shadow:0 0 0 3px var(--accent); display:flex; align-items:center; justify-content:center;">
+            <span style="font-size:18px; font-weight:700; color:var(--surface);">✓</span>
+          </div>
+          <span style="font-size:10px; color:var(--muted); font-family:var(--font-mono);">selected</span>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+          <div style="width:80px; height:80px; border-radius:50%; background:var(--sp-b); transform:scale(1.06);"></div>
+          <span style="font-size:10px; color:var(--muted); font-family:var(--font-mono);">:hover scale(1.06)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logo card -->
+    <div class="two-col" style="margin-bottom:40px;">
+      <div>
+        <p class="two-col-label">Logo card</p>
+        <p class="two-col-desc">Each logo variant lives in its own card in ScreenLibrary. Click to select — unselected is a thin grey border, selected upgrades to a 2px accent border with glow. Deprecated cards are dimmed to 40%.</p>
+        <div style="margin-top:14px; display:flex; flex-direction:column; gap:4px;">
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">bg <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--surface)</code> · r 14px</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">default border <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--border)</code></div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">selected: 2px <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--accent)</code></div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">selected glow rgba(232,254,103,0.18)</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">deprecated opacity 0.4</div>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; cursor:pointer;">
+          <div style="height:72px; background:var(--ph-2); border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
+            <span style="font-family:'Instrument Serif',Georgia,serif; font-size:24px; color:var(--ink); letter-spacing:-0.02em;">A</span>
+          </div>
+          <div style="font-size:11px; font-weight:600; color:var(--ink); margin-bottom:8px;">Current</div>
+          <div style="display:flex; gap:4px; margin-bottom:10px; flex-wrap:wrap;">
+            <span style="background:var(--ph-3); color:var(--muted); border-radius:5px; padding:2px 6px; font-size:9px; font-weight:500; font-family:var(--font-mono);">SVG</span>
+            <span style="background:var(--ph-3); color:var(--muted); border-radius:5px; padding:2px 6px; font-size:9px; font-weight:500; font-family:var(--font-mono);">PNG</span>
+            <span style="background:var(--ph-3); color:var(--muted); border-radius:5px; padding:2px 6px; font-size:9px; font-weight:500; font-family:var(--font-mono);">JPG</span>
+          </div>
+          <div style="display:flex; justify-content:flex-end;">
+            <a style="font-size:11px; color:var(--ink); font-weight:500; cursor:pointer;">◆ Open in Figma →</a>
+          </div>
+        </div>
+        <div style="background:var(--surface); border:2px solid var(--accent); border-radius:14px; padding:15px; cursor:pointer; box-shadow:0 0 0 3px rgba(232,254,103,0.18);">
+          <div style="height:72px; background:var(--ph-2); border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
+            <span style="font-family:'Instrument Serif',Georgia,serif; font-size:24px; color:var(--muted); letter-spacing:-0.02em; -webkit-text-stroke:1px var(--muted);">A</span>
+          </div>
+          <div style="font-size:11px; font-weight:600; color:var(--ink); margin-bottom:8px;">Secondary ✓</div>
+          <div style="display:flex; gap:4px; margin-bottom:10px;">
+            <span style="background:var(--ph-3); color:var(--muted); border-radius:5px; padding:2px 6px; font-size:9px; font-weight:500; font-family:var(--font-mono);">SVG</span>
+            <span style="background:var(--ph-3); color:var(--muted); border-radius:5px; padding:2px 6px; font-size:9px; font-weight:500; font-family:var(--font-mono);">PNG</span>
+          </div>
+          <div style="display:flex; justify-content:flex-end;">
+            <a style="font-size:11px; color:var(--ink); font-weight:500; cursor:pointer;">◆ Open in Figma →</a>
+          </div>
+        </div>
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; cursor:pointer; opacity:0.4;">
+          <div style="height:72px; background:var(--ph-2); border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
+            <span style="font-family:'Instrument Serif',Georgia,serif; font-size:24px; color:var(--muted); letter-spacing:-0.02em;">A</span>
+          </div>
+          <div style="font-size:11px; font-weight:600; color:var(--ink); margin-bottom:8px;">Deprecated</div>
+          <div style="display:flex; gap:4px; margin-bottom:10px;">
+            <span class="badge badge-bad" style="font-size:9px;">Deprecated</span>
+          </div>
+          <div style="display:flex; justify-content:flex-end;">
+            <a style="font-size:11px; color:var(--ink); font-weight:500; cursor:pointer;">◆ Open in Figma →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onboarding module rows -->
+    <div class="two-col">
+      <div>
+        <p class="two-col-label">Onboarding module row</p>
+        <p class="two-col-desc">Three states in the onboarding flow. Complete rows show a green check and muted text. The active row has an ink border and full opacity. Locked rows are dimmed and show a lock.</p>
+        <div style="margin-top:14px; display:flex; flex-direction:column; gap:4px;">
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">base: bg <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--surface)</code> · r 12px</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">base: border <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--border)</code></div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">active: border <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--ink)</code></div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">complete: icon bg <code style="background:var(--faint);padding:1px 4px;border-radius:3px;">var(--ok-bg)</code></div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">locked: opacity 0.4</div>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 20px; display:flex; align-items:center; gap:14px;">
+          <div style="width:28px; height:28px; border-radius:50%; background:var(--ok-bg); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <span style="font-size:12px; color:var(--ok-fg); font-weight:700;">✓</span>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:13px; font-weight:500; color:var(--muted);">Set your role</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:2px;">Completed</div>
+          </div>
+          <span class="badge badge-ok">Done</span>
+        </div>
+        <div style="background:var(--surface); border:1px solid var(--ink); border-radius:12px; padding:16px 20px; display:flex; align-items:center; gap:14px;">
+          <div style="width:28px; height:28px; border-radius:50%; background:var(--ink); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <span style="font-size:11px; color:var(--surface); font-weight:700;">2</span>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:13px; font-weight:500; color:var(--ink);">Upload your first asset</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:2px;">In progress · 0 of 1 complete</div>
+          </div>
+          <button class="btn-dark" style="font-size:11px; padding:6px 14px;">Start →</button>
+        </div>
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 20px; display:flex; align-items:center; gap:14px; opacity:0.4;">
+          <div style="width:28px; height:28px; border-radius:50%; background:var(--ph-3); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; color:var(--muted);">🔒</div>
+          <div style="flex:1;">
+            <div style="font-size:13px; font-weight:500; color:var(--ink);">Invite your team</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:2px;">Complete step 2 to unlock</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <div class="section-divider" style="margin-top:80px"></div>
+  <footer style="padding:24px 0 8px; display:flex; align-items:center; justify-content:space-between">
+    <div style="font-family:'Instrument Serif',Georgia,serif; font-size:20px; font-weight:400; letter-spacing:-0.02em; color:var(--ink)">Archive</div>
+    <div style="font-size:11px; color:var(--muted); font-family:var(--font-mono)">Design System · 2026 · Light only</div>
+  </footer>
+
+</div>
+
+<script>
+  // Replay animation demos by removing and re-adding class
+  function replay(wrapperId, className) {
+    const wrapper = document.getElementById(wrapperId);
+    if (!wrapper) return;
+    const child = wrapper.querySelector('.' + className);
+    if (!child) return;
+    child.classList.remove(className);
+    // Force reflow
+    void child.offsetWidth;
+    child.classList.add(className);
+  }
+</script>
+
+</body>
+</html>
