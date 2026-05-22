@@ -8,15 +8,15 @@
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Inter:wght@300;400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap');
 
   :root {
     --bg: #ECEDEF;
     --surface: #FFFFFF;
-    --ink: #404040;
+    --ink: #2F3A45;
     --solid: #141414;
-    --muted: #888888;
-    --border: #E2E2E2;
+    --muted: #99A3AD;
+    --border: #DDE2E7;
     --faint: #F5F5F6;
     --accent: #E8FE67;
     --accent-bubble: rgba(232,254,103,0.82);
@@ -28,13 +28,30 @@
     --grid-dot: rgba(0,0,0,0.07);
     --ok-bg: #E1E8DC; --ok-fg: #3a6a3a;
     --bad-bg: #F4DDDD; --bad-fg: #7a5050;
-    --sp-a: #C8C0D8; --sp-b: #B4C8B8; --sp-c: #D0C0B8; --sp-d: #B8C4D4; --sp-e: #D4C0D0;
-    /* ── Typography scale ── */
-    --font-size-body: 13px;
-    --font-size-input: 22px;
-    --font-weight-regular: 400;
-    --line-height-base: 1.4;
-    --letter-spacing-hero: -0.03em;
+    --sp-a: #EEF0F3; --sp-b: #D8DCE1; --sp-c: #B8BEC5; --sp-d: #99A3AD; --sp-e: #6B7680;
+    /* ── Typography ── */
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-ui:      'Inter', system-ui, sans-serif;
+    --font-mono:    'SF Mono', 'JetBrains Mono', 'Menlo', 'Consolas', monospace;
+
+    --text-body:    13px;
+    --text-caption: 11px;
+    --text-small:   10px;
+    --text-label:   10px;
+    --text-h1:      88px;
+    --text-h2:      24px;
+    --text-h3:      18px;
+    --text-stat:    72px;
+    --font-size-input: 22px;   /* semantic: large onboarding name field */
+
+    --weight-regular:  400;
+    --weight-medium:   500;
+    --weight-semibold: 600;
+
+    --lh-base:   1.4;
+    --ls-hero:   -0.03em;
+    --ls-label:  0.08em;
+    --ls-badge:  0.8px;
 
     /* ── Grid pattern ── */
     --grid-dot-size: 1px;
@@ -47,58 +64,57 @@
     --z-4: 4;
     --z-overlay: 999;
 
-    /* ── Radius ── */
-    --radius-full: 50%;
-    --radius-input: 18px;
-
     /* ── Spacing ── */
-    --space-lg: 16px;
-    --space-xl: 20px;
-    --space-7: 28px;
+    --space-2:  2px;
+    --space-4:  4px;
+    --space-6:  6px;
+    --space-8:  8px;
+    --space-10: 10px;
+    --space-12: 12px;
+    --space-14: 14px;
+    --space-16: 16px;
+    --space-20: 20px;
+    --space-24: 24px;
+    --space-28: 28px;
+    --space-32: 32px;
+    --space-40: 40px;
+    --space-48: 48px;
+    --space-64: 64px;
+
+    /* ── Radius ── */
+    --radius-2:    2px;
+    --radius-4:    4px;
+    --radius-6:    6px;
+    --radius-8:    8px;
+    --radius-10:   10px;
+    --radius-12:   12px;
+    --radius-14:   14px;
+    --radius-16:   16px;
+    --radius-full: 50%;
+    --radius-input: 18px;   /* semantic: large onboarding name field */
 
     /* ── Motion ── */
-    --duration-fast: 0.12s;
-    --duration-base: 0.22s;
-    --duration-slow: 0.3s;
-    --duration-screen: 0.6s;
-    --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
-    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --ease-in-out: cubic-bezier(0.83, 0, 0.17, 1);
-    --ease-out: ease;
+    --dur-fast:   0.12s;
+    --dur-base:   0.22s;
+    --dur-slow:   0.30s;
+    --dur-screen: 0.60s;
+    --ease-smooth:  cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-in-out:  cubic-bezier(0.83, 0, 0.17, 1);
+    --ease-out:     ease;
 
-    /* ── Photo treatment (mirrors design-system/tokens.css) ── */
-    --photo-tint: rgba(20, 20, 40, 0.12);
-    --photo-rim-shadow:
-      inset 0 0 0 1.5px rgba(255, 255, 255, 0.25),
-      inset -6px -6px 18px rgba(0, 0, 0, 0.55),
-      inset 4px 4px 12px rgba(255, 255, 255, 0.18),
-      0 8px 32px rgba(0, 0, 0, 0.22),
-      0 2px 8px rgba(0, 0, 0, 0.14);
-    --photo-iris-gradient: conic-gradient(
-      from 200deg,
-      rgba(120, 80, 220, 0.28) 0deg,
-      rgba(60, 160, 255, 0.22) 60deg,
-      rgba(80, 220, 180, 0.18) 100deg,
-      rgba(240, 220, 60, 0.14) 140deg,
-      rgba(255, 100, 80, 0.20) 200deg,
-      rgba(200, 60, 220, 0.25) 260deg,
-      rgba(120, 80, 220, 0.28) 360deg
-    );
-    --photo-spec-gradient: radial-gradient(
-      ellipse at 40% 35%,
-      rgba(255, 255, 255, 0.72) 0%,
-      rgba(255, 255, 255, 0.22) 45%,
-      rgba(255, 255, 255, 0) 100%
-    );
-    --photo-depth-gradient: radial-gradient(
-      ellipse at 60% 80%,
-      rgba(0, 0, 0, 0.38) 0%,
-      rgba(0, 0, 0, 0) 100%
-    );
-    --photo-filter: url(#liquid-glass);
+    /* ── Shadows ── */
+    --shadow-card:   0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-input:  0 4px 24px rgba(0,0,0,0.10);
+    --shadow-search: 0 2px 12px rgba(0,0,0,0.06);
+    --shadow-drop:   0 8px 24px rgba(0,0,0,0.06);
+    --shadow-lift:   0 8px 24px rgba(0,0,0,0.10);
+    --shadow-name:   0 10px 40px rgba(0,0,0,0.05);
+
+    /* ── Photo treatment ── */
     --photo-hover-scale: 1.06;
     --photo-press-scale: 0.95;
-    --photo-transition: transform var(--duration-slow) var(--ease-spring);
+    --photo-transition: transform var(--dur-slow) var(--ease-spring);
 
     /* ── Sphere treatment ── */
     --sphere-shadow:
@@ -106,19 +122,9 @@
       inset 4px 4px 10px rgba(255, 255, 255, 0.60);
     --sphere-spec-gradient: radial-gradient(circle, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 100%);
     --sphere-depth-gradient: radial-gradient(circle, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0) 100%);
-
-    /* ── Liquid glass overlay layers ── */
-    --glass-spec-gradient: radial-gradient(ellipse at 38% 32%, rgba(255,255,255,0.68) 0%, rgba(255,255,255,0.20) 50%, rgba(255,255,255,0) 100%);
-    --glass-depth-gradient: radial-gradient(ellipse at 55% 85%, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0) 100%);
-    --glass-rim: inset 0 0 0 1px rgba(255,255,255,0.35);
-    --glass-fallback: radial-gradient(circle at 35% 30%, #D4D0E0 0%, #9080A8 100%);
-
-    /* ── Sphere selected-state glow ── */
-    --sphere-selected-glow: rgba(232,254,103,0.20);
+    --glass-fallback: var(--sp-c);
+    --sphere-selected-glow:   rgba(232,254,103,0.20);
     --sphere-selected-glow-0: rgba(232,254,103,0);
-
-    /* ── Shadows ── */
-    --shadow-name-field: 0 10px 40px rgba(0,0,0,0.05);
 
     /* ── Placeholder / CTA text ── */
     --placeholder: #9AA0A6;
@@ -135,11 +141,11 @@
     background-size: var(--grid-bg-size);
     background-attachment: fixed;
     color: var(--ink);
-    font-size: var(--font-size-body);
-    line-height: var(--line-height-base);
+    font-size: var(--text-body);
+    line-height: var(--lh-base);
     -webkit-font-smoothing: antialiased;
     min-width: 1280px;
-    transition: background-color var(--duration-slow) var(--ease-out), color var(--duration-slow) var(--ease-out);
+    transition: background-color var(--dur-slow) var(--ease-out), color var(--dur-slow) var(--ease-out);
   }
   button { font-family: inherit; cursor: pointer; border: none; background: none; }
   input { font-family: inherit; outline: none; }
@@ -197,17 +203,16 @@
   .press-fx { transition: transform 0.12s cubic-bezier(0.34,1.56,0.64,1); }
   .press-fx:active { transform: scale(0.93); }
 
-  /* Liquid glass photo circle */
+  /* Photo circle — flat treatment */
   .photo-liquid {
     border-radius: var(--radius-full);
     position: relative;
     overflow: hidden;
     display: inline-block;
-    filter: url(#liquid-glass);
-    transition: transform var(--duration-slow) var(--ease-spring);
+    transition: transform var(--dur-slow) var(--ease-spring);
   }
-  .photo-liquid:hover  { transform: scale(var(--photo-hover-scale)); }
-  .photo-liquid:active { transform: scale(var(--photo-press-scale)); }
+  .photo-liquid:hover  { transform: scale(1.06); }
+  .photo-liquid:active { transform: scale(0.95); }
 
   .photo-liquid img {
     width: 100%; height: 100%;
@@ -216,40 +221,21 @@
     pointer-events: none;
   }
 
-  .photo-liquid-spec {
-    position: absolute; top: 5%; left: 8%;
-    width: 48%; height: 42%;
-    background: var(--glass-spec-gradient);
-    border-radius: var(--radius-full);
-    transform: rotate(-18deg);
-    pointer-events: none; z-index: var(--z-2);
-  }
-
-  .photo-liquid-rim {
-    position: absolute; inset: 0;
-    border-radius: var(--radius-full);
-    box-shadow: var(--glass-rim);
-    pointer-events: none; z-index: var(--z-3);
-  }
-
-  .photo-liquid-depth {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    height: 50%;
-    background: var(--glass-depth-gradient);
-    border-radius: 0 0 var(--radius-full) var(--radius-full);
-    pointer-events: none; z-index: var(--z-2);
-  }
+  /* Overlay divs are kept in DOM but inert — no backgrounds, no shadows */
+  .photo-liquid-spec,
+  .photo-liquid-rim,
+  .photo-liquid-depth { display: none; }
 
   .photo-liquid-selected { box-shadow: 0 0 0 3px var(--accent); }
-  .photo-liquid-strong   { filter: url(#liquid-glass-strong); }
-  .photo-liquid-subtle   { filter: url(#liquid-glass-subtle); }
+  .photo-liquid-strong,
+  .photo-liquid-subtle  { /* no filter */ }
 
   /* Ghost atmospheric type */
   .ghost {
-    font-family: 'Libre Caslon Display', Georgia, serif;
+    font-family: 'Instrument Serif', Georgia, serif;
     position: absolute; pointer-events: none; user-select: none;
     color: var(--ink); opacity: 0.04; line-height: 1;
-    z-index: var(--z-0); white-space: nowrap; letter-spacing: var(--letter-spacing-hero);
+    z-index: var(--z-0); white-space: nowrap; letter-spacing: var(--ls-hero);
   }
 
   /* Sphere animations */
@@ -299,7 +285,7 @@
   }
 
 .s-btn {
-    transition: opacity var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+    transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
     cursor: pointer;
   }
   .s-btn:hover  { opacity: 0.82; }
@@ -357,14 +343,14 @@
     border: none;
     outline: none;
     border-radius: var(--radius-input);
-    padding: var(--space-xl) var(--space-7);
+    padding: var(--space-20) var(--space-28);
     width: 440px;
     font-size: var(--font-size-input);
     font-family: 'Inter', sans-serif;
     color: var(--ink);
     text-align: center;
     caret-color: var(--ink);
-    box-shadow: var(--shadow-name-field);
+    box-shadow: var(--shadow-name);
   }
   .name-field::placeholder { color: transparent; }
 
@@ -391,8 +377,8 @@
 
   /* Floating role words */
   .role-word {
-    font-family: 'Libre Caslon Display', Georgia, serif;
-    font-weight: var(--font-weight-regular);
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-weight: var(--weight-regular);
     color: var(--ink);
     cursor: pointer;
     line-height: 1;
@@ -403,9 +389,9 @@
     -webkit-text-stroke-linejoin: round;
     text-shadow: none;
     transition:
-      transform var(--duration-slow) var(--ease-spring),
-      -webkit-text-stroke-color var(--duration-base) var(--ease-out),
-      opacity var(--duration-slow) var(--ease-out);
+      transform var(--dur-slow) var(--ease-spring),
+      -webkit-text-stroke-color var(--dur-base) var(--ease-out),
+      opacity var(--dur-slow) var(--ease-out);
     user-select: none;
   }
   .role-word:hover {
@@ -428,7 +414,7 @@
     background: var(--bg);
     background-image: radial-gradient(circle, var(--grid-dot) var(--grid-dot-size), transparent var(--grid-dot-size));
     background-size: var(--grid-bg-size);
-    transition: clip-path var(--duration-screen) var(--ease-in-out);
+    transition: clip-path var(--dur-screen) var(--ease-in-out);
   }
 
   /* Bubble content (sits above sphere overlays) */
@@ -436,7 +422,7 @@
     position: relative;
     z-index: var(--z-4);
     text-align: center;
-    padding: var(--space-lg);
+    padding: var(--space-16);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -456,34 +442,35 @@
     }
   }
 
+  /* ── Widget preview animations ── */
+  @keyframes waveDrift0 { from { transform: translateX(0);     } to { transform: translateX(-120px); } }
+  @keyframes waveDrift1 { from { transform: translateX(-20px); } to { transform: translateX(-140px); } }
+  @keyframes waveDrift2 { from { transform: translateX(-10px); } to { transform: translateX(-150px); } }
+  @keyframes waveDrift3 { from { transform: translateX(-35px); } to { transform: translateX(-105px); } }
+  @keyframes waveDrift4 { from { transform: translateX(-5px);  } to { transform: translateX(-165px); } }
+
+  @keyframes barBreath0 { 0%,100% { transform: scaleY(1);    } 50% { transform: scaleY(1.7);  } }
+  @keyframes barBreath1 { 0%,100% { transform: scaleY(0.75); } 50% { transform: scaleY(1.4);  } }
+  @keyframes barBreath2 { 0%,100% { transform: scaleY(1.2);  } 50% { transform: scaleY(0.65); } }
+  @keyframes barBreath3 { 0%,100% { transform: scaleY(0.9);  } 50% { transform: scaleY(1.55); } }
+
+  @keyframes ellipseY0 { 0%,100% { transform: scaleY(1);    } 50% { transform: scaleY(1.25); } }
+  @keyframes ellipseY1 { 0%,100% { transform: scaleY(0.82); } 50% { transform: scaleY(1.15); } }
+  @keyframes ellipseY2 { 0%,100% { transform: scaleY(1.1);  } 50% { transform: scaleY(0.78); } }
+
+  @keyframes modShapeIn {
+    from { opacity: 0; transform: scale(0.85); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .wp-shapes { transition: transform 0.2s ease; }
+
+  input, textarea, select { outline: none !important; box-shadow: none !important; }
+  input:focus, textarea:focus, select:focus { outline: none !important; box-shadow: none !important; }
+
 </style>
 </head>
 <body>
-<!-- Liquid glass lens filters — referenced by .photo-liquid CSS classes -->
-<svg style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none" aria-hidden="true">
-  <defs>
-    <!-- Standard lens — team photo circles -->
-    <filter id="liquid-glass" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.016" numOctaves="3" seed="42" result="noise" />
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="14" xChannelSelector="R" yChannelSelector="G" result="displaced" />
-      <feGaussianBlur in="displaced" stdDeviation="0.5" result="blurred" />
-      <feComposite in="blurred" in2="SourceGraphic" operator="atop" />
-    </filter>
-    <!-- Strong lens — large memory constellation circles -->
-    <filter id="liquid-glass-strong" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency="0.010 0.014" numOctaves="4" seed="7" result="noise" />
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="20" xChannelSelector="R" yChannelSelector="G" result="displaced" />
-      <feGaussianBlur in="displaced" stdDeviation="0.7" result="blurred" />
-      <feComposite in="blurred" in2="SourceGraphic" operator="atop" />
-    </filter>
-    <!-- Subtle lens — tiny constellation circles -->
-    <filter id="liquid-glass-subtle" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency="0.018 0.022" numOctaves="2" seed="13" result="noise" />
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="7" xChannelSelector="R" yChannelSelector="G" result="displaced" />
-      <feComposite in="displaced" in2="SourceGraphic" operator="atop" />
-    </filter>
-  </defs>
-</svg>
 <div id="root"></div>
 
 <script type="text/babel">
@@ -512,7 +499,7 @@ const FAINT = "var(--faint)";
 const HOME_BG = "var(--bg)";
 const CONTENT_MAX = "100%"; // full-width content across every page
 const HOME_TILE_BORDER = "var(--tile-border)";
-const HOME_SERIF = "'Libre Caslon Display', Georgia, serif";
+const HOME_SERIF = "'Instrument Serif', Georgia, serif";
 
 // =============== TOOLS (every working feature) ===============
 const TOOLS = [
@@ -585,12 +572,13 @@ function UniversalTopBar({ activeScreen, go }) {
             width: 48, height: 48,
             borderRadius: "50%",
             flexShrink: 0,
-            background: "#080808",
+            background: "var(--ink)",
             border: "none",
             color: "rgba(232,254,103,1)",
             fontFamily: HOME_SERIF,
-            fontSize: 18,
+            fontSize: 11,
             fontWeight: 400,
+            letterSpacing: 0.4,
             cursor: "pointer",
             padding: 0,
             zIndex: 2,
@@ -604,7 +592,7 @@ function UniversalTopBar({ activeScreen, go }) {
           }}
           onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
           onMouseLeave={e => e.currentTarget.style.opacity = "1"}
-        >A</button>
+        >BHQ</button>
 
         {/* Merged tab chain */}
         <div ref={menuRef} style={{
@@ -618,8 +606,8 @@ function UniversalTopBar({ activeScreen, go }) {
         }}>
           {openToolObjs.length === 0 ? (
             <span style={{
-              padding: "0 14px", fontSize: 14, color: "var(--muted)",
-              fontFamily: HOME_SERIF, letterSpacing: -0.3,
+              padding: "0 14px", fontSize: 13, color: "var(--muted)",
+              fontFamily: "'Inter', sans-serif",
             }}>No tools open</span>
           ) : (
             <div style={{ display: "flex", alignItems: "center", overflowX: "auto", maxWidth: "54vw" }}>
@@ -645,15 +633,7 @@ function UniversalTopBar({ activeScreen, go }) {
                         fontWeight: on ? 600 : 400, padding: 0, whiteSpace: "nowrap",
                       }}
                     >
-                      <span style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-                        <span>{t.label}</span>
-                        {on && (
-                          <span style={{
-                            display: "block", width: 4, height: 4, borderRadius: 2,
-                            background: "var(--accent)", animation: "dotPop 0.3s ease backwards",
-                          }} />
-                        )}
-                      </span>
+                      {t.label}
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); closeTab(t.key); }}
@@ -691,7 +671,7 @@ function UniversalTopBar({ activeScreen, go }) {
             borderRadius: "50%",
             background: "#99A3AD",
             border: "none",
-            color: "#1A1F26",
+            color: "var(--surface)",
             fontSize: 16,
             fontWeight: 500,
             fontFamily: "'Inter', sans-serif",
@@ -721,7 +701,7 @@ function UniversalTopBar({ activeScreen, go }) {
             }}>
               <div style={{
                 width: 40, height: 40, borderRadius: "50%",
-                background: "#99A3AD", color: "#1A1F26",
+                background: "#99A3AD", color: "var(--surface)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: 14, fontWeight: 500,
               }}>{userInitial}</div>
@@ -855,7 +835,7 @@ function SectionLabel({ children, style }) {
 function PillBadge({ children, filled, dashed, dimmed }) {
   return (
     <span style={{
-      display: "inline-block", padding: "4px 10px", borderRadius: 4,
+      display: "inline-block", padding: "4px 10px", borderRadius: 10,
       border: filled ? "none" : dashed ? "1px dashed var(--border)" : "1px solid var(--border)",
       background: filled ? "var(--ink)" : "transparent",
       color: filled ? "var(--surface)" : "var(--muted)",
@@ -869,11 +849,11 @@ function PillBadge({ children, filled, dashed, dimmed }) {
 function Pill({ active, children, onClick, dimmed }) {
   return (
     <button onClick={onClick} style={{
-      padding: "6px 14px", borderRadius: 16,
+      padding: "5px 12px", borderRadius: 14,
       border: active ? "none" : "1px solid var(--border)",
       background: active ? "var(--ink)" : "transparent",
-      fontSize: 11, color: active ? "var(--surface)" : "var(--muted)", letterSpacing: 0.4,
-      fontWeight: active ? 600 : 400, opacity: dimmed ? 0.5 : 1,
+      fontSize: 11, color: active ? "var(--surface)" : "var(--ink)",
+      fontWeight: active ? 500 : 400, opacity: dimmed ? 0.5 : 1,
       fontFamily: "'Inter', sans-serif", cursor: "pointer",
     }}>{children}</button>
   );
@@ -896,7 +876,7 @@ function OutlineButton({ children, onClick, full, style }) {
   return (
     <button onClick={onClick} className="s-btn press-fx" style={{
       background: "transparent", color: "var(--ink)",
-      padding: "9px 22px", borderRadius: 22,
+      padding: "10px 22px", borderRadius: 22,
       fontSize: 13, fontWeight: 500, letterSpacing: 0.3,
       border: "1px solid var(--border)",
       width: full ? "100%" : "auto", cursor: "pointer",
@@ -914,12 +894,12 @@ function PageHero({ title, subtitle, stat, statLabel, highlight }) {
   return (
     <div style={{
       display: "flex", justifyContent: "space-between", alignItems: "flex-start",
-      marginBottom: 36, position: "relative",
+      marginBottom: 40, position: "relative",
       animation: "heroIn 0.6s cubic-bezier(0.22,1,0.36,1) backwards",
     }}>
       <div>
         <div style={{
-          fontFamily: "'Libre Caslon Display', Georgia, serif",
+          fontFamily: "'Instrument Serif', Georgia, serif",
           fontSize: 80, fontWeight: 400, color: "var(--ink)",
           letterSpacing: -2.5, lineHeight: 0.92,
         }}>
@@ -986,7 +966,7 @@ function YDot({ style }) {
   return (
     <span style={{
       display: "inline-block", width: 5, height: 5, borderRadius: "50%",
-      background: "var(--accent)", marginRight: 7, verticalAlign: "middle",
+      background: "var(--accent)", marginRight: 8, verticalAlign: "middle",
       flexShrink: 0, animation: "dotPop 0.3s cubic-bezier(0.34,1.56,0.64,1) backwards",
       ...style,
     }} />
@@ -1011,8 +991,8 @@ function StatNum({ value, label, delay = 0 }) {
       animation: `sphereIn 0.6s cubic-bezier(0.34,1.56,0.64,1) ${delay}s backwards`,
     }}>
       <div style={{
-        fontFamily: "'Libre Caslon Display', Georgia, serif",
-        fontSize: 68, fontWeight: 400, color: "var(--ink)",
+        fontFamily: "'Instrument Serif', Georgia, serif",
+        fontSize: 76, fontWeight: 400, color: "var(--ink)",
         lineHeight: 1, letterSpacing: -2,
       }}>{value}</div>
       <div style={{
@@ -1025,9 +1005,28 @@ function StatNum({ value, label, delay = 0 }) {
 
 // =============== SCREEN 1 — BRAND LIBRARY ===============
 function ScreenLibrary({ go }) {
+  const [logoSelected, setLogoSelected] = useState(new Set());
+  const LOGO_VARIANTS = ["current", "secondary", "deprecated"];
+  function toggleLogo(i) {
+    const next = new Set(logoSelected);
+    if (next.has(i)) next.delete(i); else next.add(i);
+    setLogoSelected(next);
+  }
+  function toggleSelectAll(e) {
+    e.stopPropagation();
+    if (logoSelected.size === LOGO_VARIANTS.length) {
+      setLogoSelected(new Set());
+    } else {
+      setLogoSelected(new Set(LOGO_VARIANTS.map((_, i) => i)));
+    }
+  }
+
   return (
     <Shell active="library" go={go}>
-      <div style={{ maxWidth: CONTENT_MAX, margin: "0 auto", position: "relative" }}>
+      <div
+        style={{ maxWidth: CONTENT_MAX, margin: "0 auto", position: "relative" }}
+        onClick={() => setLogoSelected(new Set())}
+      >
         {/* Hero */}
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "flex-start",
@@ -1036,13 +1035,13 @@ function ScreenLibrary({ go }) {
         }}>
           <div>
             <div style={{
-              fontFamily: HOME_SERIF, fontSize: 92, fontWeight: 400, color: "var(--ink)",
-              letterSpacing: -3, lineHeight: 0.88,
+              fontFamily: HOME_SERIF, fontSize: 80, fontWeight: 400, color: "var(--ink)",
+              letterSpacing: -2.5, lineHeight: 0.9,
             }}>
-              The <Highlight>Brand</Highlight>,<br />2026.
+              The <Highlight>Brand</Highlight>, 2026.
             </div>
             <div style={{
-              marginTop: 18, display: "flex", alignItems: "center", gap: 10,
+              marginTop: 16, display: "flex", alignItems: "center", gap: 10,
               animation: "fadeSlide 0.5s ease 0.25s backwards",
             }}>
               <PillBadge filled><YDot />CURRENT — V3.2</PillBadge>
@@ -1061,33 +1060,40 @@ function ScreenLibrary({ go }) {
           display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16,
           paddingBottom: 24,
         }}>
-          {/* Logos */}
-          <Card style={{ padding: 20 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+          {/* Logos — full width, 3 individual cards */}
+          <div style={{ gridColumn: "span 2" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
               <SectionLabel>Logos</SectionLabel>
-              <span style={{ fontSize: 11, color: MUTED }}>3 marks · SVG · PNG · PDF</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <span style={{ fontSize: 11, color: MUTED }}>3 marks · SVG · PNG · PDF</span>
+                <button
+                  onClick={toggleSelectAll}
+                  style={{
+                    fontSize: 11, fontWeight: 500, color: logoSelected.size === LOGO_VARIANTS.length ? "var(--ink)" : MUTED,
+                    background: "none", border: "none", cursor: "pointer", padding: 0,
+                    fontFamily: "'Inter', sans-serif", letterSpacing: 0.2,
+                    transition: "color 0.15s ease",
+                  }}
+                >
+                  {logoSelected.size === LOGO_VARIANTS.length ? "Deselect all" : "Select all"}
+                </button>
+              </div>
             </div>
-            <div style={{ display: "flex", gap: 10 }}>
-              {[
-                { bg: "var(--ph-1)", el: <div style={{ width: 54, height: 24, background: SOLID, borderRadius: 1 }} /> },
-                { bg: "var(--ph-2)", el: <div style={{ width: 30, height: 30, borderRadius: 15, border: `3px solid ${DARK}` }} /> },
-                { bg: "var(--ph-3)", el: <div style={{ display: "flex", gap: 4, alignItems: "center" }}><div style={{ width: 14, height: 14, borderRadius: 7, background: SOLID }} /><div style={{ width: 26, height: 8, background: SOLID, borderRadius: 1 }} /></div> },
-              ].map((m, i) => (
-                <div key={i} style={{
-                  flex: 1, height: 92, background: m.bg,
-                  border: `1px solid ${HOME_TILE_BORDER}`, borderRadius: 6,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>{m.el}</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+              {LOGO_VARIANTS.map((v, i) => (
+                <LogoCard
+                  key={v}
+                  variant={v}
+                  selected={logoSelected.has(i)}
+                  onClick={() => toggleLogo(i)}
+                />
               ))}
             </div>
-            <div style={{ marginTop: 12 }}>
-              <DarkButton style={{ padding: "6px 14px", fontSize: 11 }}>↓ Download all</DarkButton>
-            </div>
-          </Card>
+          </div>
 
           {/* Colour palette */}
           <Card style={{ padding: 20 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
               <SectionLabel>Colour Palette</SectionLabel>
               <span style={{ fontSize: 11, color: MUTED }}>8 swatches · HEX · RGB</span>
             </div>
@@ -1098,7 +1104,7 @@ function ScreenLibrary({ go }) {
               ].map(([c, n]) => (
                 <div key={n}>
                   <div style={{ height: 52, background: c, border: `1px solid ${HOME_TILE_BORDER}`, borderRadius: 6 }} />
-                  <div style={{ fontSize: 10, color: "#666", marginTop: 5 }}>{n}</div>
+                  <div style={{ fontSize: 10, color: "#666", marginTop: 4 }}>{n}</div>
                   <div style={{ fontSize: 9, color: MUTED, fontFamily: MONO }}>{c}</div>
                 </div>
               ))}
@@ -1107,7 +1113,7 @@ function ScreenLibrary({ go }) {
 
           {/* Typography */}
           <Card style={{ padding: 20 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
               <SectionLabel>Typography</SectionLabel>
               <span style={{ fontSize: 11, color: MUTED }}>2 families</span>
             </div>
@@ -1125,32 +1131,10 @@ function ScreenLibrary({ go }) {
             </div>
           </Card>
 
-          {/* Templates */}
-          <Card style={{ padding: 20 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-              <SectionLabel>Templates</SectionLabel>
-              <span style={{ fontSize: 11, color: MUTED }}>38 files</span>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-              {[0,1,2,3,4,5].map(i => (
-                <div key={i} style={{
-                  aspectRatio: "1.4", background: FAINT,
-                  border: `1px solid ${HOME_TILE_BORDER}`, borderRadius: 4,
-                  padding: 7, display: "flex", flexDirection: "column",
-                  justifyContent: i % 2 === 0 ? "flex-start" : "flex-end",
-                }}>
-                  {i === 4 && <div style={{ height: "45%", background: PHOTO_GRADIENTS[1], borderRadius: 2, marginBottom: 4 }} />}
-                  <div style={{ height: 4, width: "70%", background: SOLID, borderRadius: 1 }} />
-                  <div style={{ marginTop: 3, height: 2, width: "50%", background: "#999", borderRadius: 1 }} />
-                </div>
-              ))}
-            </div>
-          </Card>
-
           {/* Usage guidelines — spans full width */}
           <Card style={{ padding: 20, gridColumn: "span 2" }}>
             <SectionLabel>Usage Guidelines</SectionLabel>
-            <div style={{ marginTop: 14, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
+            <div style={{ marginTop: 16, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: DARK, marginBottom: 10 }}>Clear Space</div>
                 <div style={{
@@ -1198,20 +1182,52 @@ function ScreenLibrary({ go }) {
           </Card>
         </div>
       </div>
+
+      {logoSelected.size > 0 && (
+        <div style={{
+          position: "fixed", bottom: 0, left: 0, right: 0,
+          background: "var(--surface)", color: "var(--ink)",
+          borderTop: "1px solid var(--border)",
+          borderTopLeftRadius: 16, borderTopRightRadius: 16,
+          padding: "14px 24px", display: "flex", alignItems: "center", gap: 20,
+          fontSize: 11, letterSpacing: 0.4, zIndex: 80,
+          animation: "sphereIn 0.35s cubic-bezier(0.34,1.56,0.64,1) backwards",
+        }}>
+          <span style={{ fontWeight: 600 }}>{logoSelected.size} SELECTED</span>
+          <div style={{ flex: 1 }} />
+          <DarkButton
+            style={{ padding: "8px 18px", fontSize: 12 }}
+            onClick={e => {
+              e.stopPropagation();
+              console.log("Download selected logos:", [...logoSelected].map(i => LOGO_VARIANTS[i]));
+            }}
+          >↓ Download Selected</DarkButton>
+        </div>
+      )}
     </Shell>
   );
 }
 
-function LogoCard({ variant }) {
+function LogoCard({ variant, selected, onClick }) {
   const isCurrent = variant === "current";
   const isDep = variant === "deprecated";
   return (
-    <Card thick={isCurrent} dashed={isDep} style={{ padding: 16 }}>
+    <div
+      onClick={e => { e.stopPropagation(); onClick && onClick(); }}
+      style={{
+        background: "var(--surface)",
+        border: selected ? "2px solid var(--accent)" : `1px solid ${BORDER}`,
+        borderRadius: 14, padding: selected ? 15 : 16,
+        cursor: "pointer",
+        transition: "border-color 0.15s, box-shadow 0.15s",
+        boxShadow: selected ? "0 0 0 3px rgba(232,254,103,0.18)" : "none",
+      }}
+    >
       <div style={{
         height: 120, background: isDep ? FAINT : "var(--ph-1)",
         border: `1px solid ${BORDER}`, borderRadius: 4,
         display: "flex", alignItems: "center", justifyContent: "center",
-        opacity: isDep ? 0.4 : 1, marginBottom: 14,
+        opacity: isDep ? 0.4 : 1, marginBottom: 16,
       }}>
         <div style={{ width: 80, height: 36, background: isDep ? "#bbb" : DARK }} />
       </div>
@@ -1222,35 +1238,37 @@ function LogoCard({ variant }) {
            "Wordmark · V2.4"}
         </SectionLabel>
         {isDep && <span style={{
-          fontSize: 9, padding: "2px 6px", borderRadius: 8,
+          fontSize: 10, padding: "4px 10px", borderRadius: 10,
           background: "var(--bad-bg)", color: "var(--bad-fg)", letterSpacing: 0.8,
           textTransform: "uppercase", fontWeight: 500,
+          fontFamily: "'Inter', sans-serif",
         }}>Deprecated</span>}
       </div>
       <div style={{ display: "flex", gap: 4, marginBottom: 12, opacity: isDep ? 0.4 : 1 }}>
         {["SVG","PNG","PDF"].map(f => (
           <span key={f} style={{
-            fontSize: 9, padding: "2px 6px", borderRadius: 3,
-            border: `1px solid ${BORDER}`, color: "#666", letterSpacing: 0.6,
+            fontSize: 10, padding: "4px 10px", borderRadius: 10,
+            background: "var(--ink)", color: "var(--surface)",
+            letterSpacing: 0.8, fontWeight: 500, textTransform: "uppercase",
+            fontFamily: "'Inter', sans-serif",
           }}>{f}</span>
         ))}
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", opacity: isDep ? 0.4 : 1 }}>
-        <DarkButton style={{ padding: "6px 12px", fontSize: 11 }}>↓ Download</DarkButton>
-        <a style={{ fontSize: 11, color: "var(--ink)", fontWeight: 500 }}>Open in Figma →</a>
+      <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", opacity: isDep ? 0.4 : 1 }}>
+        <a style={{ fontSize: 11, color: "var(--ink)", fontWeight: 500 }}>◆ Open in Figma →</a>
       </div>
-    </Card>
+    </div>
   );
 }
 
 // =============== SCREEN 2 — TEAM PHOTOS ===============
 const TEAM_PHOTOS = [
-  { url: "https://raw.githubusercontent.com/gpiliugina/team-photo/main/team%20photo%201.webp", name: "Team Member 1", role: "Designer" },
-  { url: "https://raw.githubusercontent.com/gpiliugina/team-photo/main/team%20photo%202.webp", name: "Team Member 2", role: "Engineer" },
-  { url: "https://raw.githubusercontent.com/gpiliugina/team-photo/main/team%20photo%203.webp", name: "Team Member 3", role: "Marketing" },
-  { url: "https://raw.githubusercontent.com/gpiliugina/team-photo/main/team%20photo%204.webp", name: "Team Member 4", role: "Sales" },
-  { url: "https://raw.githubusercontent.com/gpiliugina/team-photo/main/team%20photo%205.webp", name: "Team Member 5", role: "PM" },
-  { url: "https://raw.githubusercontent.com/gpiliugina/team-photo/main/team%20photo%206.webp", name: "Team Member 6", role: "Ops" },
+  { url: "https://raw.githubusercontent.com/gpiliugina/team-photo/main/team%20photo%201.webp", name: "Maya Chen",      role: "Designer"   },
+  { url: "https://raw.githubusercontent.com/gpiliugina/team-photo/main/team%20photo%202.webp", name: "Arjun Patel",    role: "Engineer"   },
+  { url: "https://raw.githubusercontent.com/gpiliugina/team-photo/main/team%20photo%203.webp", name: "Marcus Johnson", role: "Marketing"  },
+  { url: "https://raw.githubusercontent.com/gpiliugina/team-photo/main/team%20photo%204.webp", name: "Tom Reid",       role: "Sales"      },
+  { url: "https://raw.githubusercontent.com/gpiliugina/team-photo/main/team%20photo%205.webp", name: "Sofia Rivera",   role: "PM"         },
+  { url: "https://raw.githubusercontent.com/gpiliugina/team-photo/main/team%20photo%206.webp", name: "Raj Sharma",     role: "Ops"        },
 ];
 
 function PhotoLiquid({ src, size = 92, selected, onClick, style, variant }) {
@@ -1308,11 +1326,11 @@ function ScreenFiles({ go }) {
         {/* Hero */}
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "flex-start",
-          marginBottom: 36, position: "relative",
+          marginBottom: 40, position: "relative",
         }}>
           <div>
             <div style={{
-              fontFamily: HOME_SERIF, fontSize: 88, fontWeight: 400,
+              fontFamily: HOME_SERIF, fontSize: 80, fontWeight: 400,
               color: "var(--ink)", letterSpacing: -2.5, lineHeight: 0.9,
               animation: "heroIn 0.6s cubic-bezier(0.22,1,0.36,1) backwards",
             }}>Team.</div>
@@ -1330,9 +1348,9 @@ function ScreenFiles({ go }) {
           <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
             {[["All Roles", true], ["Engineering", false], ["Design", false]].map(([lbl, on]) => (
               <span key={lbl} style={{
-                padding: "6px 14px", borderRadius: 16, fontSize: 11, fontWeight: on ? 600 : 400,
+                padding: "5px 12px", borderRadius: 14, fontSize: 11, fontWeight: on ? 500 : 400,
                 background: on ? "var(--ink)" : "transparent",
-                color: on ? "var(--surface)" : "var(--muted)",
+                color: on ? "var(--surface)" : "var(--ink)",
                 border: on ? "none" : "1px solid var(--border)",
                 fontFamily: "'Inter', sans-serif", cursor: "pointer",
               }}>{lbl}</span>
@@ -1342,17 +1360,18 @@ function ScreenFiles({ go }) {
             <div style={{ display: "flex", gap: 6 }}>
               {[["Grid", true], ["List", false]].map(([lbl, on]) => (
                 <span key={lbl} style={{
-                  padding: "6px 14px", borderRadius: 16, fontSize: 11, fontWeight: on ? 600 : 400,
+                  padding: "5px 12px", borderRadius: 14, fontSize: 11, fontWeight: on ? 500 : 400,
                   background: on ? "var(--ink)" : "transparent",
-                  color: on ? "var(--surface)" : "var(--muted)",
+                  color: on ? "var(--surface)" : "var(--ink)",
                   border: on ? "none" : "1px solid var(--border)",
                   fontFamily: "'Inter', sans-serif", cursor: "pointer",
                 }}>{lbl}</span>
               ))}
             </div>
             <div style={{
-              fontSize: 11, color: "var(--muted)", padding: "6px 12px",
-              border: `1px solid var(--border)`, borderRadius: 16, background: "var(--surface)",
+              fontSize: 11, color: "var(--ink)", padding: "5px 12px",
+              border: `1px solid var(--border)`, borderRadius: 14, background: "transparent",
+              fontFamily: "'Inter', sans-serif", cursor: "pointer",
             }}>Sort: Recent ▾</div>
           </div>
         </div>
@@ -1362,7 +1381,7 @@ function ScreenFiles({ go }) {
           <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(7, 1fr)",
-            gap: 28,
+            gap: 24,
             padding: "24px 0",
           }}>
             {TEAM_PHOTOS.map((photo, idx) => (
@@ -1466,24 +1485,26 @@ function ScreenFiles({ go }) {
         }}>
           <span style={{ fontWeight: 600 }}>{selected.size} SELECTED</span>
           <Sep />
-          <span style={{ color: "var(--muted)" }}>SHAPE:</span>
+          <span style={{ color: "var(--muted)", fontSize: 11, fontWeight: 500, fontFamily: "'Inter', sans-serif", letterSpacing: "0.08em", textTransform: "uppercase", cursor: "default" }}>Shape</span>
           {[["Circle",true],["Square",false],["Original",false]].map(([l,on]) => (
             <span key={l} style={{
-              padding: "4px 10px", borderRadius: 10, fontSize: 10, fontWeight: 500,
-              background: on ? "var(--ink)" : "transparent", color: on ? "var(--surface)" : "var(--muted)",
+              padding: "5px 12px", borderRadius: 14, fontSize: 11, fontWeight: on ? 500 : 400,
+              background: on ? "var(--ink)" : "transparent", color: on ? "var(--surface)" : "var(--ink)",
               border: on ? "none" : "1px solid var(--border)",
+              fontFamily: "'Inter', sans-serif", cursor: "pointer",
             }}>{l}</span>
           ))}
           <Sep />
-          <span style={{ color: "var(--muted)" }}>SIZE:</span>
-          <span style={{ padding: "4px 10px", borderRadius: 10, fontSize: 10, fontWeight: 500, background: "var(--ink)", color: "var(--surface)" }}>Medium 800px</span>
+          <span style={{ color: "var(--muted)", fontSize: 11, fontWeight: 500, fontFamily: "'Inter', sans-serif", letterSpacing: "0.08em", textTransform: "uppercase", cursor: "default" }}>Size</span>
+          <span style={{ padding: "5px 12px", borderRadius: 14, fontSize: 11, fontWeight: 500, background: "var(--ink)", color: "var(--surface)", fontFamily: "'Inter', sans-serif", cursor: "pointer" }}>Medium 800px</span>
           <Sep />
-          <span style={{ color: "var(--muted)" }}>FORMAT:</span>
+          <span style={{ color: "var(--muted)", fontSize: 11, fontWeight: 500, fontFamily: "'Inter', sans-serif", letterSpacing: "0.08em", textTransform: "uppercase", cursor: "default" }}>Format</span>
           {[["JPG",true],["PNG",false],["WebP",false]].map(([l,on]) => (
             <span key={l} style={{
-              padding: "4px 10px", borderRadius: 10, fontSize: 10, fontWeight: 500,
-              background: on ? "var(--ink)" : "transparent", color: on ? "var(--surface)" : "var(--muted)",
+              padding: "5px 12px", borderRadius: 14, fontSize: 11, fontWeight: on ? 500 : 400,
+              background: on ? "var(--ink)" : "transparent", color: on ? "var(--surface)" : "var(--ink)",
               border: on ? "none" : "1px solid var(--border)",
+              fontFamily: "'Inter', sans-serif", cursor: "pointer",
             }}>{l}</span>
           ))}
           <div style={{ flex: 1 }} />
@@ -1522,7 +1543,7 @@ function ScreenPhoto({ go }) {
           <div style={{ fontSize: 24, fontWeight: 700, color: DARK }}>Eli Marchetti</div>
           <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>Brand Lead · Marketing</div>
 
-          <div style={{ marginTop: 18, display: "flex", flexDirection: "column", gap: 6, fontSize: 12 }}>
+          <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 6, fontSize: 12 }}>
             {[
               ["Format", "JPG · 4096×4096"],
               ["Size", "3.8 MB"],
@@ -1536,19 +1557,20 @@ function ScreenPhoto({ go }) {
             ))}
           </div>
 
-          <div style={{ marginTop: 14 }}>
+          <div style={{ marginTop: 16 }}>
             <span style={{
-              padding: "4px 10px", borderRadius: 12, fontSize: 10,
-              background: "#E8E2D6", color: "#7a6a3a", letterSpacing: 0.8,
+              padding: "4px 10px", borderRadius: 10, fontSize: 10,
+              background: "var(--ink)", color: "var(--surface)", letterSpacing: 0.8,
               textTransform: "uppercase", fontWeight: 500,
+              fontFamily: "'Inter', sans-serif",
             }}>Pending Review</span>
           </div>
 
-          <div style={{ marginTop: 18 }}>
+          <div style={{ marginTop: 16 }}>
             <DarkButton full>↓ Download Original</DarkButton>
           </div>
 
-          <div style={{ marginTop: 22, paddingTop: 18, borderTop: `1px solid ${BORDER}` }}>
+          <div style={{ marginTop: 24, paddingTop: 18, borderTop: `1px solid ${BORDER}` }}>
             <SectionLabel>Shape</SectionLabel>
             <div style={{ marginTop: 10, display: "flex", gap: 6 }}>
               {["Circle","Square","Original"].map(s => (
@@ -1557,7 +1579,7 @@ function ScreenPhoto({ go }) {
             </div>
           </div>
 
-          <div style={{ marginTop: 18 }}>
+          <div style={{ marginTop: 16 }}>
             <SectionLabel>Background</SectionLabel>
             <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
               {["#FFF","#EEE","#999",DARK,"transparent"].map((c,i) => (
@@ -1573,7 +1595,7 @@ function ScreenPhoto({ go }) {
             </div>
           </div>
 
-          <div style={{ marginTop: 18 }}>
+          <div style={{ marginTop: 16 }}>
             <SectionLabel>Size</SectionLabel>
             <div style={{
               marginTop: 8, padding: "8px 12px",
@@ -1620,7 +1642,7 @@ function ScreenCreator({ go }) {
         {/* Hero */}
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "flex-start",
-          marginBottom: 36, position: "relative",
+          marginBottom: 40, position: "relative",
         }}>
           <div>
             <div style={{
@@ -1691,7 +1713,7 @@ function ScreenCreator({ go }) {
                   </div>
                 </div>
               ))}
-              <div style={{ marginTop: 18, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ marginTop: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div style={{ fontSize: 12, color: "var(--muted)" }}>
                   <Highlight>2 issues</Highlight>
                   <span style={{ color: "var(--muted)" }}> · 4 checks complete</span>
@@ -1715,7 +1737,7 @@ function ScreenSignature({ go }) {
       <div style={{ display: "grid", gridTemplateColumns: "45% 55%", gap: 16 }}>
         <Card style={{ padding: 24 }}>
           <SectionLabel>Your Details</SectionLabel>
-          <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 10 }}>
+          <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 10 }}>
             {[
               ["Full Name", "Eli Marchetti"],
               ["Job Title", "Brand Lead"],
@@ -1726,14 +1748,20 @@ function ScreenSignature({ go }) {
               <div key={k}>
                 <div style={{ fontSize: 10, color: MUTED, letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 4 }}>{k}</div>
                 <input defaultValue={v} style={{
-                  width: "100%", padding: "8px 12px", border: `1px solid ${BORDER}`,
-                  borderRadius: 6, fontSize: 13, color: DARK, background: SURFACE,
+                  width: "100%", padding: "8px 12px",
+                  borderRadius: 14, border: "1px solid rgba(26,31,38,0.35)",
+                  background: "rgba(255,255,255,0.96)", fontSize: 13,
+                  fontFamily: "'Inter', sans-serif", fontWeight: 400,
+                  color: "rgba(26,31,38,0.88)", outline: "none",
+                  boxShadow: "none",
+                  caretColor: "var(--ink)", transition: "border-color 0.12s",
+                  boxSizing: "border-box",
                 }} />
               </div>
             ))}
           </div>
 
-          <div style={{ borderTop: `1px solid ${BORDER}`, marginTop: 22, paddingTop: 18 }}>
+          <div style={{ borderTop: `1px solid ${BORDER}`, marginTop: 24, paddingTop: 18 }}>
             <SectionLabel>Signature Style</SectionLabel>
             <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
               {["Minimal","Standard","Detailed"].map(s => (
@@ -1749,7 +1777,7 @@ function ScreenSignature({ go }) {
             </div>
           </div>
 
-          <div style={{ marginTop: 22 }}>
+          <div style={{ marginTop: 24 }}>
             <DarkButton full>Generate Signature</DarkButton>
           </div>
         </Card>
@@ -1757,7 +1785,7 @@ function ScreenSignature({ go }) {
         <Card style={{ padding: 24 }}>
           <SectionLabel>Preview</SectionLabel>
           <div style={{
-            marginTop: 14, height: 160, background: FAINT,
+            marginTop: 16, height: 160, background: FAINT,
             border: `1px dashed ${BORDER}`, borderRadius: 4, padding: 20,
             display: "flex", flexDirection: "column", justifyContent: "center", gap: 4,
           }}>
@@ -1768,12 +1796,12 @@ function ScreenSignature({ go }) {
             <div style={{ height: 8, width: 140, background: "#bbb", borderRadius: 2 }} />
             <div style={{ height: 8, width: 200, background: "#bbb", borderRadius: 2 }} />
           </div>
-          <div style={{ marginTop: 14, fontSize: 12, color: "#555" }}>Looks good?</div>
+          <div style={{ marginTop: 16, fontSize: 12, color: "#555" }}>Looks good?</div>
           <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
             <DarkButton>Copy HTML</DarkButton>
             <OutlineButton>↓ Download PNG</OutlineButton>
           </div>
-          <div style={{ marginTop: 14, fontSize: 11, color: MUTED }}>
+          <div style={{ marginTop: 16, fontSize: 11, color: MUTED }}>
             This signature uses current brand version <Highlight>V3.2</Highlight>
           </div>
         </Card>
@@ -1933,7 +1961,7 @@ function ScreenSocial({ go }) {
                   }}>{p.label}</button>
                 ))}
               </div>
-              <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${BORDER}` }}>
+              <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid ${BORDER}` }}>
                 <SectionLabel>Font</SectionLabel>
                 <div style={{
                   marginTop: 10, padding: "10px 12px",
@@ -1986,7 +2014,7 @@ function ScreenSocial({ go }) {
                 {Array.from({ length: 12 }).map((_, i) => (
                   <div key={i} style={{
                     aspectRatio: "1", borderRadius: 4,
-                    background: PHOTO_GRADIENTS[i % PHOTO_GRADIENTS.length],
+                    background: "var(--ph-3)",
                     border: `1px solid ${BORDER}`, cursor: "pointer",
                   }} />
                 ))}
@@ -2038,9 +2066,9 @@ function ScreenSocial({ go }) {
                         {t === 2 && <div style={{ height: "45%", background: "#bbb", borderRadius: 1, marginBottom: 4 }} />}
                         <div style={{ height: 4, width: "70%", background: SOLID, borderRadius: 1,
                           marginLeft: t === 4 ? "auto" : 0, marginRight: t === 4 ? "auto" : 0 }} />
-                        <div style={{ marginTop: 3, height: 2, width: "50%", background: "#999", borderRadius: 1,
+                        <div style={{ marginTop: 4, height: 2, width: "50%", background: "#999", borderRadius: 1,
                           marginLeft: t === 4 ? "auto" : 0, marginRight: t === 4 ? "auto" : 0 }} />
-                        {t === 5 && <div style={{ marginTop: 3, height: 6, width: 6, borderRadius: 3, background: SOLID }} />}
+                        {t === 5 && <div style={{ marginTop: 4, height: 6, width: 6, borderRadius: 3, background: SOLID }} />}
                       </div>
                     </button>
                   );
@@ -2067,7 +2095,7 @@ function ScreenSocial({ go }) {
                   />
                 ))}
               </div>
-              <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${BORDER}` }}>
+              <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid ${BORDER}` }}>
                 <SectionLabel>Gradient</SectionLabel>
                 <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
                   {[
@@ -2153,7 +2181,7 @@ function ScreenSocial({ go }) {
               {template === 2 && (
                 <div style={{
                   width: "100%", height: "50%",
-                  background: PHOTO_GRADIENTS[2],
+                  background: "var(--ph-3)",
                   borderRadius: 2, marginBottom: 12,
                 }} />
               )}
@@ -2241,9 +2269,10 @@ function ScreenSocial({ go }) {
               fontSize: 13, color: DARK,
             }}>+</button>
             <button onClick={() => setZoomPct(100)} style={{
-              padding: "4px 10px", borderRadius: 12,
-              border: `1px solid ${BORDER}`, background: SURFACE, cursor: "pointer",
-              fontSize: 11, color: DARK, letterSpacing: 0.4,
+              padding: "5px 12px", borderRadius: 14,
+              border: `1px solid var(--border)`, background: "transparent", cursor: "pointer",
+              fontSize: 11, color: "var(--ink)", fontWeight: 400,
+              fontFamily: "'Inter', sans-serif",
             }}>Fit</button>
           </div>
         </div>
@@ -2285,9 +2314,14 @@ function ScreenSocial({ go }) {
                 onChange={(e) => setHeadline(e.target.value)}
                 rows={2}
                 style={{
-                  width: "100%", padding: "8px 10px", border: `1px solid ${BORDER}`,
-                  borderRadius: 6, fontSize: 12, color: DARK, background: SURFACE,
-                  resize: "vertical", boxSizing: "border-box", fontFamily: "inherit",
+                  width: "100%", padding: "8px 10px",
+                  borderRadius: 14, border: "1px solid rgba(26,31,38,0.35)",
+                  background: "rgba(255,255,255,0.96)", fontSize: 13,
+                  fontFamily: "'Inter', sans-serif", fontWeight: 400,
+                  color: "rgba(26,31,38,0.88)", outline: "none",
+                  boxShadow: "none",
+                  caretColor: "var(--ink)", transition: "border-color 0.12s",
+                  resize: "vertical", boxSizing: "border-box",
                 }}
               />
             ) : (
@@ -2296,9 +2330,14 @@ function ScreenSocial({ go }) {
                 onChange={(e) => setBody(e.target.value)}
                 rows={2}
                 style={{
-                  width: "100%", padding: "8px 10px", border: `1px solid ${BORDER}`,
-                  borderRadius: 6, fontSize: 12, color: DARK, background: SURFACE,
-                  resize: "vertical", boxSizing: "border-box", fontFamily: "inherit",
+                  width: "100%", padding: "8px 10px",
+                  borderRadius: 14, border: "1px solid rgba(26,31,38,0.35)",
+                  background: "rgba(255,255,255,0.96)", fontSize: 13,
+                  fontFamily: "'Inter', sans-serif", fontWeight: 400,
+                  color: "rgba(26,31,38,0.88)", outline: "none",
+                  boxShadow: "none",
+                  caretColor: "var(--ink)", transition: "border-color 0.12s",
+                  resize: "vertical", boxSizing: "border-box",
                 }}
               />
             )}
@@ -2565,7 +2604,7 @@ function ScreenOnboarding({ go }) {
             </div>
           </div>
 
-          <div style={{ marginTop: 22, display: "flex", gap: 10 }}>
+          <div style={{ marginTop: 24, display: "flex", gap: 10 }}>
             <DarkButton>Mark as complete</DarkButton>
             <OutlineButton>Next module →</OutlineButton>
           </div>
@@ -2671,7 +2710,7 @@ function ScreenOnboarding({ go }) {
             </div>
 
             {/* Buttons row */}
-            <div style={{ marginTop: 14, display: "flex", alignItems: "center", gap: 16 }}>
+            <div style={{ marginTop: 16, display: "flex", alignItems: "center", gap: 16 }}>
               <button
                 onClick={() => setPlaying(p => !p)}
                 style={{
@@ -2758,26 +2797,24 @@ function ScreenOnboarding({ go }) {
 // =============== SCREEN 8 — MEMORY (Constellation Timeline) ===============
 const MONO = '"SF Mono", "JetBrains Mono", "Menlo", "Consolas", monospace';
 
-const PHOTO_GRADIENTS = [
-  "radial-gradient(circle at 30% 40%, #C5B8D8, #7A6E8A)",
-  "radial-gradient(circle at 60% 30%, #B8C8B0, #6E8A70)",
-  "radial-gradient(circle at 40% 60%, #D0B8B0, #8A6E68)",
-  "radial-gradient(circle at 50% 50%, #B8C0D0, #6E7A8A)",
-  "radial-gradient(circle at 20% 70%, #C8B8D0, #8A78A0)",
-  "radial-gradient(circle at 70% 40%, #C0C8B8, #788A70)",
-  "radial-gradient(circle at 35% 55%, #D0C8B0, #8A8068)",
-];
 
 const ARCHIVE_PHOTOS = [
+  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1573164574572-cb89e39749b4?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1568992688065-536aad8a12f6?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1622675363311-3e1904dc1885?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1704652070195-61e76e1466db?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1690378820474-b468b8ee64d3?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1545112969-bdd91ef544c7?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1561489396-888724a1543d?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1558008258-3256797b43f3?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1515169067868-5387ec356754?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1531058020387-3be344556be6?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&h=400&fit=crop",
-  "https://images.unsplash.com/photo-1622675363311-3e1904dc1885?w=400&h=400&fit=crop",
-  "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=400&h=400&fit=crop",
-  "https://images.unsplash.com/photo-1568992688065-536aad8a12f6?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1681949103006-70066fb25dfe?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=400&h=400&fit=crop",
@@ -2789,7 +2826,6 @@ const ARCHIVE_PHOTOS = [
   "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=400&h=400&fit=crop",
-  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1560439514-4e9645039924?w=400&h=400&fit=crop",
@@ -2803,81 +2839,75 @@ const ARCHIVE_PHOTOS = [
   "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&h=400&fit=crop",
-  "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=400&h=400&fit=crop",
   "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?w=400&h=400&fit=crop",
-  "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1561489396-888724a1543d?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1558008258-3256797b43f3?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1515169067868-5387ec356754?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1531058020387-3be344556be6?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1622675363311-3e1904dc1885?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1568992688065-536aad8a12f6?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1681949103006-70066fb25dfe?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=400&h=400&fit=crop&sat=-20",
-  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1560439514-4e9645039924?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?w=400&h=400&fit=crop&crop=top",
-  "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1561489396-888724a1543d?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1558008258-3256797b43f3?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1515169067868-5387ec356754?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1531058020387-3be344556be6?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1622675363311-3e1904dc1885?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1568992688065-536aad8a12f6?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1681949103006-70066fb25dfe?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&h=400&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=400&h=400&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1530021232320-687d8e3dba54?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1604881991720-f91add269bed?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1542744095-291d1f67b221?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1517457210348-703079e57d4b?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1565688534245-05d6b5be184a?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1573164713988-8665fc963095?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1559223607-b4d0555ae227?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1552581234-26160f608093?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1530099486328-e021101a494a?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1531973576160-7125cd663d86?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1497215842964-222b430dc094?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1564069114553-7215e1ff1890?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1604328698692-f76ea9498e76?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1517502884422-41eaead166d4?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1487014679447-9f8336841d58?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1543269664-7eef42226a21?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1559223607-a43c990c692c?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1542626991-cbc4e32524cc?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1542665952-14513db15293?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1531497865144-0464ef8fb9a9?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1530023367847-a683933f4172?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1531538606174-0f90ff5dce83?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1542223616-740d5dff7f56?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1556157382-97eda2d62296?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1559523182-a284c3fb7cff?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1551836022-4c4c79ecde51?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1521119989659-a83eee488004?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1463453091185-61582044d556?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1542751110-97427bbecf20?w=400&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=400&h=400&fit=crop",
 ];
 function archivePhoto(idx) { return ARCHIVE_PHOTOS[((idx % ARCHIVE_PHOTOS.length) + ARCHIVE_PHOTOS.length) % ARCHIVE_PHOTOS.length]; }
 
 const MEMORY_EVENTS = [
   { name: "FIRST HIRES",    mon: "JAN", year: 2022, count: 4,  L: 1, M: 2,  S: 1  },
-  { name: "SERIES A",       mon: "MAR", year: 2022, count: 8,  L: 1, M: 4,  S: 3  },
-  { name: "STUDIO OPEN",    mon: "JAN", year: 2023, count: 11, L: 2, M: 5,  S: 4  },
-  { name: "KICKOFF",        mon: "APR", year: 2023, count: 14, L: 2, M: 7,  S: 5  },
-  { name: "OFFSITE",        mon: "SEP", year: 2023, count: 18, L: 2, M: 9,  S: 7  },
+  { name: "SERIES A",       mon: "JUN", year: 2022, count: 6,  L: 1, M: 3,  S: 2  },
+  { name: "STUDIO OPEN",    mon: "JAN", year: 2023, count: 8,  L: 1, M: 4,  S: 3  },
+  { name: "OFFSITE",        mon: "SEP", year: 2023, count: 7,  L: 1, M: 3,  S: 3  },
   { name: "BRAND LAUNCH",   mon: "JAN", year: 2024, count: 22, L: 3, M: 11, S: 8  },
   { name: "CONFERENCE",     mon: "FEB", year: 2024, count: 34, L: 3, M: 17, S: 14 },
   { name: "OFFSITE",        mon: "SEP", year: 2024, count: 28, L: 3, M: 14, S: 11 },
@@ -2888,6 +2918,12 @@ const MEMORY_EVENTS = [
   { name: "VOLTAGE LAUNCH", mon: "MAR", year: 2026, count: 52, L: 4, M: 26, S: 22 },
   { name: "TEAM SHOOT",     mon: "APR", year: 2026, count: 61, L: 5, M: 30, S: 26 },
 ];
+// Cumulative photo-index offset per event so each event starts where the last left off.
+// gradIdx = (EVENT_PHOTO_OFFSETS[evIdx] + phIdx) % ARCHIVE_PHOTOS.length
+const EVENT_PHOTO_OFFSETS = MEMORY_EVENTS.reduce((acc, _e, i) => {
+  acc.push(i === 0 ? 0 : acc[i - 1] + MEMORY_EVENTS[i - 1].L + MEMORY_EVENTS[i - 1].M + MEMORY_EVENTS[i - 1].S);
+  return acc;
+}, []);
 
 function memoryDensity(count) {
   if (count <= 4)  return { spread: 50,  height: 120, width: 180 };
@@ -2923,9 +2959,10 @@ function memorySizes(L, M, S) {
 }
 
 const MEMORY_PAD_START = 60;
-const MEMORY_PAD_END = 100;
+const MEMORY_PAD_END = 220;          // extra right pad so the last cluster label is fully visible
 const MEMORY_TIMELINE_H = 600;
 const MEMORY_AXIS_Y = MEMORY_TIMELINE_H / 2;
+const CLUSTER_AXIS_Y = MEMORY_AXIS_Y - 30; // shift clusters up so constellation is vertically centred in usable area
 
 const MEMORY_CLUSTERS = (() => {
   let x = MEMORY_PAD_START;
@@ -2958,15 +2995,17 @@ function PhotoCircle({ id, size, cx, cy, gradIdx, selected, onPhotoEvent }) {
         overflow: "hidden",
         flexShrink: 0,
         cursor: "pointer",
-        background: "var(--ph-3)",
+        background: "var(--border)",
         zIndex: selected ? 10 : 1,
         boxShadow: selected ? `0 0 0 3px var(--accent)` : "none",
+        transition: "left 0.35s cubic-bezier(0.22,1,0.36,1), top 0.35s cubic-bezier(0.22,1,0.36,1)",
       }}
     >
       <img
         src={archivePhoto(gradIdx)}
         alt=""
         style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
+        onError={(e) => { e.currentTarget.style.display = "none"; }}
       />
     </div>
   );
@@ -3130,9 +3169,11 @@ function ScreenMemory({ go }) {
   const [zoom, setZoom] = useState(0.6);
   const [activeYear, setActiveYear] = useState(2022);
   const [previewPhoto, setPreviewPhoto] = useState(null);
+  const [search, setSearch] = useState("");
 
   const scrollRef = useRef(null);
   const zoomRef = useRef(0.6);
+  const mouseXRef = useRef(0);
   const clickTimerRef = useRef(null);
   useEffect(() => { zoomRef.current = zoom; }, [zoom]);
 
@@ -3189,30 +3230,60 @@ function ScreenMemory({ go }) {
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
+
+    // Track cursor X relative to the scroll container via mousemove
+    // so the zoom handler always has the precise current position.
+    const onMouseMove = (e) => {
+      mouseXRef.current = e.clientX - el.getBoundingClientRect().left;
+    };
+    el.addEventListener("mousemove", onMouseMove);
+
     const handler = (e) => {
       e.preventDefault();
       if (e.ctrlKey || e.metaKey) {
-        // Cursor-anchored zoom
-        const rect = el.getBoundingClientRect();
-        const cursorX = e.clientX - rect.left;
+        // Cursor-anchored zoom:
+        //   canvasPoint = (scrollLeft + cursorX) / prevScale  — the canvas coordinate under cursor
+        //   after scale change: scrollLeft = canvasPoint * newScale - cursorX
+        const cursorX = mouseXRef.current;
         const prevScale = zoomRef.current;
         const delta = e.deltaY > 0 ? -0.1 : 0.1;
         const newScale = Math.min(2.0, Math.max(0.5, +(prevScale + delta).toFixed(2)));
         if (newScale === prevScale) return;
-        const canvasX = (el.scrollLeft + cursorX) / prevScale;
+        const canvasPoint = (el.scrollLeft + cursorX) / prevScale;
         setZoom(newScale);
         zoomRef.current = newScale;
         requestAnimationFrame(() => {
-          el.scrollLeft = canvasX * newScale - cursorX;
+          const rawTn = Math.max(0, Math.min(1, (newScale - 1.3) / 0.5));
+          const gtn = rawTn * rawTn * (3 - 2 * rawTn);
+          const sfn = newScale / 1.8;
+          const gcW = (MEMORY_PAD_START * 1.8 + unifiedGridLayout.maxCol * GRID_CELL + 34) * sfn + MEMORY_PAD_END;
+          const maxS = Math.max(0, (1 - gtn) * (MEMORY_CANVAS_W - 40) * newScale + gtn * gcW - el.clientWidth);
+          el.scrollLeft = Math.min(canvasPoint * newScale - cursorX, maxS);
         });
         return;
       }
       // Horizontal scroll: deltaX wins if larger; otherwise deltaY → horizontal
       const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      el.scrollLeft += delta * 1.5;
+      const z = zoomRef.current;
+      const rawTz = Math.max(0, Math.min(1, (z - 1.3) / 0.5));
+      const gtz = rawTz * rawTz * (3 - 2 * rawTz);
+      const gcWz = (MEMORY_PAD_START * 1.8 + unifiedGridLayout.maxCol * GRID_CELL + 34) * (z / 1.8) + MEMORY_PAD_END;
+      const maxScroll = Math.max(0, (1 - gtz) * (MEMORY_CANVAS_W - 40) * z + gtz * gcWz - el.clientWidth);
+      el.scrollLeft = Math.max(0, Math.min(el.scrollLeft + delta * 1.5, maxScroll));
     };
     el.addEventListener("wheel", handler, { passive: false });
-    return () => el.removeEventListener("wheel", handler);
+    return () => {
+      el.removeEventListener("wheel", handler);
+      el.removeEventListener("mousemove", onMouseMove);
+    };
+  }, []);
+
+  // Scroll to show TODAY at the right edge of the viewport on first open
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    // TODAY visual position = (MEMORY_CANVAS_W - 40) * zoom; place it at right edge
+    el.scrollLeft = (MEMORY_CANVAS_W - 40) * zoomRef.current - el.clientWidth;
   }, []);
 
   const yearMarkers = MEMORY_YEARS.map(y => {
@@ -3256,40 +3327,130 @@ function ScreenMemory({ go }) {
     []
   );
 
+  // Unified gallery grid — all photos in one continuous wall, rows fill top→bottom then next column
+  const GRID_ROWS = 6;
+  const GRID_PHOTO_SIZE = 68; // ~30% larger than the original 52px
+  const GRID_GAP = 10;        // ~half the original 20px gap → tight mosaic feel
+  const GRID_CELL = GRID_PHOTO_SIZE + GRID_GAP; // 78
+  const unifiedGridLayout = useMemo(() => {
+    // Build result[clusterIdx][photoIdx] = { gx, gy } in GRID_FULL screen pixels
+    // gy is an offset relative to CLUSTER_AXIS_Y (not MEMORY_AXIS_Y).
+    // Formula anchors row 0 so its top edge sits ~24 px below the canvas top when gridT=1.
+    const result = MEMORY_CLUSTERS.map(c => memorySizes(c.L, c.M, c.S).map(() => null));
+    let col = 0, row = 0, maxCol = 0;
+    MEMORY_CLUSTERS.forEach((c, ci) => {
+      const n = memorySizes(c.L, c.M, c.S).length;
+      for (let pi = 0; pi < n; pi++) {
+        // gx: absolute left position (GRID_FULL screen pixels); gy: offset from CLUSTER_AXIS_Y
+        const gx = MEMORY_PAD_START * 1.8 + col * GRID_CELL; // 1.8 = GRID_FULL
+        const gy = row * GRID_CELL + (24 + 16 + GRID_PHOTO_SIZE / 2 - CLUSTER_AXIS_Y);
+        result[ci][pi] = { gx, gy };
+        if (col > maxCol) maxCol = col;
+        row++;
+        if (row >= GRID_ROWS) { row = 0; col++; }
+      }
+    });
+    return { layout: result, maxCol };
+  }, []);
+
+  // Search filter — null means "show all"
+  const filteredClusterIndices = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return null;
+    const matched = new Set(
+      MEMORY_CLUSTERS.filter(c =>
+        c.name.toLowerCase().includes(q) ||
+        String(c.year).includes(q) ||
+        c.mon.toLowerCase().includes(q) ||
+        (c.mon + " " + c.year).toLowerCase().includes(q) ||
+        (String(c.year) + " " + c.mon).toLowerCase().includes(q)
+      ).map(c => c.idx)
+    );
+    return matched;
+  }, [search]);
+
+  // Grid/constellation interpolation — 0 at zoom ≤ 1.3, 1 at zoom ≥ 1.8
+  const GRID_START = 1.3, GRID_FULL = 1.8;
+  const rawT = Math.max(0, Math.min(1, (zoom - GRID_START) / (GRID_FULL - GRID_START)));
+  const gridT = rawT * rawT * (3 - 2 * rawT); // smoothstep
+
+  // Unified grid layout — destructure here so wheel handler and render share the same values
+  const { layout: unifiedLayout, maxCol: gridMaxCol } = unifiedGridLayout;
+  const scaleFactor = zoom / GRID_FULL; // 1.0 at GRID_FULL, scales proportionally above it
+  // Usable scroll end in screen px:
+  //   Constellation → TODAY position: (MEMORY_CANVAS_W - 40) * zoom
+  //   Grid          → right edge of last column + end padding
+  const gridCanvasW = (MEMORY_PAD_START * 1.8 + gridMaxCol * GRID_CELL + GRID_PHOTO_SIZE / 2) * scaleFactor + MEMORY_PAD_END;
+  const usefulW = (1 - gridT) * (MEMORY_CANVAS_W - 40) * zoom + gridT * gridCanvasW;
+  // Outer wrapper extends usefulW + 200px so there's breathing room at the right edge
+  const outerW = Math.round(usefulW + 200);
+  // Inner canvas: interpolate between timeline width and outerW so it never overflows the scroll area
+  const innerW = Math.round((1 - gridT) * MEMORY_CANVAS_W * zoom + gridT * outerW);
+
   return (
     <Shell active="memory" go={go} fullBleed>
       <div style={{ display: "flex", flexDirection: "column", height: "100vh", paddingTop: 84, position: "relative" }}>
 
-
-        {/* INNER TOP BAR — heading + subtitle + TODAY only */}
+        {/* INNER TOP BAR — heading + subtitle + search + TODAY */}
         <div style={{
           flexShrink: 0,
-          padding: "20px 24px 18px",
+          padding: "20px 24px 16px",
           borderBottom: "1px solid rgba(0,0,0,0.06)",
           background: HOME_BG,
-          display: "flex", alignItems: "flex-start", justifyContent: "space-between",
         }}>
-          <div>
-            <div style={{
-              fontFamily: HOME_SERIF, fontSize: 64, fontWeight: 400,
-              color: "var(--ink)", letterSpacing: -2, lineHeight: 0.9,
-            }}>Photo <Highlight>Archive</Highlight>.</div>
-            <div style={{
-              marginTop: 8, fontSize: 11, color: "#7A7885",
-              fontFamily: MONO, letterSpacing: 0.6,
-            }}>
-              TOTAL 2,418 PHOTOS · SPANS 2022–2026
+          {/* Row 1: title + TODAY */}
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+            <div>
+              <div style={{
+                fontFamily: HOME_SERIF, fontSize: 80, fontWeight: 400,
+                color: "var(--ink)", letterSpacing: -2.5, lineHeight: 0.9,
+              }}>Photo <Highlight>Archive</Highlight>.</div>
+              <div style={{
+                marginTop: 8, fontSize: 11, color: "#7A7885",
+                fontFamily: MONO, letterSpacing: 0.6,
+              }}>
+                TOTAL 1,861 PHOTOS · SPANS 2022–TODAY
+                {filteredClusterIndices !== null && (
+                  <span style={{ marginLeft: 12, color: "var(--accent)", background: "rgba(0,0,0,0.08)", borderRadius: 4, padding: "1px 6px" }}>
+                    {filteredClusterIndices.size} EVENTS MATCH
+                  </span>
+                )}
+              </div>
             </div>
           </div>
-          <div style={{ position: "relative", paddingLeft: 18, paddingTop: 6 }}>
+          {/* Row 2: search bar */}
+          <div style={{ marginTop: 16, position: "relative", maxWidth: 480 }}>
             <span style={{
-              fontSize: 10, color: "#1E1C23", fontFamily: MONO,
-              letterSpacing: 1, fontWeight: 600,
-            }}>TODAY</span>
-            <div style={{
-              position: "absolute", left: 6, top: -10, bottom: -16,
-              width: 1, background: "#6B6B6B",
-            }} />
+              position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)",
+              fontSize: 14, color: "var(--muted)", pointerEvents: "none", lineHeight: 1,
+            }}>⌕</span>
+            <input
+              type="text"
+              placeholder="Search events, people, dates, locations…"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{
+                width: "100%", height: 36,
+                borderRadius: 14, border: "1px solid rgba(26,31,38,0.10)",
+                padding: "0 36px 0 32px",
+                background: "rgba(255,255,255,0.96)", fontSize: 13,
+                fontFamily: "'Inter', sans-serif", fontWeight: 400,
+                color: "rgba(26,31,38,0.88)", outline: "none",
+                boxShadow: "0px 2px 12px rgba(0,0,0,0.06)",
+                caretColor: "var(--ink)", transition: "border-color 0.12s",
+                boxSizing: "border-box",
+              }}
+            />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                style={{
+                  position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
+                  background: "none", border: "none", cursor: "pointer",
+                  color: "var(--muted)", fontSize: 13, lineHeight: 1, padding: 2,
+                }}
+              >✕</button>
+            )}
           </div>
         </div>
 
@@ -3300,41 +3461,42 @@ function ScreenMemory({ go }) {
             onScroll={onTimelineScroll}
             style={{
               position: "absolute", inset: 0,
-              overflowX: "scroll", overflowY: "hidden",
+              overflowX: "hidden", overflowY: "hidden",
               width: "100%",
             }}
           >
-            {/* Outer wrapper: provides scroll bounds at scaled dimensions */}
+            {/* Outer wrapper: provides scroll bounds; canvas sits at top so grid row 0 starts at ~24px */}
             <div style={{
-              position: "relative",
-              width: (MEMORY_CANVAS_W - MEMORY_PAD_END + 24) * zoom,
+              width: outerW,
               height: "100%",
-              minHeight: MEMORY_TIMELINE_H,
+              display: "flex",
+              alignItems: "flex-start",
             }}>
-              {/* Inner canvas: position relative + inline-block, transform-origin 0 0 */}
+              {/* Inner canvas: no CSS transform — all positions pre-multiplied by zoom */}
               <div style={{
                 position: "relative",
-                display: "inline-block",
-                width: MEMORY_CANVAS_W,
+                flexShrink: 0,
+                width: innerW,
                 height: MEMORY_TIMELINE_H,
-                transform: `scale(${zoom})`,
-                transformOrigin: "0 50%",
+                overflow: "visible",
               }}>
                 {/* AXIS LINE */}
                 <div style={{
                   position: "absolute",
-                  left: 0, right: 0, top: MEMORY_AXIS_Y,
+                  left: 0, right: 0, top: CLUSTER_AXIS_Y,
                   height: 1, background: "rgba(0,0,0,0.12)",
+                  opacity: 1 - gridT, transition: "opacity 0.3s ease",
                 }} />
 
                 {/* YEAR BOUNDARY DASHED LINES */}
                 {yearBoundaries.map(b => (
                   <div key={b.year} style={{
                     position: "absolute",
-                    left: b.x, top: 0, bottom: 0,
+                    left: b.x * zoom, top: 0, bottom: 0,
                     width: 0,
                     borderLeft: "1px dashed rgba(0,0,0,0.06)",
                     pointerEvents: "none",
+                    opacity: 1 - gridT, transition: "opacity 0.3s ease",
                   }} />
                 ))}
 
@@ -3344,9 +3506,10 @@ function ScreenMemory({ go }) {
                   return (
                     <div key={"dot-" + ym.year} style={{
                       position: "absolute",
-                      left: ym.cxCenter - 3, top: MEMORY_AXIS_Y - 3,
+                      left: ym.cxCenter * zoom - 3, top: CLUSTER_AXIS_Y - 3,
                       width: 6, height: 6, borderRadius: 3,
                       background: on ? "var(--accent)" : "var(--line)",
+                      opacity: 1 - gridT, transition: "opacity 0.3s ease",
                     }} />
                   );
                 })}
@@ -3354,46 +3517,64 @@ function ScreenMemory({ go }) {
                 {/* CLUSTERS */}
                 {MEMORY_CLUSTERS.map((c, idx) => {
                   const positions = layoutByCluster[idx];
-                  const labelTop = MEMORY_AXIS_Y + c.height / 2 + 18;
+                  const isFiltered = filteredClusterIndices !== null && !filteredClusterIndices.has(c.idx);
+                  const clusterOpacity = isFiltered ? 0.1 : 1;
+
+                  // Label: fixed near the bottom year row, fades out in grid mode
+
                   return (
                     <Fragment key={idx}>
+                      {/* Vertical tick line — runs from cluster top down to label row */}
                       <div style={{
                         position: "absolute",
-                        left: c.cx - 0.5,
-                        top: MEMORY_AXIS_Y - c.height / 2,
+                        left: c.cx * zoom - 0.5,
+                        top: CLUSTER_AXIS_Y - c.height * zoom / 2,
+                        bottom: 54,
                         width: 1,
-                        height: c.height + 18,
                         background: "var(--line)",
                         pointerEvents: "none",
+                        opacity: clusterOpacity * (1 - gridT), transition: "opacity 0.3s ease",
                       }} />
+                      {/* Axis dot — fades out in grid mode */}
                       <div style={{
                         position: "absolute",
-                        left: c.cx - 2,
-                        top: MEMORY_AXIS_Y - 2,
+                        left: c.cx * zoom - 2,
+                        top: CLUSTER_AXIS_Y - 2,
                         width: 4, height: 4, borderRadius: 2,
                         background: "rgba(0,0,0,0.2)",
+                        opacity: clusterOpacity * (1 - gridT), transition: "opacity 0.3s ease",
                       }} />
                       {positions.map((p, i) => {
                         const id = `${idx}_${i}`;
+                        const ug = unifiedLayout[idx][i];
+                        // Unified gallery: cx is absolute (not relative to cluster centre)
+                        // Constellation: (c.cx + p.x) * zoom  →  Grid: ug.gx * scaleFactor
+                        const cx = (c.cx + p.x) * zoom * (1 - gridT) + ug.gx * scaleFactor * gridT;
+                        // Y: constellation offset scales with zoom; grid row offset scales with scaleFactor
+                        const py = p.y * zoom * (1 - gridT) + ug.gy * scaleFactor * gridT;
+                        // Size: interpolate to GRID_PHOTO_SIZE (scales proportionally above GRID_FULL)
+                        const sz = p.sz + (GRID_PHOTO_SIZE * scaleFactor - p.sz) * gridT;
                         return (
                           <PhotoCircle
                             key={i}
                             id={id}
-                            size={p.sz}
-                            cx={c.cx + p.x}
-                            cy={MEMORY_AXIS_Y + p.y}
-                            gradIdx={(idx * 3 + i) % PHOTO_GRADIENTS.length}
+                            size={sz}
+                            cx={cx}
+                            cy={CLUSTER_AXIS_Y + py}
+                            gradIdx={(EVENT_PHOTO_OFFSETS[idx] + i) % ARCHIVE_PHOTOS.length}
                             selected={selected.has(id)}
-                            onPhotoEvent={onPhotoEvent}
+                            onPhotoEvent={isFiltered ? () => {} : onPhotoEvent}
                           />
                         );
                       })}
+                      {/* Cluster label — fixed bottom row, aligned with year labels, fades in grid mode */}
                       <div style={{
                         position: "absolute",
-                        left: c.cx - 80,
-                        top: labelTop,
+                        left: c.cx * zoom - 80,
+                        bottom: 54,
                         width: 160, textAlign: "center",
                         pointerEvents: "none",
+                        opacity: clusterOpacity * (1 - gridT), transition: "opacity 0.3s ease",
                       }}>
                         <div style={{
                           fontSize: 10, fontFamily: MONO,
@@ -3419,7 +3600,7 @@ function ScreenMemory({ go }) {
                       style={{
                         position: "absolute",
                         bottom: 16,
-                        left: ym.cx - 80,
+                        left: ym.cx * zoom - 80,
                         width: 160, textAlign: "center",
                         fontFamily: "'Inter', sans-serif",
                         fontSize: on ? 28 : 16,
@@ -3437,46 +3618,26 @@ function ScreenMemory({ go }) {
                 {/* TODAY line at far right of canvas */}
                 <div style={{
                   position: "absolute",
-                  left: MEMORY_CANVAS_W - 40,
+                  left: (MEMORY_CANVAS_W - 40) * zoom,
                   top: 0, bottom: 0,
                   width: 1, background: "#6B6B6B",
                   pointerEvents: "none",
                 }}>
                   <div style={{
                     position: "absolute",
-                    top: 8, left: 6,
+                    top: 8, right: 8,
                     fontSize: 10, fontFamily: MONO,
                     color: "#6B6B6B",
                     letterSpacing: 0.8,
+                    whiteSpace: "nowrap",
                   }}>TODAY</div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* ZOOM INDICATOR */}
-          <div style={{
-            position: "absolute",
-            top: 14, right: 24,
-            fontSize: 10, fontFamily: MONO,
-            color: "#9A9AA8",
-            letterSpacing: 0.8,
-            pointerEvents: "none",
-          }}>
-            ZOOM {zoom.toFixed(1)}×
-          </div>
         </div>
 
-        {/* HINT TEXT — bottom-left */}
-        <div style={{
-          position: "fixed",
-          bottom: 24, left: 80,
-          fontSize: 10, color: "#9A9AA8",
-          letterSpacing: 0.4, fontFamily: MONO,
-          pointerEvents: "none", zIndex: 80,
-        }}>
-          scroll to navigate · ⌘ scroll to zoom
-        </div>
 
         {/* DOWNLOAD CARD — bottom-right, glass style */}
         <div style={{
@@ -3516,7 +3677,7 @@ function ScreenMemory({ go }) {
                   const [evIdxStr, photoIdxStr] = id.split("_");
                   const evIdx = parseInt(evIdxStr, 10);
                   const phIdx = parseInt(photoIdxStr, 10);
-                  const gradIdx = (evIdx * 3 + phIdx) % PHOTO_GRADIENTS.length;
+                  const gradIdx = (EVENT_PHOTO_OFFSETS[evIdx] + phIdx) % ARCHIVE_PHOTOS.length;
                   return (
                     <div
                       key={id}
@@ -3527,10 +3688,11 @@ function ScreenMemory({ go }) {
                       <div style={{
                         width: 28, height: 28, borderRadius: "50%",
                         overflow: "hidden", border: "1.5px solid var(--surface)",
-                        background: "var(--ph-3)",
+                        background: "var(--border)",
                       }}>
                         <img src={archivePhoto(gradIdx)} alt=""
-                          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }} />
+                          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
+                          onError={(e) => { e.currentTarget.style.display = "none"; }} />
                       </div>
                       <div style={{
                         position: "absolute", top: -3, right: -3,
@@ -3562,7 +3724,7 @@ function ScreenMemory({ go }) {
           const evIdx = parseInt(evIdxStr, 10);
           const phIdx = parseInt(phIdxStr, 10);
           const ev = MEMORY_EVENTS[evIdx];
-          const gradIdx = (evIdx * 3 + phIdx) % PHOTO_GRADIENTS.length;
+          const gradIdx = (EVENT_PHOTO_OFFSETS[evIdx] + phIdx) % ARCHIVE_PHOTOS.length;
           const isSel = selected.has(previewPhoto);
           return (
             <div
@@ -3621,7 +3783,7 @@ function ScreenMemory({ go }) {
                     aspectRatio: "4 / 5",
                     maxHeight: "78vh",
                     borderRadius: 10,
-                    background: "var(--ph-3)",
+                    background: "var(--border)",
                     boxShadow: "0 24px 80px rgba(0,0,0,0.6)",
                     border: isSel ? "3px solid white" : "1px solid rgba(255,255,255,0.1)",
                     position: "relative",
@@ -3630,20 +3792,27 @@ function ScreenMemory({ go }) {
                   }}
                 >
                   <img
-                    src={archivePhoto(gradIdx)}
-                    alt={ev.name}
-                    style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
+                    src={archivePhoto(gradIdx).replace('w=400&h=400', 'w=800&h=1000')}
+                    alt=""
+                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
+                    onError={(e) => { e.currentTarget.style.display = "none"; }}
                   />
                   {isSel && (
                     <div style={{
                       position: "absolute", top: 16, left: 16,
                       width: 28, height: 28, borderRadius: 14,
-                      background: "white", color: "#1E1C23",
+                      background: SURFACE, color: "#1E1C23",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       fontSize: 13, fontWeight: 700,
                       boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
                     }}>✓</div>
                   )}
+                  <div style={{
+                    position: "absolute", bottom: 14, right: 16,
+                    fontSize: 10, fontFamily: MONO,
+                    color: "rgba(255,255,255,0.55)", letterSpacing: 0.8,
+                    textTransform: "uppercase",
+                  }}>4 : 5 · 3024×3780</div>
                 </div>
               </div>
 
@@ -4066,7 +4235,7 @@ function ScreenRole({ onChoose, onSkip }) {
         position: "absolute",
         top: 28, left: 36,
         zIndex: 2,
-        fontFamily: "'Libre Caslon Display', Georgia, serif",
+        fontFamily: "'Instrument Serif', Georgia, serif",
         fontSize: 22,
         fontWeight: 400,
         color: "rgba(26,31,38,0.75)",
@@ -4103,20 +4272,18 @@ function ScreenRole({ onChoose, onSkip }) {
               width: 440,
               padding: "14px 20px",
               borderRadius: 14,
-              border: "1px solid rgba(0,0,0,0.10)",
+              border: "1px solid rgba(26,31,38,0.35)",
               background: "rgba(255,255,255,0.96)",
-              fontSize: 17,
+              fontSize: 13,
               fontFamily: "'Inter', sans-serif",
               fontWeight: 400,
               color: "rgba(26,31,38,0.88)",
               textAlign: "center",
               outline: "none",
-              boxShadow: "0 4px 24px rgba(0,0,0,0.10)",
+              boxShadow: "none",
               caretColor: "var(--ink)",
-              transition: "border-color var(--duration-fast)",
+              transition: "border-color 0.12s",
             }}
-            onFocus={e => e.currentTarget.style.borderColor = "rgba(26,31,38,0.35)"}
-            onBlur={e => e.currentTarget.style.borderColor = "rgba(0,0,0,0.10)"}
           />
           {/* Animated "type your name" CTA — visible only when field is empty */}
           {isEmpty && (
@@ -4161,8 +4328,8 @@ function ScreenRole({ onChoose, onSkip }) {
                 onMouseLeave={() => setHoveredRole(null)}
                 onClick={() => handleChoose(r.key)}
                 style={{
-                  fontFamily: "'Libre Caslon Display', Georgia, serif",
-                  fontSize: 56,
+                  fontFamily: "'Instrument Serif', Georgia, serif",
+                  fontSize: 62,
                   fontWeight: 400,
                   lineHeight: 1.1,
                   letterSpacing: -1,
@@ -4204,7 +4371,7 @@ function ScreenRole({ onChoose, onSkip }) {
           color: "rgba(26,31,38,0.35)",
           opacity: nameEntered ? 1 : 0,
           pointerEvents: nameEntered ? "auto" : "none",
-          transition: `opacity 0.5s var(--ease-smooth), color var(--duration-fast)`,
+          transition: `opacity 0.5s var(--ease-smooth), color var(--dur-fast)`,
         }}
         onMouseEnter={e => { if (nameEntered) e.currentTarget.style.opacity = "0.7"; }}
         onMouseLeave={e => { e.currentTarget.style.opacity = nameEntered ? "1" : "0"; }}
@@ -4216,219 +4383,372 @@ function ScreenRole({ onChoose, onSkip }) {
   );
 }
 
+// ── Module SVG thumbnails ──────────────────────────────────────────────────
+
+function ModuleSVGThumb({ renderSvg, hovered }) {
+  const [animated, setAnimated] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setAnimated(true); obs.disconnect(); } },
+      { threshold: 0.3 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return <div ref={ref} style={{ width: "100%", height: "100%", minHeight: 0 }}>{renderSvg(animated, hovered)}</div>;
+}
+
+function modShapeStyle(i, animated) {
+  return animated
+    ? { transformBox: "fill-box", transformOrigin: "center",
+        animation: `modShapeIn 0.6s cubic-bezier(0.34,1.56,0.64,1) ${i * 60}ms both` }
+    : { opacity: 0 };
+}
+
+const HOVER_DIRS = [
+  { x: -0.8, y: -0.6 }, { x:  0.6, y: -0.8 }, { x:  1.0, y:  0.2 },
+  { x: -0.5, y:  0.9 }, { x:  0.9, y: -0.4 }, { x: -0.7, y:  0.7 },
+  { x:  0.3, y: -1.0 }, { x: -1.0, y:  0.1 }, { x:  0.5, y:  0.8 },
+  { x:  0.8, y:  0.5 },
+];
+const HOVER_DIST = 7;
+
+function modHoverStyle(i, hovered) {
+  const dir = HOVER_DIRS[i % HOVER_DIRS.length];
+  const tx = hovered ? (dir.x * HOVER_DIST).toFixed(1) : 0;
+  const ty = hovered ? (dir.y * HOVER_DIST).toFixed(1) : 0;
+  return {
+    transform: `translate(${tx}px,${ty}px)`,
+    transition: hovered
+      ? `transform 0.4s cubic-bezier(0.34,1.56,0.64,1) ${i * 30}ms`
+      : `transform 0.35s ease ${i * 20}ms`,
+  };
+}
+
+function SvgBrandChecker({ animated, hovered }) {
+  const a = (i) => modShapeStyle(i, animated);
+  const h = (i) => modHoverStyle(i, hovered);
+  return (
+    <svg viewBox="0 0 331 258" fill="none" style={{ width: "100%", height: "100%", display: "block" }}>
+      <defs>
+        <filter id="filter0_i_527_181" x="-12" y="170" width="72" height="74" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="effect1_innerShadow_527_181"/>
+          <feOffset dx="7" dy="10"/>
+          <feGaussianBlur stdDeviation="11"/>
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0.909804 0 0 0 0 0.996078 0 0 0 0 0.403922 0 0 0 0.8 0"/>
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_527_181"/>
+        </filter>
+        <filter id="filter1_g_527_181" x="-94" y="57" width="254" height="254" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feTurbulence type="fractalNoise" baseFrequency="0.999 0.999" numOctaves="3" seed="4441"/>
+          <feDisplacementMap in="shape" scale="200" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%"/>
+          <feMerge result="effect1_texture_527_181"><feMergeNode in="displacedImage"/></feMerge>
+        </filter>
+        <filter id="filter2_i_527_181" x="193" y="77" width="72" height="75" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="effect1_innerShadow_527_181"/>
+          <feOffset dx="7" dy="10"/>
+          <feGaussianBlur stdDeviation="11"/>
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0.909804 0 0 0 0 0.996078 0 0 0 0 0.403922 0 0 0 0.8 0"/>
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_527_181"/>
+        </filter>
+        <filter id="filter3_g_527_181" x="72" y="-44" width="254" height="254" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feTurbulence type="fractalNoise" baseFrequency="0.999 0.999" numOctaves="3" seed="4441"/>
+          <feDisplacementMap in="shape" scale="200" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%"/>
+          <feMerge result="effect1_texture_527_181"><feMergeNode in="displacedImage"/></feMerge>
+        </filter>
+      </defs>
+      <g style={h(0)}><g style={a(0)}><circle cx="20.5" cy="109.5" r="32.5" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(1)}><g style={a(1)}><g filter="url(#filter0_i_527_181)"><ellipse cx="20.5" cy="202" rx="32" ry="32.5" transform="rotate(-90 20.5 202)" style={{ fill: "var(--surface)" }}/></g></g></g>
+      <g style={h(2)}><g style={a(2)}><g filter="url(#filter1_g_527_181)" style={{ mixBlendMode: "hue", opacity: hovered ? 1 : 0.6, transition: "opacity 0.4s ease" }}><circle cx="33" cy="184" r="27" fill="#ECEFEC" fillOpacity="0.98"/></g></g></g>
+      <g style={h(3)}><g style={a(3)}><ellipse cx="123" cy="109.5" rx="32" ry="32.5" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(4)}><g style={a(4)}><circle cx="123" cy="202" r="32" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(5)}><g style={a(5)}><g filter="url(#filter2_i_527_181)"><circle cx="225.5" cy="109.5" r="32.5" style={{ fill: "var(--surface)" }}/></g></g></g>
+      <g style={h(6)}><g style={a(6)}><g filter="url(#filter3_g_527_181)" style={{ mixBlendMode: "hue", opacity: hovered ? 1 : 0.6, transition: "opacity 0.4s ease" }}><circle cx="199" cy="83" r="27" fill="#ECEFEC" fillOpacity="0.98"/></g></g></g>
+      <g style={h(7)}><g style={a(7)}><circle cx="328.5" cy="109.5" r="32.5" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(8)}><g style={a(8)}><ellipse cx="225.5" cy="202" rx="32.5" ry="32" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(9)}><g style={a(9)}><ellipse cx="328.5" cy="202" rx="32.5" ry="32" style={{ fill: "var(--bg)" }}/></g></g>
+    </svg>
+  );
+}
+
+function SvgBrandLibrary({ animated, hovered }) {
+  const a = (i) => modShapeStyle(i, animated);
+  const h = (i) => modHoverStyle(i, hovered);
+  return (
+    <svg viewBox="0 0 331 258" fill="none" style={{ width: "100%", height: "100%", display: "block" }}>
+      <defs>
+        <filter id="filter0_i_522_56" x="116.985" y="61.2451" width="132.624" height="193.943" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="effect1_innerShadow_522_56"/>
+          <feOffset dx="7" dy="10"/>
+          <feGaussianBlur stdDeviation="11"/>
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0.909804 0 0 0 0 0.996078 0 0 0 0 0.403922 0 0 0 0.8 0"/>
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_522_56"/>
+        </filter>
+        <filter id="filter1_g_522_56" x="-17" y="-60" width="313" height="313" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feTurbulence type="fractalNoise" baseFrequency="0.999 0.999" numOctaves="3" seed="4441"/>
+          <feDisplacementMap in="shape" scale="200" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%"/>
+          <feMerge result="effect1_texture_522_56"><feMergeNode in="displacedImage"/></feMerge>
+        </filter>
+      </defs>
+      <g style={h(0)}><g style={a(0)}><path d="M206.654 212.744C210.704 216.498 210.944 222.825 207.189 226.876L160.41 277.337C156.655 281.387 150.328 281.626 146.278 277.872L35.3335 175.022C31.2833 171.267 31.0438 164.94 34.7985 160.89L81.5776 110.429C85.3323 106.379 91.6594 106.139 95.7096 109.894L206.654 212.744Z" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(1)}><g style={a(1)}><path d="M283.392 239.312C281.762 244.589 276.163 247.545 270.886 245.914L205.144 225.604C199.867 223.973 196.911 218.374 198.541 213.097L243.197 68.5545C244.827 63.2778 250.426 60.3217 255.703 61.9519L321.446 82.2628C326.722 83.893 329.678 89.4922 328.048 94.769L283.392 239.312Z" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(2)}><g style={a(2)}><g filter="url(#filter0_i_522_56)"><path d="M242.266 214.788C243.695 220.123 240.529 225.607 235.195 227.036L168.731 244.845C163.396 246.274 157.913 243.108 156.483 237.774L117.328 91.645C115.899 86.3103 119.065 80.8269 124.399 79.3975L190.863 61.5886C196.198 60.1591 201.681 63.325 203.111 68.6596L242.266 214.788Z" style={{ fill: "var(--surface)" }}/></g></g></g>
+      <g style={h(3)}><g style={a(3)}><g filter="url(#filter1_g_522_56)" style={{ mixBlendMode: "hue", opacity: hovered ? 1 : 0.6, transition: "opacity 0.4s ease" }}><circle cx="139.5" cy="96.5" r="56.5" fill="#ECEFEC" fillOpacity="0.98"/></g></g></g>
+    </svg>
+  );
+}
+
+function SvgOnboarding({ animated, hovered }) {
+  const a = (i) => modShapeStyle(i, animated);
+  const h = (i) => modHoverStyle(i, hovered);
+  return (
+    <svg viewBox="0 0 331 258" fill="none" style={{ width: "100%", height: "100%", display: "block" }}>
+      <defs>
+        <filter id="filter0_i_527_206" x="241" y="83" width="58" height="164" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="effect1_innerShadow_527_206"/>
+          <feOffset dx="7" dy="10"/>
+          <feGaussianBlur stdDeviation="11"/>
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0.909804 0 0 0 0 0.996078 0 0 0 0 0.403922 0 0 0 0.8 0"/>
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_527_206"/>
+        </filter>
+        <filter id="filter1_g_527_206" x="133" y="-76" width="318" height="318" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feTurbulence type="fractalNoise" baseFrequency="0.999 0.999" numOctaves="3" seed="4441"/>
+          <feDisplacementMap in="shape" scale="200" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%"/>
+          <feMerge result="effect1_texture_527_206"><feMergeNode in="displacedImage"/></feMerge>
+        </filter>
+      </defs>
+      <g style={h(0)}><g style={a(0)}><path d="M37 173C37 167.477 41.4772 163 47 163H78C83.5228 163 88 167.477 88 173V227C88 232.523 83.5228 237 78 237H47C41.4772 237 37 232.523 37 227V173Z" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(1)}><g style={a(1)}><path d="M105 142C105 136.477 109.477 132 115 132H146C151.523 132 156 136.477 156 142V227C156 232.523 151.523 237 146 237H115C109.477 237 105 232.523 105 227V142Z" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(2)}><g style={a(2)}><path d="M173 108C173 102.477 177.477 98 183 98H214C219.523 98 224 102.477 224 108V227C224 232.523 219.523 237 214 237H183C177.477 237 173 232.523 173 227V108Z" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(3)}><g style={a(3)}><g filter="url(#filter0_i_527_206)"><rect x="241" y="83" width="51" height="154" rx="10" style={{ fill: "var(--surface)" }}/></g></g></g>
+      <g style={h(4)}><g style={a(4)}><g filter="url(#filter1_g_527_206)" style={{ mixBlendMode: "hue", opacity: hovered ? 1 : 0.6, transition: "opacity 0.4s ease" }}><circle cx="292" cy="83" r="59" fill="#ECEFEC" fillOpacity="0.98"/></g></g></g>
+    </svg>
+  );
+}
+
+function SvgPhotoArchive({ animated, hovered }) {
+  const a = (i) => modShapeStyle(i, animated);
+  const h = (i) => modHoverStyle(i, hovered);
+  return (
+    <svg viewBox="0 0 331 258" fill="none" style={{ width: "100%", height: "100%", display: "block" }}>
+      <defs>
+        <filter id="filter0_i_522_68" x="72" y="76" width="165" height="168" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="effect1_innerShadow_522_68"/>
+          <feOffset dx="7" dy="10"/>
+          <feGaussianBlur stdDeviation="11"/>
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0.909804 0 0 0 0 0.996078 0 0 0 0 0.403922 0 0 0 0.8 0"/>
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_522_68"/>
+        </filter>
+        <filter id="filter1_g_522_68" x="-53" y="-53" width="318" height="318" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feTurbulence type="fractalNoise" baseFrequency="0.999 0.999" numOctaves="3" seed="4441"/>
+          <feDisplacementMap in="shape" scale="200" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%"/>
+          <feMerge result="effect1_texture_522_68"><feMergeNode in="displacedImage"/></feMerge>
+        </filter>
+      </defs>
+      <g style={h(0)}><g style={a(0)}><circle cx="242.5" cy="155.5" r="48.5" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(1)}><g style={a(1)}><circle cx="306.5" cy="155.5" r="43.5" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(2)}><g style={a(2)}><circle cx="-0.5" cy="155.5" r="25.5" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(3)}><g style={a(3)}><circle cx="62.5" cy="155.5" r="43.5" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(4)}><g style={a(4)}><g filter="url(#filter0_i_522_68)"><circle cx="151" cy="155" r="79" style={{ fill: "var(--surface)" }}/></g></g></g>
+      <g style={h(5)}><g style={a(5)}><g filter="url(#filter1_g_522_68)" style={{ mixBlendMode: "hue", opacity: hovered ? 1 : 0.6, transition: "opacity 0.4s ease" }}><circle cx="106" cy="106" r="59" fill="#ECEFEC" fillOpacity="0.98"/></g></g></g>
+    </svg>
+  );
+}
+
+function SvgSocialPost({ animated, hovered }) {
+  const a = (i) => modShapeStyle(i, animated);
+  const h = (i) => modHoverStyle(i, hovered);
+  return (
+    <svg viewBox="0 0 331 258" fill="none" style={{ width: "100%", height: "100%", display: "block" }}>
+      <defs>
+        <filter id="filter0_i_527_119" x="28" y="78" width="126" height="121" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="effect1_innerShadow_527_119"/>
+          <feOffset dx="7" dy="10"/>
+          <feGaussianBlur stdDeviation="11"/>
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0.909804 0 0 0 0 0.996078 0 0 0 0 0.403922 0 0 0 0.8 0"/>
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_527_119"/>
+        </filter>
+        <filter id="filter1_g_527_119" x="-120" y="-65" width="319" height="319" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feTurbulence type="fractalNoise" baseFrequency="0.999 0.999" numOctaves="3" seed="4441"/>
+          <feDisplacementMap in="shape" scale="200" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%"/>
+          <feMerge result="effect1_texture_527_119"><feMergeNode in="displacedImage"/></feMerge>
+        </filter>
+      </defs>
+      <g style={h(0)}><g style={a(0)}><rect x="28" y="78" width="119" height="156" rx="10" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(1)}><g style={a(1)}><g filter="url(#filter0_i_527_119)"><path d="M28 88C28 82.4772 32.4772 78 38 78H137C142.523 78 147 82.4772 147 88V189H28V88Z" style={{ fill: "var(--surface)" }}/></g></g></g>
+      <g style={h(2)}><g style={a(2)}><g filter="url(#filter1_g_527_119)" style={{ mixBlendMode: "hue", opacity: hovered ? 1 : 0.6, transition: "opacity 0.4s ease" }}><circle cx="39.5" cy="94.5" r="59.5" fill="#ECEFEC" fillOpacity="0.98"/></g></g></g>
+      <g style={h(3)}><g style={a(3)}><path d="M171 88C171 82.4772 175.477 78 181 78H274C279.523 78 284 82.4772 284 88V224C284 229.523 279.523 234 274 234H181C175.477 234 171 229.523 171 224V88Z" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(4)}><g style={a(4)}><path d="M308 88C308 82.4772 312.477 78 318 78H411C416.523 78 421 82.4772 421 88V224C421 229.523 416.523 234 411 234H318C312.477 234 308 229.523 308 224V88Z" style={{ fill: "var(--bg)" }}/></g></g>
+    </svg>
+  );
+}
+
+function SvgTeamPhotos({ animated, hovered }) {
+  const a = (i) => modShapeStyle(i, animated);
+  const h = (i) => modHoverStyle(i, hovered);
+  return (
+    <svg viewBox="0 0 331 258" fill="none" style={{ width: "100%", height: "100%", display: "block" }}>
+      <defs>
+        <filter id="filter0_i_527_173" x="189" y="43" width="158" height="161" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="effect1_innerShadow_527_173"/>
+          <feOffset dx="7" dy="10"/>
+          <feGaussianBlur stdDeviation="11"/>
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0.909804 0 0 0 0 0.996078 0 0 0 0 0.403922 0 0 0 0.8 0"/>
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_527_173"/>
+        </filter>
+        <filter id="filter1_g_527_173" x="66" y="-24" width="313" height="313" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feTurbulence type="fractalNoise" baseFrequency="0.999 0.999" numOctaves="3" seed="4441"/>
+          <feDisplacementMap in="shape" scale="200" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%"/>
+          <feMerge result="effect1_texture_527_173"><feMergeNode in="displacedImage"/></feMerge>
+        </filter>
+      </defs>
+      <g style={h(0)}><g style={a(0)}><g filter="url(#filter0_i_527_173)"><circle cx="264.5" cy="118.5" r="75.5" style={{ fill: "var(--surface)" }}/></g></g></g>
+      <g style={h(1)}><g style={a(1)}><g filter="url(#filter1_g_527_173)" style={{ mixBlendMode: "hue", opacity: hovered ? 1 : 0.6, transition: "opacity 0.4s ease" }}><circle cx="222.5" cy="132.5" r="56.5" fill="#ECEFEC" fillOpacity="0.98"/></g></g></g>
+      <g style={h(2)}><g style={a(2)}><circle cx="168.516" cy="42.5165" r="27.5165" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(3)}><g style={a(3)}><circle cx="110.5" cy="102.5" r="46.5" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(4)}><g style={a(4)}><circle cx="122.5" cy="197.5" r="34.5" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(5)}><g style={a(5)}><circle cx="203.5" cy="240.5" r="40.5" style={{ fill: "var(--bg)" }}/></g></g>
+    </svg>
+  );
+}
+
+function SvgEmailSignature({ animated, hovered }) {
+  const a = (i) => modShapeStyle(i, animated);
+  const h = (i) => modHoverStyle(i, hovered);
+  return (
+    <svg viewBox="0 0 331 258" fill="none" style={{ width: "100%", height: "100%", display: "block" }}>
+      <defs>
+        <filter id="filter0_i_549_264" x="56" y="112" width="72" height="75" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="effect1_innerShadow_549_264"/>
+          <feOffset dx="7" dy="10"/>
+          <feGaussianBlur stdDeviation="11"/>
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0.909804 0 0 0 0 0.996078 0 0 0 0 0.403922 0 0 0 0.8 0"/>
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_549_264"/>
+        </filter>
+        <filter id="filter1_g_549_264" x="-67" y="-51" width="300" height="300" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feTurbulence type="fractalNoise" baseFrequency="0.999 0.999" numOctaves="3" seed="4441"/>
+          <feDisplacementMap in="shape" scale="200" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%"/>
+          <feMerge result="effect1_texture_549_264"><feMergeNode in="displacedImage"/></feMerge>
+        </filter>
+      </defs>
+      <g style={h(0)}><g style={a(0)}><path d="M39 93C39 87.4772 43.4772 83 49 83H335C340.523 83 345 87.4772 345 93V227C345 232.523 340.523 237 335 237H49C43.4772 237 39 232.523 39 227V93Z" style={{ fill: "var(--bg)" }}/></g></g>
+      <g style={h(1)}><g style={a(1)}><path d="M151 143C145.477 143 141 138.523 141 133L141 125C141 119.477 145.477 115 151 115L260 115C265.523 115 270 119.477 270 125L270 133C270 138.523 265.523 143 260 143L151 143Z" style={{ fill: "var(--surface)" }}/></g></g>
+      <g style={h(2)}><g style={a(2)}><path d="M151 177C145.477 177 141 172.523 141 167L141 159C141 153.477 145.477 149 151 149L312 149C317.523 149 322 153.477 322 159L322 167C322 172.523 317.523 177 312 177L151 177Z" style={{ fill: "var(--surface)" }}/></g></g>
+      <g style={h(3)}><g style={a(3)}><g filter="url(#filter0_i_549_264)"><circle cx="88.5" cy="144.5" r="32.5" style={{ fill: "var(--surface)" }}/></g></g></g>
+      <g style={h(4)}><g style={a(4)}><g filter="url(#filter1_g_549_264)" style={{ mixBlendMode: "hue", opacity: hovered ? 1 : 0.6, transition: "opacity 0.4s ease" }}><circle cx="83" cy="99" r="50" fill="#ECEFEC" fillOpacity="0.98"/></g></g></g>
+    </svg>
+  );
+}
+
 // =============== SCREEN 10 — HOME (sidebar-less, cream, radial picker) ===============
 const WIDGET_CATALOGUE = {
   "library": {
     title: "Brand Library",
     to: "library",
     working: true,
-    render: () => (
-      <div style={{ display: "flex", gap: 10, flex: 1, alignItems: "stretch" }}>
-        {[{ mark: "block" }, { mark: "stamp" }, { mark: "word" }].map((m, i) => (
-          <div key={i} style={{
-            flex: i === 0 ? 1.6 : 1,
-            background: i === 0 ? "var(--ph-1)" : i === 1 ? "var(--ph-2)" : "var(--ph-3)",
-            border: `1px solid ${HOME_TILE_BORDER}`, borderRadius: 6,
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-            {m.mark === "block" && <div style={{ width: 48, height: 22, background: SOLID, borderRadius: 1 }} />}
-            {m.mark === "stamp" && <div style={{ width: 28, height: 28, borderRadius: 14, border: `3px solid ${DARK}` }} />}
-            {m.mark === "word" && (
-              <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-                <div style={{ width: 12, height: 12, borderRadius: 6, background: SOLID }} />
-                <div style={{ width: 22, height: 7, background: SOLID, borderRadius: 1 }} />
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    ),
+    render: (go, hover) => <ModuleSVGThumb hovered={hover} renderSvg={(animated, hovered) => <SvgBrandLibrary animated={animated} hovered={hovered} />} />,
   },
   "files": {
     title: "Team Photos",
     to: "files",
     working: true,
-    render: () => (
-      <div style={{
-        position: "relative",
-        width: "100%",
-        height: "100%",
-        minHeight: 160,
-        overflow: "hidden",
-      }}>
-        {[
-          { idx: 0, size: 110, left: "5%",  top: "10%" },
-          { idx: 1, size: 75,  left: "38%", top: "5%"  },
-          { idx: 2, size: 140, left: "55%", top: "0%"  },
-          { idx: 3, size: 85,  left: "8%",  top: "55%" },
-          { idx: 4, size: 65,  left: "42%", top: "52%" },
-          { idx: 5, size: 90,  left: "68%", top: "50%" },
-        ].map(({ idx, size, left, top }) => (
-          <div
-            key={idx}
-            style={{
-              position: "absolute",
-              left,
-              top,
-              width: size,
-              height: size,
-              borderRadius: "50%",
-              overflow: "hidden",
-              flexShrink: 0,
-            }}
-          >
-            <img
-              src={TEAM_PHOTOS[idx].url}
-              alt=""
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: "center top",
-                display: "block",
-              }}
-            />
-          </div>
-        ))}
-      </div>
-    ),
+    render: (go, hover) => <ModuleSVGThumb hovered={hover} renderSvg={(animated, hovered) => <SvgTeamPhotos animated={animated} hovered={hovered} />} />,
   },
   "memory": {
     title: "Photo Archive",
     to: "memory",
     working: true,
-    render: () => {
-      const circles = [
-        { idx: 0, size: 120, left: "48%", top: "-5%"  },
-        { idx: 1, size: 85,  left: "5%",  top: "15%"  },
-        { idx: 2, size: 70,  left: "28%", top: "45%"  },
-        { idx: 3, size: 55,  left: "60%", top: "55%"  },
-        { idx: 4, size: 45,  left: "18%", top: "65%"  },
-        { idx: 5, size: 40,  left: "75%", top: "20%"  },
-      ];
-      return (
-        <div style={{ position: "relative", width: "100%", height: "100%", minHeight: 160 }}>
-          {circles.map(({ idx, size, left, top }) => (
-            <div
-              key={idx}
-              style={{
-                position: "absolute", left, top,
-                width: size, height: size,
-                borderRadius: "50%",
-                overflow: "hidden",
-                flexShrink: 0,
-              }}
-            >
-              <img
-                src={archivePhoto(idx)}
-                alt=""
-                onError={e => { e.currentTarget.style.display = "none"; e.currentTarget.parentElement.style.background = "var(--ph-1)"; }}
-                style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
-              />
-            </div>
-          ))}
-        </div>
-      );
-    },
+    render: (go, hover) => <ModuleSVGThumb hovered={hover} renderSvg={(animated, hovered) => <SvgPhotoArchive animated={animated} hovered={hovered} />} />,
   },
   "signature": {
     title: "Email Signature",
     to: "signature",
     working: true,
-    render: () => (
-      <div style={{
-        flex: 1, padding: 16, background: FAINT, borderRadius: 6,
-        border: `1px solid ${HOME_TILE_BORDER}`,
-        display: "flex", flexDirection: "column", justifyContent: "center", gap: 4,
-      }}>
-        <div style={{ fontSize: 15, fontWeight: 700, color: DARK, letterSpacing: -0.2 }}>Eli Marchetti</div>
-        <div style={{ fontSize: 11, color: "#666" }}>Brand Lead · Marketing</div>
-        <div style={{ marginTop: 8, height: 1, width: "70%", background: BORDER }} />
-        <div style={{ marginTop: 6, fontSize: 10, color: "#888" }}>+1 (415) 555 · 0148</div>
-        <div style={{ fontSize: 10, color: "#888" }}>linkedin.com/in/elim</div>
-      </div>
-    ),
+    render: (go, hover) => <ModuleSVGThumb hovered={hover} renderSvg={(animated, hovered) => <SvgEmailSignature animated={animated} hovered={hovered} />} />,
   },
   "social": {
     title: "Social Post",
     to: "social",
     working: true,
-    render: () => (
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6, flex: 1 }}>
-        {[{ gIdx: 0 }, { gIdx: 2 }, { gIdx: 4 }, { gIdx: 1, colSpan: 2 }, { gIdx: 5 }].map((s, i) => (
-          <div key={i} style={{
-            gridColumn: s.colSpan ? `span ${s.colSpan}` : undefined,
-            background: PHOTO_GRADIENTS[s.gIdx % PHOTO_GRADIENTS.length],
-            border: `1px solid ${HOME_TILE_BORDER}`, borderRadius: 4,
-          }} />
-        ))}
-      </div>
-    ),
+    render: (go, hover) => <ModuleSVGThumb hovered={hover} renderSvg={(animated, hovered) => <SvgSocialPost animated={animated} hovered={hovered} />} />,
   },
   "creator": {
     title: "Brand Checker",
     to: "creator",
     working: true,
-    render: () => (
-      <div style={{
-        flex: 1, border: `1px dashed ${HOME_TILE_BORDER}`, borderRadius: 6,
-        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-        gap: 10, padding: 14, color: MUTED,
-      }}>
-        <div style={{
-          width: 40, height: 40, border: `1.5px solid ${MUTED}`, borderRadius: 20,
-          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, color: "#888",
-        }}>↑</div>
-        <div style={{ fontSize: 12, color: "#555", textAlign: "center" }}>Drop a file to check</div>
-        <div style={{ fontSize: 9, color: MUTED, letterSpacing: 0.6, fontFamily: '"SF Mono", monospace' }}>PDF · PNG · PPTX · FIG</div>
-      </div>
-    ),
+    render: (go, hover) => <ModuleSVGThumb hovered={hover} renderSvg={(animated, hovered) => <SvgBrandChecker animated={animated} hovered={hovered} />} />,
   },
   "onboarding": {
     title: "Onboarding",
     to: "onboarding",
     working: true,
-    render: () => (
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-          <div style={{ fontSize: 48, fontWeight: 700, color: DARK, letterSpacing: -1.6, lineHeight: 1 }}>40</div>
-          <div style={{ fontSize: 20, color: MUTED, fontWeight: 500 }}>%</div>
-        </div>
-        <div style={{ marginTop: 12, height: 6, background: FAINT, borderRadius: 3, overflow: "hidden" }}>
-          <div style={{ width: "40%", height: "100%", background: "var(--ink)" }} />
-        </div>
-        <div style={{ marginTop: 14, fontSize: 11, color: MUTED, letterSpacing: 0.6, textTransform: "uppercase", fontFamily: '"SF Mono", monospace' }}>
-          Up next · 03 Logo & Visual Identity
-        </div>
-      </div>
-    ),
+    render: (go, hover) => <ModuleSVGThumb hovered={hover} renderSvg={(animated, hovered) => <SvgOnboarding animated={animated} hovered={hovered} />} />,
   },
   "brand-pulse": {
     title: "Brand Pulse",
     to: null,
     working: false,
-    render: () => (
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <div style={{ flex: 1, position: "relative", marginBottom: 12 }}>
-          <svg viewBox="0 0 200 60" preserveAspectRatio="none" style={{ width: "100%", height: "100%" }}>
-            <polyline fill="none" stroke={DARK} strokeWidth="1.5"
-              points="0,44 20,40 40,42 60,32 80,34 100,26 120,28 140,18 160,20 180,12 200,8" />
-            <polyline fill="var(--line)" stroke="none"
-              points="0,44 20,40 40,42 60,32 80,34 100,26 120,28 140,18 160,20 180,12 200,8 200,60 0,60" />
-            <circle cx="200" cy="8" r="3" fill={DARK} />
-          </svg>
-        </div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-          <div>
-            <div style={{ fontSize: 28, fontWeight: 700, color: DARK, letterSpacing: -0.8, lineHeight: 1 }}>847</div>
-            <div style={{ marginTop: 4, fontSize: 10, color: MUTED, letterSpacing: 0.6, textTransform: "uppercase", fontFamily: '"SF Mono", monospace' }}>
-              Assets · V3.2
-            </div>
-          </div>
-          <div style={{ textAlign: "right" }}>
-            <div style={{ fontSize: 18, fontWeight: 600, color: DARK, letterSpacing: -0.3, lineHeight: 1 }}>94%</div>
-            <div style={{ fontSize: 10, color: MUTED, letterSpacing: 0.4, marginTop: 4 }}>Coverage</div>
-          </div>
+    render: (go, hover) => (
+      <div style={{ flex: 1, display: "flex", alignItems: "flex-end", justifyContent: "center", paddingBottom: 18 }}>
+        <div className="wp-shapes" style={{ display: "flex", alignItems: "flex-end", gap: 6 }}>
+          {[16, 24, 34, 44, 54, 66, 76, 82].map((h, i) => (
+            <div key={i} style={{
+              width: 10, height: h, borderRadius: 4, background: "var(--ph-4)",
+              transform: hover ? "scaleY(1.2)" : "scaleY(1)",
+              transformOrigin: "bottom",
+              transition: `transform 0.3s ease ${i * 0.025}s`,
+            }} />
+          ))}
         </div>
       </div>
     ),
@@ -4437,35 +4757,47 @@ const WIDGET_CATALOGUE = {
     title: "Tone of Voice",
     to: null,
     working: false,
-    render: () => (
-      <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1, justifyContent: "center" }}>
-        {[["✓","Direct, no jargon"],["✓","Warm, not corporate"],["✓","Confident, never loud"],["✗","Never 'leverage'"]].map(([m, t]) => (
-          <div key={t} style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            <div style={{
-              width: 22, height: 22, borderRadius: 11,
-              background: m === "✓" ? "var(--ok-bg)" : "var(--bad-bg)",
-              color: m === "✓" ? "var(--ok-fg)" : "var(--bad-fg)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 11, fontWeight: 700, flexShrink: 0,
-            }}>{m}</div>
-            <span style={{ fontSize: 13, color: "#444" }}>{t}</span>
+    render: (go, hover) => {
+      const shifts = [8, -5, 6];
+      return (
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div className="wp-shapes" style={{ display: "flex", flexDirection: "column", gap: 10, width: "80%" }}>
+            {[{ w: "100%" }, { w: "70%" }, { w: "85%" }].map(({ w }, i) => (
+              <div key={i} style={{
+                height: 10, width: w, borderRadius: 5, background: "var(--ph-3)",
+                transform: hover ? `translateX(${shifts[i]}px)` : "translateX(0)",
+                transition: `transform 0.3s ease ${i * 0.06}s`,
+              }} />
+            ))}
           </div>
-        ))}
-      </div>
-    ),
+        </div>
+      );
+    },
   },
   "guidelines": {
     title: "Guidelines",
     to: null,
     working: false,
-    render: () => (
-      <div style={{ display: "flex", flexDirection: "column", gap: 9, flex: 1, justifyContent: "center" }}>
-        {[0,1,2,3].map(i => (
-          <div key={i} style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            <div style={{ width: 18, height: 22, borderRadius: 2, background: SURFACE, border: `1px solid ${HOME_TILE_BORDER}`, flexShrink: 0 }} />
-            <div style={{ flex: 1, height: 4, background: "var(--ph-4)", borderRadius: 2, maxWidth: 70 + i * 18 }} />
-          </div>
-        ))}
+    render: (go, hover) => (
+      <div style={{ flex: 1, position: "relative" }}>
+        <div className="wp-shapes" style={{
+          position: "absolute", bottom: 20, right: 20,
+          display: "flex", flexDirection: "column", gap: 14,
+          width: 160,
+        }}>
+          {[
+            { h: 8, w: "90%" },
+            { h: 5, w: "65%" },
+            { h: 3, w: "80%" },
+          ].map(({ h, w }, i) => (
+            <div key={i} style={{
+              height: h, width: w, borderRadius: 4, background: "var(--ph-3)",
+              transform: hover ? "scaleX(1.08)" : "scaleX(1)",
+              transformOrigin: "right",
+              transition: `transform 0.3s ease ${i * 0.05}s`,
+            }} />
+          ))}
+        </div>
       </div>
     ),
   },
@@ -4473,31 +4805,53 @@ const WIDGET_CATALOGUE = {
     title: "Icon Set",
     to: null,
     working: false,
-    render: () => (
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, flex: 1, alignContent: "center" }}>
-        {[0,1,2,3,4,5,6,7].map(i => (
-          <div key={i} style={{
-            aspectRatio: "1", borderRadius: 6, border: `1.5px solid ${DARK}`,
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-            <div style={{ width: 10, height: 10, background: SOLID, borderRadius: i % 2 ? 5 : 1 }} />
+    render: (go, hover) => {
+      const offsets = [[-3,-3],[3,-3],[-3,3],[3,3]];
+      const shapes = [
+        { borderRadius: "50%", clipPath: undefined },
+        { borderRadius: 3,     clipPath: undefined },
+        { borderRadius: 0,     clipPath: "polygon(50% 4%, 96% 96%, 4% 96%)" },
+        { borderRadius: 0,     clipPath: "polygon(50% 4%, 96% 50%, 50% 96%, 4% 50%)" },
+      ];
+      return (
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div className="wp-shapes" style={{ display: "grid", gridTemplateColumns: "36px 36px", gap: 12 }}>
+            {shapes.map(({ borderRadius, clipPath }, i) => (
+              <div key={i} style={{
+                width: 36, height: 36, background: "var(--ph-4)",
+                borderRadius, clipPath,
+                transform: hover
+                  ? `scale(1.1) translate(${offsets[i][0]}px, ${offsets[i][1]}px)`
+                  : "scale(1) translate(0, 0)",
+                transition: `transform 0.3s ease ${i * 0.04}s`,
+              }} />
+            ))}
           </div>
-        ))}
-      </div>
-    ),
+        </div>
+      );
+    },
   },
   "motion": {
     title: "Motion",
     to: null,
     working: false,
-    render: () => (
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-        {[0,1,2,3,4].map(i => (
-          <div key={i} style={{
-            width: 10, borderRadius: 5, background: SOLID,
-            height: [24, 44, 64, 40, 20][i], opacity: 0.35 + i * 0.13,
-          }} />
-        ))}
+    render: (go, hover) => (
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div className="wp-shapes" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {[
+            { w: 14, h: 40,  r: 7  },
+            { w: 16, h: 80,  r: 8  },
+            { w: 18, h: 120, r: 9  },
+            { w: 16, h: 90,  r: 8  },
+            { w: 14, h: 56,  r: 7  },
+          ].map(({ w, h, r }, i) => (
+            <div key={i} style={{
+              width: w, height: h, borderRadius: r, background: "var(--ph-4)",
+              transform: hover ? "scaleY(1.15)" : "scaleY(1)",
+              transition: `transform 0.3s ease ${i * 0.05}s`,
+            }} />
+          ))}
+        </div>
       </div>
     ),
   },
@@ -4505,12 +4859,16 @@ const WIDGET_CATALOGUE = {
     title: "Photography Style",
     to: null,
     working: false,
-    render: () => (
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 6, flex: 1 }}>
-        <div style={{ background: PHOTO_GRADIENTS[3], borderRadius: 6, border: `1px solid ${HOME_TILE_BORDER}` }} />
-        <div style={{ display: "grid", gridTemplateRows: "1fr 1fr", gap: 6 }}>
-          <div style={{ background: PHOTO_GRADIENTS[0], borderRadius: 6, border: `1px solid ${HOME_TILE_BORDER}` }} />
-          <div style={{ background: PHOTO_GRADIENTS[5], borderRadius: 6, border: `1px solid ${HOME_TILE_BORDER}` }} />
+    render: (go, hover) => (
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div className="wp-shapes" style={{ display: "grid", gridTemplateColumns: "52px 44px", gridTemplateRows: "52px 44px", gap: 10 }}>
+          {[0,1,2,3].map(i => (
+            <div key={i} style={{
+              borderRadius: 4, background: "var(--ph-3)",
+              transform: hover ? "scale(1.04)" : "scale(1)",
+              transition: `transform 0.3s ease ${i * 0.04}s`,
+            }} />
+          ))}
         </div>
       </div>
     ),
@@ -4519,14 +4877,17 @@ const WIDGET_CATALOGUE = {
     title: "Campaigns",
     to: null,
     working: false,
-    render: () => (
-      <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1, justifyContent: "center" }}>
-        {[["Spring Launch","ACTIVE"],["Q3 Rebrand","PLANNING"],["Recruiting","DRAFT"]].map(([n, s]) => (
-          <div key={n} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: 13, color: "#444" }}>{n}</span>
-            <span style={{ fontSize: 9, color: MUTED, fontFamily: MONO, letterSpacing: 0.6 }}>{s}</span>
-          </div>
-        ))}
+    render: (go, hover) => (
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div className="wp-shapes" style={{ display: "flex", flexDirection: "column", gap: 14, width: "80%" }}>
+          {["100%", "40%", "70%", "25%"].map((w, i) => (
+            <div key={i} style={{
+              height: 6, width: w, borderRadius: 4, background: "var(--ph-3)",
+              transform: hover ? "translateX(6px)" : "translateX(0)",
+              transition: `transform 0.3s ease ${i * 0.07}s`,
+            }} />
+          ))}
+        </div>
       </div>
     ),
   },
@@ -4534,26 +4895,56 @@ const WIDGET_CATALOGUE = {
     title: "Asset Requests",
     to: null,
     working: false,
-    render: () => (
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", gap: 8 }}>
-        <div style={{ fontSize: 48, fontWeight: 700, color: DARK, letterSpacing: -1.6, lineHeight: 1 }}>5</div>
-        <div style={{ fontSize: 11, color: MUTED, letterSpacing: 0.6, textTransform: "uppercase", fontFamily: MONO }}>Open requests · 2 awaiting you</div>
-      </div>
-    ),
+    render: (go, hover) => {
+      /* Speech bubble: rounded rect body + downward-left triangle pointer */
+      const bubble = (style, withPointer, pointerLeft = 14) => (
+        <div style={{ position: "relative", ...style }}>
+          <div style={{
+            position: "absolute", inset: 0,
+            borderRadius: 10, background: "var(--ph-3)",
+          }} />
+          {withPointer && (
+            <div style={{
+              position: "absolute", bottom: -7, left: pointerLeft,
+              width: 11, height: 8, background: "var(--ph-3)",
+              clipPath: "polygon(0 0, 100% 0, 15% 100%)",
+            }} />
+          )}
+        </div>
+      );
+      return (
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div className="wp-shapes" style={{ position: "relative", width: 120, height: 96 }}>
+            {/* Back bubble — upper-right, no pointer */}
+            {bubble({
+              position: "absolute", top: 0, left: 22,
+              width: 96, height: 52,
+            }, false)}
+            {/* Front bubble — lower-left, has pointer, shifts on hover */}
+            {bubble({
+              position: "absolute", top: 26, left: 0,
+              width: 90, height: 48,
+              transform: hover ? "translate(-3px, -3px)" : "translate(0, 0)",
+              transition: "transform 0.3s ease",
+            }, true, 14)}
+          </div>
+        </div>
+      );
+    },
   },
 };
 
 const ROLE_PRESETS = {
   designer: ["library","memory","files","onboarding","brand-pulse","brand-voice"],
   marketer: ["social","library","memory","creator","files","brand-pulse"],
-  hr:       ["files","onboarding","memory","brand-voice","library","signature"],
+  hr:       ["files","onboarding","memory","library","signature","brand-voice"],
   sales:    ["signature","library","onboarding","creator","files","brand-pulse"],
 };
 
 const SEARCH_INDEX = [
   { label: "Team Photos",     hint: "42 portraits · headshots", to: "files",
     keywords: ["photo","photos","team","people","headshot","portrait","faces","staff"] },
-  { label: "Photo Archive",   hint: "2,418 photos · 2022–2026", to: "memory",
+  { label: "Photo Archive",   hint: "1,861 photos · 2022–today", to: "memory",
     keywords: ["photo","photos","archive","memory","timeline","events","history","gallery"] },
   { label: "Brand Library",   hint: "logos · colours · type", to: "library",
     keywords: ["brand","library","logo","logos","mark","assets","guidelines","download"] },
@@ -4600,12 +4991,14 @@ function searchTools(q) {
 // ===== Widget tile (handles click-vs-hold discrimination) =====
 function HomeWidgetTile({ widgetKey, widget, go, index = 0, justAdded, isDragged, isAnyDragging, onDragStart }) {
   const [hover, setHover] = useState(false);
+  const [pressed, setPressed] = useState(false);
   const stateRef = useRef({ phase: "idle", startX: 0, startY: 0, timer: null });
 
   function onPointerDown(e) {
     if (e.button !== 0) return;
     if (isAnyDragging) return;
     e.preventDefault();
+    setPressed(true);
     const rect = e.currentTarget.getBoundingClientRect();
     const startX = e.clientX, startY = e.clientY;
     stateRef.current = { phase: "pressed", startX, startY, timer: null };
@@ -4636,6 +5029,7 @@ function HomeWidgetTile({ widgetKey, widget, go, index = 0, justAdded, isDragged
         if (widget.working && widget.to) go(widget.to);
       }
       stateRef.current.phase = "idle";
+      setPressed(false);
     }
 
     window.addEventListener("pointermove", onMove);
@@ -4653,18 +5047,16 @@ function HomeWidgetTile({ widgetKey, widget, go, index = 0, justAdded, isDragged
         background: isDragged ? "rgba(255,255,255,0.4)" : "var(--surface)",
         border: isDragged ? `1px dashed var(--border)` : `1px solid var(--border)`,
         borderRadius: 14,
-        padding: 20,
+        padding: 0,
         height: 260,
+        overflow: widgetKey === "files" ? "visible" : "hidden",
         display: "flex", flexDirection: "column",
         cursor: widget.working ? "pointer" : "grab",
         userSelect: "none",
         opacity: isDragged ? 0.35 : widget.working ? 1 : 0.62,
-        transform: isDragged
-          ? "translateY(0)"
-          : hover
-            ? (widget.working ? "translateY(-4px) scale(1.015)" : "translateY(-2px)")
-            : "translateY(0) scale(1)",
-        transition: "transform 0.26s cubic-bezier(0.22,1,0.36,1), opacity 0.15s, background 0.15s, border-color 0.15s",
+        transform: isDragged ? "translateY(0)" : hover ? "translateY(-3px)" : "translateY(0)",
+        boxShadow: pressed ? "inset 0 0 0 1.5px rgba(232,254,103,0.3)" : "none",
+        transition: "transform 0.2s ease, box-shadow 0.15s ease, opacity 0.15s, background 0.15s, border-color 0.15s",
         touchAction: "none",
         animation: isDragged
           ? "none"
@@ -4673,12 +5065,12 @@ function HomeWidgetTile({ widgetKey, widget, go, index = 0, justAdded, isDragged
             : `tileIn 0.5s cubic-bezier(0.22,1,0.36,1) backwards`,
         animationDelay: justAdded ? "0ms" : `${Math.min(index, 11) * 45}ms`,
       }}
-      onMouseOver={e => { if (!isDragged) e.currentTarget.style.borderColor = "var(--ink)"; }}
+      onMouseOver={e => { if (!isDragged && widget.working) e.currentTarget.style.borderColor = "var(--ink)"; }}
       onMouseOut={e => { e.currentTarget.style.borderColor = "var(--border)"; }}
     >
       <div style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        marginBottom: 14,
+        marginBottom: 16, padding: "20px 20px 0",
       }}>
         <div style={{
           fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 500, color: "var(--ink)",
@@ -4686,15 +5078,14 @@ function HomeWidgetTile({ widgetKey, widget, go, index = 0, justAdded, isDragged
         }}>{widget.title}</div>
         {!widget.working && (
           <span style={{
-            fontSize: 9, fontWeight: 600, letterSpacing: 0.8,
-            color: "var(--muted)", background: "var(--faint)",
-            border: `1px solid var(--border)`,
-            padding: "2px 7px", borderRadius: 10, textTransform: "uppercase",
+            fontSize: 10, fontWeight: 500, letterSpacing: 0.8,
+            color: "var(--ph-4)", textTransform: "uppercase",
+            fontFamily: "'Inter', sans-serif",
           }}>Soon</span>
         )}
       </div>
       <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
-        {widget.render(go)}
+        {widget.render(go, hover)}
       </div>
     </div>
   );
@@ -4703,7 +5094,7 @@ function HomeWidgetTile({ widgetKey, widget, go, index = 0, justAdded, isDragged
 // ===== Radial picker =====
 function ChipPreview({ widgetKey }) {
   if (widgetKey === "library") return (
-    <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
+    <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
       <div style={{ width: 26, height: 14, background: SOLID, borderRadius: 1 }} />
       <div style={{ width: 18, height: 18, borderRadius: 9, border: `2px solid ${DARK}` }} />
     </div>
@@ -4713,7 +5104,7 @@ function ChipPreview({ widgetKey }) {
       {[0,1,2,3].map(i => (
         <div key={i} style={{
           width: 24, height: 24, borderRadius: 12,
-          background: PHOTO_GRADIENTS[i % PHOTO_GRADIENTS.length],
+          background: "var(--ph-3)",
           border: "2px solid white", marginLeft: i === 0 ? 0 : -7,
         }} />
       ))}
@@ -4722,7 +5113,7 @@ function ChipPreview({ widgetKey }) {
   if (widgetKey === "memory") return (
     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 2, width: 50, height: 36 }}>
       {[0,1,2,3,4,5].map(i => (
-        <div key={i} style={{ background: PHOTO_GRADIENTS[(i*2+1) % PHOTO_GRADIENTS.length], borderRadius: 2 }} />
+        <div key={i} style={{ background: "var(--ph-3)", borderRadius: 2 }} />
       ))}
     </div>
   );
@@ -4737,7 +5128,7 @@ function ChipPreview({ widgetKey }) {
   if (widgetKey === "social") return (
     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 3, width: 50, height: 50 }}>
       {[0,1,2,3].map(i => (
-        <div key={i} style={{ background: PHOTO_GRADIENTS[(i*3) % PHOTO_GRADIENTS.length], borderRadius: 2 }} />
+        <div key={i} style={{ background: "var(--ph-3)", borderRadius: 2 }} />
       ))}
     </div>
   );
@@ -4919,21 +5310,44 @@ function packHex(h) {
     : [parseInt(s.slice(0,2),16), parseInt(s.slice(2,4),16), parseInt(s.slice(4,6),16)];
 }
 
+// ── BubblePicker sphere helpers ──────────────────────────────────────────
+// Deterministic per-key hash so every widget always gets the same shadow
+// direction and turbulence seed regardless of render order.
+const BUBBLE_SHADOW_OFFSETS = [
+  [-20, -20], [ 20, -20], [-20,  20], [ 20,  20],
+  [  0, -28], [ 28,   0], [  0,  28], [-28,   0],
+  [-16,  24], [ 24, -16], [-24,  16], [ 16,  24],
+];
+const BUBBLE_SEEDS = [3, 7, 12, 17, 23, 29, 37, 41, 47, 53, 61, 67];
+function bubbleKeyHash(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+  return h;
+}
+
 function BubblePicker({ availableWidgets, onAdd, onClose }) {
-  const { theme } = useContext(AppContext);
   const [closing, setClosing] = useState(false);
   const [circles, setCircles] = useState([]);
   const [hovered, setHovered] = useState(-1);
   const widgets = availableWidgets || [];
 
-  const BG     = theme === "dark" ? "#1C1C1E" : "#ECEDEF";
-  const INK    = theme === "dark" ? "rgba(240,237,232,0.88)" : "rgba(20,20,20,0.88)";
-  const STROKE = theme === "dark" ? "rgba(255,255,255,0.14)" : "rgba(20,20,20,0.18)";
+  // Physics: single ref per bubble — rAF writes translate+scale together
+  const circleRefs = useRef([]);
+  const hovRef     = useRef(-1);      // mirrors hovered state; read by rAF without triggering renders
+  const mouseRef   = useRef({ x: -9999, y: -9999 }); // off-screen until first real move
+  const physRef    = useRef([]);      // [{x,y,vx,vy,sc}] per bubble — physics state
+  const sleepRef   = useRef(false);   // true when loop is stopped; wakes on mousemove
+  const rafRef     = useRef(null);
+  const isTouch    = useRef(false);
 
   function handleClose() {
     setClosing(true);
     setTimeout(() => onClose(), 300);
   }
+
+  useEffect(() => {
+    isTouch.current = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+  }, []);
 
   useEffect(() => {
     function onKey(e) { if (e.key === "Escape") handleClose(); }
@@ -4951,84 +5365,272 @@ function BubblePicker({ availableWidgets, onAdd, onClose }) {
       spawnRate: () => 1,
     });
     engine.resize(W, H);
-    // Run synchronously to stable layout — no RAF dependency
     for (let i = 0; i < 6000; i++) engine.step(1 / 60);
     const raw = engine.getCircles().filter(c => c.settled && c.r >= 56);
-    // Sort largest-first so big circles get widgets assigned
     raw.sort((a, b) => b.r - a.r);
-    const mapped = widgets.slice(0, raw.length).map((key, i) => ({
+    const mapped = widgets.slice(0, raw.length).map((key, idx) => ({
       key,
-      x: raw[i].x,
-      y: raw[i].y,
-      r: raw[i].r,
+      x: raw[idx].x,
+      y: raw[idx].y,
+      r: raw[idx].r,
     }));
     setCircles(mapped);
   }, [widgets.join(",")]);
+
+  // Physics loop — spring + cursor repulsion + bubble-to-bubble repulsion
+  useEffect(() => {
+    if (isTouch.current || circles.length === 0) return;
+
+    // Per-bubble mutable state. Never triggers React renders.
+    physRef.current = circles.map(() => ({ x: 0, y: 0, vx: 0, vy: 0, sc: 1 }));
+    sleepRef.current = false;
+
+    // ── Tuning constants ────────────────────────────────────────────────────
+    const SPRING_K         = 0.04;  // restoring force toward home per px of displacement
+    const DAMPING          = 0.82;  // velocity decay per frame (friction)
+    const CURSOR_R         = 200;   // px — radius of cursor influence
+    const CURSOR_F         = 1.2;   // peak force at cursor centre
+    const REPULSION_F      = 1.5;   // bubble-bubble force per unit normalised overlap
+    const BUBBLE_GAP       = 4;     // px clearance added to r_i + r_j before repulsion fires
+    const MAX_V            = 15;    // velocity cap, px / frame
+    const IDLE_EPS         = 0.02;  // activity below which a bubble counts as still
+    const IDLE_CUTOFF      = 120;   // frames of quiet before the loop sleeps (~2 s at 60 fps)
+    // ────────────────────────────────────────────────────────────────────────
+
+    let idleCount = 0;
+
+    function tick() {
+      const phys = physRef.current;
+      const n    = phys.length;
+      const mx   = mouseRef.current.x;
+      const my   = mouseRef.current.y;
+
+      // ── Pass 1: spring + cursor force → velocity → position ─────────────
+      for (let i = 0; i < n; i++) {
+        const p  = phys[i];
+        const ci = circles[i];
+
+        // Spring pulls back toward home offset (0, 0)
+        let fx = -p.x * SPRING_K;
+        let fy = -p.y * SPRING_K;
+
+        // Cursor pushes the bubble away from the mouse position
+        const bx   = ci.x + p.x;     // actual bubble centre x
+        const by   = ci.y + p.y;     // actual bubble centre y
+        const dxM  = bx - mx;
+        const dyM  = by - my;
+        const dstM = Math.sqrt(dxM * dxM + dyM * dyM) || 0.001;
+        if (dstM < CURSOR_R) {
+          const t = 1 - dstM / CURSOR_R;         // 1 at centre, 0 at edge
+          const f = t * t * CURSOR_F;             // quadratic falloff
+          fx += (dxM / dstM) * f;
+          fy += (dyM / dstM) * f;
+        }
+
+        // Integrate
+        p.vx = (p.vx + fx) * DAMPING;
+        p.vy = (p.vy + fy) * DAMPING;
+        if (p.vx >  MAX_V) p.vx =  MAX_V;
+        if (p.vx < -MAX_V) p.vx = -MAX_V;
+        if (p.vy >  MAX_V) p.vy =  MAX_V;
+        if (p.vy < -MAX_V) p.vy = -MAX_V;
+        p.x += p.vx;
+        p.y += p.vy;
+      }
+
+      // ── Pass 2: bubble-to-bubble soft repulsion ──────────────────────────
+      // O(n²) but n ≤ ~12 so this is ~66 iterations — negligible.
+      for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+          const pi  = phys[i];
+          const pj  = phys[j];
+          const dx  = (circles[i].x + pi.x) - (circles[j].x + pj.x);
+          const dy  = (circles[i].y + pi.y) - (circles[j].y + pj.y);
+          const dst = Math.sqrt(dx * dx + dy * dy) || 0.001;
+          const min = circles[i].r + circles[j].r + BUBBLE_GAP;
+          if (dst < min) {
+            // Overlap as a fraction of min distance → soft, not rigid
+            const overlap = (min - dst) / min;
+            const f  = overlap * REPULSION_F;
+            const nx = dx / dst;
+            const ny = dy / dst;
+            pi.vx += nx * f;  pi.vy += ny * f;
+            pj.vx -= nx * f;  pj.vy -= ny * f;
+          }
+        }
+      }
+
+      // ── Pass 3: hover scale lerp + activity measure ──────────────────────
+      let maxActivity = 0;
+      for (let i = 0; i < n; i++) {
+        const p        = phys[i];
+        const targetSc = hovRef.current === i ? 1.05 : 1;
+        p.sc          += (targetSc - p.sc) * 0.18;
+        const a = Math.abs(p.vx) + Math.abs(p.vy) + Math.abs(p.x) + Math.abs(p.y) + Math.abs(p.sc - 1);
+        if (a > maxActivity) maxActivity = a;
+      }
+
+      // ── Pass 4: render ───────────────────────────────────────────────────
+      const active = maxActivity > IDLE_EPS || hovRef.current !== -1;
+      if (active) {
+        idleCount = 0;
+        for (let i = 0; i < n; i++) {
+          const el = circleRefs.current[i];
+          if (!el) continue;
+          const p = phys[i];
+          el.style.transform =
+            `translate(${p.x.toFixed(2)}px,${p.y.toFixed(2)}px) scale(${p.sc.toFixed(4)})`;
+        }
+      } else {
+        idleCount++;
+        if (idleCount > IDLE_CUTOFF) {
+          // Snap everything to exact rest, then stop the loop
+          for (let i = 0; i < n; i++) {
+            const p = phys[i];
+            p.x = p.y = p.vx = p.vy = 0; p.sc = 1;
+            const el = circleRefs.current[i];
+            if (el) el.style.transform = "";
+          }
+          sleepRef.current = true;
+          return; // no next rAF — loop is sleeping
+        }
+      }
+
+      rafRef.current = requestAnimationFrame(tick);
+    }
+
+    function onMove(e) {
+      mouseRef.current = { x: e.clientX, y: e.clientY };
+      // If the loop went to sleep, wake it on the first mouse event
+      if (sleepRef.current) {
+        sleepRef.current = false;
+        rafRef.current = requestAnimationFrame(tick);
+      }
+    }
+    window.addEventListener("mousemove", onMove, { passive: true });
+
+    rafRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [circles]);
 
   return (
     <div
       onClick={handleClose}
       style={{
         position: "fixed", inset: 0, zIndex: 500,
-        background: BG,
+        background: "var(--bg)",
         opacity: closing ? 0 : 1,
         transition: "opacity 0.3s ease",
       }}
     >
       {circles.map((c, i) => {
-        const label = WIDGET_CATALOGUE[c.key]?.title || c.key;
+        const label    = WIDGET_CATALOGUE[c.key]?.title || c.key;
         const fontSize = c.r > 170 ? 28 : c.r > 120 ? 22 : c.r > 88 ? 18 : 14;
-        const words = label.split(" ");
-        const isHov = hovered === i;
+        const isHov    = hovered === i;
+        const diam     = c.r * 2;
+
+        const h = bubbleKeyHash(c.key);
+        const [shadowX, shadowY] = BUBBLE_SHADOW_OFFSETS[h % BUBBLE_SHADOW_OFFSETS.length];
+        const seed     = BUBBLE_SEEDS[h % BUBBLE_SEEDS.length];
+        const filterId = `turb-${c.key}`;
+
         return (
+          // Single bubble div — rAF writes translate+scale here imperatively.
+          // bubbleIn entrance animation lives on the inner child so it never
+          // conflicts with the rAF-owned transform on this element.
           <div
+            ref={el => { circleRefs.current[i] = el; }}
             key={c.key}
             onClick={e => { e.stopPropagation(); onAdd(c.key); onClose(); }}
-            onMouseEnter={() => setHovered(i)}
-            onMouseLeave={() => setHovered(-1)}
+            onMouseEnter={() => { setHovered(i);  hovRef.current = i;  }}
+            onMouseLeave={() => { setHovered(-1); hovRef.current = -1; }}
             style={{
               position: "absolute",
               left: c.x - c.r,
-              top: c.y - c.r,
-              width: c.r * 2,
-              height: c.r * 2,
-              borderRadius: "50%",
-              border: `1px solid ${STROKE}`,
-              background: "transparent",
-              boxShadow: isHov ? "inset 0 0 60px 18px rgba(232,254,103,0.22)" : "none",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
+              top:  c.y - c.r,
+              width: diam,
+              height: diam,
+              willChange: "transform",
               cursor: "pointer",
-              animation: `bubbleIn 0.5s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.055}s both`,
-              transform: isHov ? "scale(1.05)" : "scale(1)",
-              transition: "transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease",
+              borderRadius: "50%",
+              outline: isHov ? "3px solid var(--accent)" : "3px solid transparent",
+              outlineOffset: 2,
+              transition: "outline-color 0.3s ease",
             }}
           >
-            {words.length > 1 ? (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, pointerEvents: "none" }}>
-                {words.map((w, wi) => (
-                  <span key={wi} style={{
-                    fontFamily: "'Libre Caslon Display', Georgia, serif",
-                    fontSize,
-                    fontWeight: 400,
-                    color: INK,
-                    lineHeight: 1.15,
-                    textAlign: "center",
-                    display: "block",
-                  }}>{w}</span>
-                ))}
-              </div>
-            ) : (
-              <span style={{
-                fontFamily: "'Libre Caslon Display', Georgia, serif",
-                fontSize,
-                fontWeight: 400,
-                color: INK,
+            {/* Inner child — carries bubbleIn entrance animation only.
+                overflow:hidden clips sphere layers to the circle shape.
+                rAF never touches this element. */}
+            <div style={{
+              position: "relative",
+              width: "100%",
+              height: "100%",
+              borderRadius: "50%",
+              overflow: "hidden",
+              animation: `bubbleIn 0.5s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.055}s both`,
+            }}>
+              {/* Layer 1 — base sphere with directional inner rim glow */}
+              <div style={{
+                position: "absolute",
+                inset: 0,
+                borderRadius: 500,
+                background: "var(--bg)",
+                boxShadow: `${shadowX}px ${shadowY}px 30px 10px rgba(232,254,103,0.80) inset`,
+              }} />
+
+              {/* Layer 2 — displaced hue overlay (88% of diameter, centered) */}
+              <svg
+                width="88%"
+                height="88%"
+                viewBox="0 0 100 100"
+                style={{
+                  position: "absolute",
+                  top: "6%", left: "6%",
+                  pointerEvents: "none",
+                  overflow: "visible",
+                }}
+              >
+                <defs>
+                  <filter id={filterId} x="-10%" y="-10%" width="120%" height="120%" colorInterpolationFilters="sRGB">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.999 0.999" numOctaves="3" seed={seed} result="noise" />
+                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="200" xChannelSelector="R" yChannelSelector="G" />
+                  </filter>
+                </defs>
+                <g opacity="0.6" style={{ mixBlendMode: "hue" }} filter={`url(#${filterId})`}>
+                  <circle cx="50" cy="50" r="50" fill="#ECEFEC" fillOpacity="0.98" />
+                </g>
+              </svg>
+
+              {/* Layer 3 — label, centered inside the sphere */}
+              <div style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
                 pointerEvents: "none",
-              }}>{label}</span>
-            )}
+                zIndex: 2,
+              }}>
+                <span style={{
+                  fontFamily: "'Instrument Serif', Georgia, serif",
+                  fontSize,
+                  fontWeight: 400,
+                  color: "var(--ink)",
+                  lineHeight: 1.15,
+                  textAlign: "center",
+                  maxWidth: c.r * 1.5,
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                  pointerEvents: "none",
+                }}>{label}</span>
+              </div>
+            </div>
           </div>
         );
       })}
@@ -5038,27 +5640,17 @@ function BubblePicker({ availableWidgets, onAdd, onClose }) {
         style={{
           position: "absolute", top: 24, right: 24,
           width: 40, height: 40, borderRadius: "50%",
-          background: theme === "dark" ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
+          background: "rgba(0,0,0,0.06)",
           border: "none", cursor: "pointer",
-          fontSize: 18,
-          color: theme === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)",
+          fontSize: 18, color: "rgba(0,0,0,0.5)",
           display: "flex", alignItems: "center", justifyContent: "center",
           zIndex: 10,
           transition: "background 0.15s",
         }}
-        onMouseEnter={e => e.currentTarget.style.background = theme === "dark" ? "rgba(255,255,255,0.14)" : "rgba(0,0,0,0.10)"}
-        onMouseLeave={e => e.currentTarget.style.background = theme === "dark" ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}
+        onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.10)"}
+        onMouseLeave={e => e.currentTarget.style.background = "rgba(0,0,0,0.06)"}
       >×</button>
 
-      <div style={{
-        position: "absolute", bottom: 24, left: "50%",
-        transform: "translateX(-50%)",
-        fontSize: 11, letterSpacing: "0.18em",
-        textTransform: "uppercase",
-        color: theme === "dark" ? "rgba(255,255,255,0.28)" : "rgba(0,0,0,0.28)",
-        pointerEvents: "none",
-        fontFamily: "'Inter', sans-serif",
-      }}>Click a circle to add · Esc to close</div>
     </div>
   );
 }
@@ -5197,7 +5789,7 @@ function ScreenHome({ role, go }) {
         {/* Headline */}
         <h1 style={{
           fontFamily: HOME_SERIF, fontWeight: 400,
-          fontSize: 80, color: "var(--ink)",
+          fontSize: 88, color: "var(--ink)",
           letterSpacing: -2.5, lineHeight: 0.92,
           margin: 0, position: "relative",
           animation: "heroIn 0.7s cubic-bezier(0.22,1,0.36,1) backwards",
@@ -5217,23 +5809,23 @@ function ScreenHome({ role, go }) {
         )}
 
         {/* AI search — reserved-height wrapper so the grid never shifts */}
-        <div style={{ marginTop: 32, maxWidth: 760, height: 52, position: "relative" }}>
+        <div style={{ marginTop: 32, maxWidth: "calc(2 * ((100% - 40px) / 3) + 20px)", height: 52, position: "relative" }}>
           <div style={{
             position: "absolute", top: 0, left: 0, right: 0,
             zIndex: searchFocused ? 100 : 1,
           }}>
             <div style={{
-              background: SURFACE,
-              border: searchFocused ? "1px solid var(--ink)" : `1px solid var(--border)`,
+              background: "rgba(255,255,255,0.96)",
+              border: "1px solid rgba(26,31,38,0.12)",
               borderRadius: 14,
               padding: "12px 16px",
-              transition: "border-color 0.15s",
+              boxShadow: "0px 2px 12px rgba(0,0,0,0.06)",
               position: "relative",
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <div style={{
                   width: 30, height: 30, borderRadius: 8,
-                  background: SOLID, color: "white",
+                  background: "var(--ink)", color: "#ffffff",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: 13, fontWeight: 700, flexShrink: 0,
                 }}>✦</div>
@@ -5243,15 +5835,17 @@ function ScreenHome({ role, go }) {
                   onFocus={() => setSearchFocused(true)}
                   placeholder="Ask Archive — find any brand space, file or rule…"
                   style={{
-                    flex: 1, border: "none", outline: "none",
-                    fontSize: 15, color: DARK, background: "transparent",
+                    flex: 1, border: "none", outline: "none", boxShadow: "none",
+                    fontSize: 13, fontFamily: "'Inter', sans-serif", fontWeight: 400,
+                    color: "rgba(26,31,38,0.88)", background: "transparent",
+                    caretColor: "var(--ink)", transition: "border-color 0.12s",
                     padding: "6px 0",
                   }}
                 />
                 <span style={{
                   fontSize: 10, color: MUTED, letterSpacing: 0.6,
                   fontFamily: '"SF Mono", monospace',
-                  padding: "4px 8px", border: `1px solid ${HOME_TILE_BORDER}`, borderRadius: 4,
+                  padding: "4px 8px", border: "1px solid rgba(26,31,38,0.10)", borderRadius: 4,
                 }}>⌘ K</span>
               </div>
 
@@ -5260,7 +5854,8 @@ function ScreenHome({ role, go }) {
                 <div style={{
                   position: "absolute", top: "calc(100% + 8px)", left: 0, right: 0,
                   background: SURFACE,
-                  border: `1px solid var(--border)`, borderRadius: 14,
+                  border: "1px solid rgba(26,31,38,0.08)", borderRadius: 14,
+                  boxShadow: "0px 8px 24px rgba(0,0,0,0.06)",
                   padding: 14,
                 }}>
                   <div style={{
@@ -5374,7 +5969,7 @@ function ScreenHome({ role, go }) {
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 22, fontWeight: 300,
             }}>+</div>
-            <span style={{ letterSpacing: 0.4, fontFamily: HOME_SERIF, fontSize: 14 }}>Add widget</span>
+            <span style={{ letterSpacing: 0.4, fontFamily: "'Inter', sans-serif", fontSize: 14 }}>Add widget</span>
           </button>
         </div>
       </div>
@@ -5399,7 +5994,7 @@ function ScreenHome({ role, go }) {
         }}>
           <div style={{
             fontSize: 14, fontWeight: 600, color: DARK,
-            letterSpacing: -0.1, marginBottom: 14,
+            letterSpacing: -0.1, marginBottom: 16,
           }}>{draggedWidget.title}</div>
           <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
             {draggedWidget.render(go)}
