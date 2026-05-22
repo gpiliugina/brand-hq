@@ -5777,6 +5777,23 @@ function ScreenHome({ role, go }) {
   const [searchQuery, setSearchQuery] = useState("");
   const searchResults = searchTools(searchQuery);
 
+  // ---- Search bar width — pinned to the right edge of the grid's 2nd column ----
+  const [searchMaxWidth, setSearchMaxWidth] = useState(null);
+  useEffect(() => {
+    function measure() {
+      if (!gridRef.current) return;
+      const children = gridRef.current.children;
+      if (children.length < 2) return;
+      const gridLeft  = gridRef.current.getBoundingClientRect().left;
+      const col2Right = children[1].getBoundingClientRect().right;
+      setSearchMaxWidth(col2Right - gridLeft);
+    }
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(gridRef.current);
+    return () => ro.disconnect();
+  }, [widgets]);
+
   const draggedWidget = draggedKey ? WIDGET_CATALOGUE[draggedKey] : null;
 
   return (
@@ -5809,7 +5826,7 @@ function ScreenHome({ role, go }) {
         )}
 
         {/* AI search — reserved-height wrapper so the grid never shifts */}
-        <div style={{ marginTop: 32, maxWidth: "calc(2 * ((100% - 40px) / 3) + 20px)", height: 52, position: "relative" }}>
+        <div style={{ marginTop: 32, maxWidth: searchMaxWidth ?? "calc(2 * ((100% - 40px) / 3) + 20px)", height: 52, position: "relative" }}>
           <div style={{
             position: "absolute", top: 0, left: 0, right: 0,
             zIndex: searchFocused ? 100 : 1,
